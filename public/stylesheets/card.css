@@ -1,0 +1,28 @@
+.card{
+	height: 50px;
+	width: 35px;
+	border: solid;
+	text-align: right;
+	display: inline-block;
+}
+.heart{
+	
+}
+.club{
+	
+}
+.spade{
+	
+}
+.joker{
+	background-size: contain;
+}
+.joker.big{
+	background-image: url('/images/big_joker.png');
+}
+.joker.small{
+	background-image: url('/images/small_joker.png');
+}
+.unknown{
+	
+}
