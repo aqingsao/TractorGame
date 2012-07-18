@@ -1,15 +1,4 @@
-var Card = require('../routes/card.js');
-
-exports['0 decks'] = function(test){
-	test.equal(Card.decks(0).length, 0);
-	test.done();
-};
-
-exports['1 deck has 54 cards'] = function(test){
-	var cards = Card.decks(1);
-	test.equal(cards.length, 54);
-	test.done();
-};
+var Card = require('../routes/card.js').Card;
 
 exports['Rank equals'] = function(test){
 	test.ok(Card.Ranks.QUEEN.equals(Card.Ranks.QUEEN));
@@ -26,12 +15,24 @@ exports['Suit equals'] = function(test){
 	test.done();
 };
 exports['Card equals'] = function(test){
-	test.ok(Card.Card.heart(Card.Ranks.QUEEN).equals(Card.Card.heart(Card.Ranks.QUEEN)));
-	test.ok(Card.Card.joker(Card.Ranks.SMALL_JOKER).equals(Card.Card.joker(Card.Ranks.SMALL_JOKER)));
-	test.ok(Card.Card.club(Card.Ranks.TWO).equals(Card.Card.club(Card.Ranks.TWO)));
+	console.log("---" + Card.heart(Card.Ranks.QUEEN));
+	test.ok(Card.heart(Card.Ranks.QUEEN).equals(Card.heart(Card.Ranks.QUEEN)));
+	test.ok(Card.joker(Card.Ranks.SMALL_JOKER).equals(Card.joker(Card.Ranks.SMALL_JOKER)));
+	test.ok(Card.club(Card.Ranks.TWO).equals(Card.club(Card.Ranks.TWO)));
 
-	test.ok(!Card.Card.joker(Card.Ranks.SMALL_JOKER).equals(Card.Card.joker(Card.Ranks.BIG_JOKER)));
-	test.ok(!Card.Card.club(Card.Ranks.TWO).equals(Card.Card.club(Card.Ranks.THREE)));
+	test.ok(!Card.joker(Card.Ranks.SMALL_JOKER).equals(Card.joker(Card.Ranks.BIG_JOKER)));
+	test.ok(!Card.club(Card.Ranks.TWO).equals(Card.club(Card.Ranks.THREE)));
 
+	test.done();
+};
+
+exports['0 decks'] = function(test){
+	test.equal(Card.decks(0).length, 0);
+	test.done();
+};
+
+exports['1 deck has 54 cards'] = function(test){
+	var cards = Card.decks(1);
+	test.equal(cards.length, 54);
 	test.done();
 };
