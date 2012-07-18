@@ -52,24 +52,30 @@ var Card = Backbone.Model.extend({
 	joker: function(rank){
 		return new Card(Card.Suits.J, rank);
 	}, 
+	smallJoker: function(){
+		return Card.joker(Card.Ranks.SMALL_JOKER);
+	},
+	bigJoker: function(){
+		return Card.joker(Card.Ranks.BIG_JOKER);
+	},
 	decks: function(count){
-		var decks = new Decks();
+		var cards = new Backbone.Collection();
 		while(count-- > 0){
 			_.each(Card.Ranks, function(rank){
 				if(rank.isJoker){
-					decks.add(Card.joker(rank));
+					cards.add(Card.joker(rank));
 				}
 			});
 			_.each(Card.Ranks, function(rank){
 				if(!rank.isJoker){
-					decks.add(Card.heart(rank));
-					decks.add(Card.spade(rank));
-					decks.add(Card.diamond(rank));
-					decks.add(Card.club(rank));
+					cards.add(Card.heart(rank));
+					cards.add(Card.spade(rank));
+					cards.add(Card.diamond(rank));
+					cards.add(Card.club(rank));
 				}
 			});
 		}
-		return decks;
+		return new Decks(cards.shuffle());
 	}, 
 	Ranks: {TWO: new Rank('2', 2, 0), THREE: new Rank('3', 3, 0), FOUR: new Rank('4', 4, 0), FIVE: new Rank('5', 5, 5), 
 		SIX: new Rank('6', 6, 0), SEVEN: new Rank('7', 7, 0), EIGHT: new Rank('8', 8, 0), NINE: new Rank('9', 9, 0), TEN: new Rank('10', 10, 10), 
@@ -79,8 +85,10 @@ var Card = Backbone.Model.extend({
 });
 var Decks = Backbone.Collection.extend({
 	model: Card, 
-	shuffle: function(){
-		
+	contains: function(card){
+		return this.any(function(c){
+			return c.equals(card);
+		});
 	}
 });
 
