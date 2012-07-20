@@ -26,7 +26,7 @@ exports['Tractor game can not be joined when there are already 4 players'] = fun
 	tractorGame.join(new Player('Nana'));
 	tractorGame.join(new Player('Kerry'));
 	tractorGame.join(new Player('Yao'));
-	test.equal(tractorGame.players.size(), 4);
+	test.equals(tractorGame.players.size(), 4);
 	test.equals(tractorGame.gameState, TractorGame.GameState.READY);
 	test.throws(function(){tractorGame.join('Bin')}, "Cannot join this game");
 	
@@ -40,22 +40,37 @@ exports['Tractor round should be ready when 4 players join'] = function(test){
 	test.done();
 };
 
-exports['Tractor round can be started when ready'] = function(test){
+exports['Tractor round can start and flip when ready'] = function(test){
 	var tractorRound = readyGame().tractorRound;
 	test.equals(tractorRound.state, TractorGame.RoundState.READY);
 	
 	tractorRound.start();
 	test.equals(tractorRound.state, TractorGame.RoundState.FLIPING);
 	
-	test.done();	
+	var totalTime = 0;
+	var assertion = function(){
+		if(yao.cards.size() < 25 && totalTime < 10){
+			setTimeout(assertion, 1000);
+		}
+		else{
+			test.equals(yao.cards.size(), 25);
+			test.done();
+		}
+	}
+	assertion();
 }
+
+var jacky = new Player('Jacky');
+var nana = new Player('Nana');
+var kerry = new Player('Kerry');
+var yao = new Player('Yao');
 
 function readyGame(){
 	var tractorGame = new TractorGame();
-	tractorGame.join(new Player('Jacky'));
-	tractorGame.join(new Player('Nana'));
-	tractorGame.join(new Player('Kerry'));
-	tractorGame.join(new Player('Yao'));
+	tractorGame.join(jacky);
+	tractorGame.join(nana);
+	tractorGame.join(kerry);
+	tractorGame.join(yao);
 	
 	return tractorGame;
 }

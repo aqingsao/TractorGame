@@ -26,6 +26,21 @@ exports['Card equals'] = function(test){
 	test.done();
 };
 
+exports["Card isSmallJoker or isBigJoker or isRedSuit or isBlackSuit"] = function(test){
+	test.ok(Card.heart(Card.Ranks.JACK).isRedSuit());
+	test.ok(!Card.heart(Card.Ranks.JACK).isBlackSuit());
+	test.ok(!Card.heart(Card.Ranks.JACK).isSmallJoker());
+
+	test.ok(Card.smallJoker().isSmallJoker());
+	test.ok(!Card.heart(Card.Ranks.JACK).isSmallJoker());
+	test.ok(!Card.bigJoker(Card.Ranks.JACK).isSmallJoker());
+	
+	test.ok(!Card.smallJoker().isBigJoker());
+	test.ok(!Card.heart(Card.Ranks.JACK).isBigJoker());
+	test.ok(Card.bigJoker(Card.Ranks.JACK).isBigJoker());
+	
+	test.done();
+};
 exports['0 decks'] = function(test){
 	test.equal(Card.decks(0).length, 0);
 	test.done();
@@ -42,5 +57,51 @@ exports['1 deck has 54 cards'] = function(test){
 exports['2 deck2 has 108 cards'] = function(test){
 	var cards = Card.decks(2);
 	test.equal(cards.length, 108);
+	test.done();
+};
+
+exports['allSuits return true when cards is emtpy'] = function(test){
+	var cards = Card.cards();
+	test.ok(cards.allSuits());
+	test.done();
+};
+exports['allSuits return true when cards are all suits'] = function(test){
+	var cards = Card.cards([Card.heart(Card.Ranks.TWO), Card.club(Card.Ranks.THREE)]);
+	test.ok(cards.allSuits());
+	test.done();
+};
+exports['allSuits return false when at least one card is not suit'] = function(test){
+	var cards = Card.cards([Card.smallJoker(), Card.club(Card.Ranks.THREE)]);
+	test.ok(!cards.allSuits());
+	test.done();
+};
+exports['allJokers return true when cards are all jokers'] = function(test){
+	var cards = Card.cards([Card.smallJoker(), Card.bigJoker()]);
+	test.ok(cards.allJokers());
+	test.done();
+};
+exports['allJokers return false when at least one is not jokers'] = function(test){
+	var cards = Card.cards([Card.heart(Card.Ranks.TWO), Card.bigJoker()]);
+	test.ok(!cards.allJokers());
+	test.done();
+};
+exports["sameSuits return true when cards with size 0"] = function(test){
+	var cards = Card.cards([]);
+	test.ok(cards.sameSuit());
+	test.done();
+};
+exports["sameSuits return true when cards with size 1"] = function(test){
+	var cards = Card.cards([Card.club(Card.Ranks.THREE)]);
+	test.ok(cards.sameSuit());
+	test.done();
+};
+exports["sameSuits return true when 2 cards have same suit"] = function(test){
+	var cards = Card.cards([Card.club(Card.Ranks.THREE), Card.club(Card.Ranks.FOUR)]);
+	test.ok(cards.sameSuit());
+	test.done();
+};
+exports["sameSuits return false when 2 cards have not same suit"] = function(test){
+	var cards = Card.cards([Card.club(Card.Ranks.THREE), Card.spade(Card.Ranks.FOUR)]);
+	test.ok(!cards.sameSuit());
 	test.done();
 };
