@@ -6,15 +6,15 @@ TractorRound = require('../routes/tractor.js').TractorRound;
 exports['Tractor game is new'] = function(test){
 	var tractorGame = new TractorGame();
 	test.equals(tractorGame.gameState, TractorGame.GameState.WAITING);
-	test.equal(tractorGame.players.size(), 0);
+	test.ok(!tractorGame.seats.full());
 
 	test.done();
 };
 
 exports['Tractor game can be joined'] = function(test){
 	var tractorGame = new TractorGame();
-	tractorGame.join(new Player('Jacky Li'));
-	test.equal(tractorGame.players.size(), 1);
+	tractorGame.join(jacky, 0);
+	test.ok(!tractorGame.seats.full());
 	test.equals(tractorGame.gameState, TractorGame.GameState.WAITING);
 
 	test.done();
@@ -22,11 +22,11 @@ exports['Tractor game can be joined'] = function(test){
 
 exports['Tractor game can not be joined when there are already 4 players'] = function(test){	
 	var tractorGame = new TractorGame();
-	tractorGame.join(new Player('Jacky Li'));
-	tractorGame.join(new Player('Nana'));
-	tractorGame.join(new Player('Kerry'));
-	tractorGame.join(new Player('Yao'));
-	test.equals(tractorGame.players.size(), 4);
+	tractorGame.join(jacky, 0);
+	tractorGame.join(nana, 1);
+	tractorGame.join(kerry, 2);
+	tractorGame.join(yao, 3);
+	test.ok(tractorGame.seats.full());
 	test.equals(tractorGame.gameState, TractorGame.GameState.READY);
 	test.throws(function(){tractorGame.join('Bin')}, "Cannot join this game");
 	
@@ -45,7 +45,7 @@ exports['Tractor round can start and flip when ready'] = function(test){
 	test.equals(tractorRound.state, TractorGame.RoundState.READY);
 	
 	tractorRound.start();
-	test.equals(tractorRound.state, TractorGame.RoundState.FLIPING);
+	test.equals(tractorRound.state, TractorGame.RoundState.DEALING);
 	
 	var totalTime = 0;
 	var assertion = function(){
@@ -58,7 +58,16 @@ exports['Tractor round can start and flip when ready'] = function(test){
 		}
 	}
 	assertion();
-}
+};
+
+exports["Non team is defender at startup"] = function(test){
+	var tractorGame = readyGame();
+	var seats = tractorGame.seats;
+	test.ok(typeof(seats.defenders()) == undefined);
+	test.equals(seats.teams[0].rank == Card.Ranks.TWO);
+	
+	test.done();
+};
 
 var jacky = new Player('Jacky');
 var nana = new Player('Nana');
@@ -67,10 +76,10 @@ var yao = new Player('Yao');
 
 function readyGame(){
 	var tractorGame = new TractorGame();
-	tractorGame.join(jacky);
-	tractorGame.join(nana);
-	tractorGame.join(kerry);
-	tractorGame.join(yao);
+	tractorGame.join(jacky, 0);
+	tractorGame.join(nana, 1);
+	tractorGame.join(kerry, 2);
+	tractorGame.join(yao, 3);
 	
 	return tractorGame;
 }
