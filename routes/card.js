@@ -97,9 +97,17 @@ var Card = Backbone.Model.extend({
 	}, 
 	cards: function(initialCards){
 		var cards = new Cards();
-		_.each(initialCards, function(card){
-			cards.add(card);
-		});
+		if(initialCards == undefined){
+			return cards;
+		}
+		if(initialCards.constructor === Array){
+			_.each(initialCards, function(card){
+				cards.add(card);
+			});
+		}
+		else{
+			cards.add(initialCards);	
+		}
 		return cards;
 	},
 	Ranks: {TWO: new Rank('2', 2, 0), THREE: new Rank('3', 3, 0), FOUR: new Rank('4', 4, 0), FIVE: new Rank('5', 5, 5), 

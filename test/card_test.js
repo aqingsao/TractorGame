@@ -105,3 +105,10 @@ exports["sameSuits return false when 2 cards have not same suit"] = function(tes
 	test.ok(!cards.sameSuit());
 	test.done();
 };
+
+exports["could create several cards"] = function(test){
+	var cards = Card.cards(Card.club(Card.Ranks.TWO));
+	test.equals(cards.length, 1);
+	test.done();
+};
+

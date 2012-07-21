@@ -23,24 +23,23 @@ var Player = Backbone.Model.extend({
 	}
 });
 var Pair = Backbone.Model.extend({
-	initialize: function(name){
+	initialize: function(name, seat0, seat1){
 		this.name = name;
-		this.players = [];
+		this.seats = new Backbone.Collection();
+		this.seats.add(seat0);
+		this.seats.add(seat1);
 		this.rank = Card.Ranks.TWO;
+		this.isDefenders = false;
+		this.isAttackers = false;
 	}, 
-	join: function(player, seat){
-		var index = seat < 2 ? 0 : 1;
-		if(typeof(this.players[index]) != undefined){
-			throw "Cannot take seat";
-		}
-		this.players[index] = player;
+	hasPlayer: function(player){
+		return this.seats.any(function(seat){
+			return seat.player.equals(player);
+		});
 	}, 
-	size: function(){
-		return this.players.length;
-	}, 
-	getPlayerBySeat: function(seat){
-		var index = seat < 2 ? 0 : 1;
-		return typeof(this.players[index]) == undefined;
+	setDefender: function(isDefenders){
+		this.isDefenders = isDefenders;
+		this.isAttackers = !isDefenders;
 	}
 });
 var Seat = Backbone.Model.extend({
@@ -57,35 +56,69 @@ var Seat = Backbone.Model.extend({
 		return typeof(this.player) == 'object';
 	}
 });
-var Seats = Backbone.Collection.extend({
-	initialize: function(){
-		this.
+var Seats = Backbone.Model.extend({
+	model: Seat,
+	initialize: function(seat0, seat1, seat2, seat3){
+		this.seats = new Backbone.Collection();
+		this.seats.add(seat0);
+		this.seats.add(seat1);
+		this.seats.add(seat2);
+		this.seats.add(seat3);
+		this.pairs = new Backbone.Collection();
+		this.pairs.add(new Pair("team0", seat0, seat2)); 
+		this.pairs.add(new Pair("team1", seat1, seat3));
 	},
 	full: function(){		
-		return this.all(function(seat){
+		return this.seats.all(function(seat){
 			return seat.isTaken();
 		});
 	},
 	join: function(player, seatIndex){
 		if(seatIndex < 0 || seatIndex > 3){
-			throw "Canont take seat";
+			throw "Cannot take seat";
 		}
-		this.at(seatIndex).join(player, seatIndex);
+		if(this.hasPlayer(player)){
+			throw "Cannot take seat";
+		}
+		this.seats.at(seatIndex).join(player, seatIndex);
 	}, 
 	defenders: function(){
-		return undefined;
+		return this.pairs.find(function(pair){
+			if(pair.isDefenders){
+				return pair;
+			}
+		});
+	}, 
+	attackers: function(){
+		return this.pairs.find(function(pair){
+			if(pair.isAttackers){
+				return pair;
+			}
+		});
+	}, 
+	getPlayer: function(seatIndex){
+		return this.seats.at(seatIndex).player;
+	}, 
+	setDefender: function(player){
+		this.pairs.each(function(pair){
+			pair.setDefender(pair.hasPlayer(player));
+		});
+	}, 
+	hasPlayer: function(player){
+		return this.seats.any(function(seat){
+			return seat.player != undefined && seat.player.equals(player);
+		});
+	}, 
+	getPair: function(player){
+		return this.pairs.find(function(pair){
+			return pair.hasPlayer(player);
+		});
 	}
 }, {
 	prepareSeats: function(){
-		var seats = new Seats(); 
-		seats.add(new Seat(0));
-		seats.add(new Seat(1));
-		seats.add(new Seat(2));
-		seats.add(new Seat(3));
-		return seats;
+		return new Seats(new Seat(0), new Seat(1), new Seat(2), new Seat(3));
 	}
 });
-
 var Flipping = Backbone.Model.extend({
 	initialize: function(player, jokers, trumps){
 		this.level = this.check(player, jokers, trumps);
@@ -95,12 +128,15 @@ var Flipping = Backbone.Model.extend({
 		else{
 			this.isValid = true;
 		}
+		if(jokers.size() == 2){
+			this.rank = jokers.at(0).rank;
+		}
+		else if(trumps.size() > 0){
+			this.rank = trumps.at(0).rank;
+		}
 		this.banker = player;
 		this.jokers = jokers;
 		this.trumps = trumps;
-	},
-	isValid: function(player, jokers, trumps){
-		return this.check(player, jokers, trumps) > 0;
 	},
 	check: function(player, jokers, trumps){
 		if(jokers.size() == 0 || jokers.size > 2 || trumps.size() > 2){
@@ -141,6 +177,9 @@ var Flipping = Backbone.Model.extend({
 		}
 		// 2 jokers are big jokers;
 		return 10;
+	}, 
+	matchRank: function(pair){
+		return this.rank == Card.Ranks.SMALL_JOERK || this.rank == Card.Ranks.BIG_JOERK || this.rank == pair.rank;
 	}
 });
 var TractorRound = Backbone.Model.extend({
@@ -165,7 +204,7 @@ var TractorRound = Backbone.Model.extend({
 		var that = this;
 		var dealSlow = function(){
 			var card = that.cards.shift();
-			that.seats.at(i%4).player.deal(card);
+			that.seats.getPlayer(i%4).deal(card);
 			//event.deal
 			if(i++ < 100){
 				setTimeout(dealSlow, that.dealInterval);
@@ -182,11 +221,19 @@ var TractorRound = Backbone.Model.extend({
 		if(!flipping.isValid){
 			throw "You cannot flip cards";			
 		}
-		if(typeof(this.flipping) != null &&  flipping.level <= this.flipping.level){
+		var defenders = this.seats.defenders();
+		if(defenders == undefined){
+			defenders = this.seats.getPair(player);
+			if(!flipping.matchRank(defenders)){
+				throw "You cannot flip cards";
+			}
+		};
+		if(this.flipping != undefined &&  flipping.level <= this.flipping.level){
 			throw "You cannot overturn cards";	
 		}
 		// event.flip
 		this.flipping = flipping;
+		this.seats.setDefender(player);
 	}
 });
 
@@ -209,6 +256,22 @@ var TractorGame = Backbone.Model.extend({
 			this.nextRound();
 		}
 	},
+	flip: function(player, cards){
+		if(this.tractorRound == undefined){
+			throw "You cannot flip cards";
+		}
+		var jokers = Card.cards();
+		var suits = Card.cards();
+		_.each(cards, function(card){
+			if(card.isJoker()){
+				jokers.add(card);
+			}
+			else{
+				suits.add(card);
+			}
+		});
+		this.tractorRound.flip(player, jokers, suits);
+	}, 
 	roundState: function(){
 		return this.tractorRound ? this.tractorRound.state: null;
 	}, 
