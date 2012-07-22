@@ -32,6 +32,7 @@ app.configure('production', function(){
 
 app.get('/', routes.index);
 app.get('/tractor/:id', routes.tractor);
+app.post('/tractor/:id/join/:seatId', routes.tractorJoin);
 
 
 app.listen(3000, function(){

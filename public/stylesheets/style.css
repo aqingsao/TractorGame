@@ -9,14 +9,31 @@ a {
 
 .cf{
 	clear: both;
+}  
+.hidden{
+	display: none;
 }
 .seat{
 	border: solid;
 	padding: 5px 10px;
-	margin: 10px 20px 20px 20px;
+	margin: 10px 20px 20px 20px;  
+	height: 135px;
+}   
+/*start of seat not taken*/
+.seat.notTaken .trumps, .seat.notTaken .suits{
+	display: none;
 }
+.seat.notTaken .join{
+	display: block;
+}
+.seat.notTaken .error{
+	font-weight: bold;
+	font-style: italic;
+	background: red;
+}   
+/*-------end of seat not taken*/
 .seat.north, .seat.south{
-	width: 550px;
+	width: 550px; 
 	margin-left: auto;
 	margin-right: auto;
 }
@@ -24,7 +41,8 @@ a {
 	float: left;
 }
 .seat.east, .seat.west{
-	width: 450px;
+	width: 450px;  
+	height: ;
 }
 .seat.east{
 	float: left;

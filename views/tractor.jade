@@ -1,58 +1,36 @@
 div#header
-div#main
-	div.seat.north
-		div.trumps
-			span.card.joker.big= 'Joker'
-			span.card.joker.small= 'Joker'
-			span.card.heart= 2
-			span.card.club= 2
-			span.card.heart= 3
-			span.card.heart= 4
-			span.card.heart= 4
-			span.card.heart= 5
-			span.card.heart= 9
-			span.card.heart= 10
-			span.card.heart= 'J'
-		div.suits
-			span.card.club= 'A'
-			span.card.club= 'K'
-			span.card.club= 'K'
-			span.card.club= 'Q'
-			span.card.club= 'J'
-			span.card.club= 10
-			span.card.club= 9
-			span.card.splade= 'A'
-			span.card.splade= 'K'
-			span.card.splade= 'K'
-			span.card.splade= 'Q'
-			span.card.splade= 'J'
-			span.card.splade= 10
-			span.card.splade.hidden= 9
-			span.card.diamond= 'A'
-		div.player
-			span.name= 'Jacky Li'
-			span= '现在打:'
-			span.level= '2'
-			span.trick= 1
+div#main 
+	div.hidden
+	-var northSeat = tractorGame.seats.getSeat('N')
+		-var seatClz = northSeat.isTaken() ? "seat north" : "seat north notTaken"
+		div(class=seatClz)
+			div.player
+				span.name= (northSeat.player == undefined ? "" : northSeat.player.name)
+				span= '现在打:'
+				span.level= northSeat.rank.value
+			div.join
+				div.message.error.hidden= '无法加入该座位'
+				form(action="/tractor/" + tractorGame.get("id") + "/join/" + northSeat.get("id"), method="POST")
+					input(name='name', type="text", value= 'player' + northSeat.get("id"))
+					input(value='我要加入', type='submit')= '点击加入'
+			div.trumps
+			div.suits
 
-	div.seat.west
-		div.trumps
-			span.card.joker.big= 'Joker'
-			span.card.joker.small= 'Joker'
-			span.card.heart= 2
-		div.suits
-			span.card.club= 9
-			span.card.splade= 'A'
-			span.card.splade= 'K'
-			span.card.splade.hidden= 9
-			span.card.diamond= 'A'
-		div.player
-			span.name= 'Nana Jia'
-			span= '现在打:'
-			span.level= '2'
-			span.trick= 1
-			span.banker= '庄家'
-		
+	-var westSeat = tractorGame.seats.getSeat('W')
+		-var seatClz = westSeat.isTaken() ? "seat west" : "seat west notTaken"
+		div(class=seatClz)
+			div.player
+				span.name= (westSeat.player == undefined ? "" : westSeat.player.name)
+				span= '现在打:'
+				span.level= westSeat.rank.value
+			div.join
+				div.message.error.hidden= '无法加入该座位'
+				form(action="/tractor/" + tractorGame.get("id") + "/join/" + westSeat.get("id"), method="POST")
+					input(name='name', type="text", value= 'player' + westSeat.get("id"))
+					input(value='我要加入', type='submit')= '点击加入'
+			div.trumps
+			div.suits
+	
 	div.playarea
 		div.flip
 			span= '亮主:'
@@ -66,40 +44,37 @@ div#main
 			span= '出牌:'
 			span.cards
 	
-	div.seat.east
-		div.trumps
-			span.card.joker.big= 'Joker'
-			span.card.joker.small= 'Joker'
-			span.card.heart= 2
-		div.suits
-			span.card.club= 9
-			span.card.splade= 'A'
-			span.card.splade= 'K'
-			span.card.splade.hidden= 9
-			span.card.diamond= 'A'
-		div.player
-			span.name= 'Lee Li'
-			span= '现在打:'
-			span.level= '2'
-			span.trick= 1
+	-var eastSeat = tractorGame.seats.getSeat('E')
+		-var seatClz = eastSeat.isTaken() ? "seat east" : "seat east notTaken"
+		div(class=seatClz)
+			div.player
+				span.name= (eastSeat.player == undefined ? "" : eastSeat.player.name)
+				span= '现在打:'
+				span.level= eastSeat.rank.value
+			div.join
+				div.message.error.hidden= '无法加入该座位'
+				form(action="/tractor/" + tractorGame.get("id") + "/join/" + eastSeat.get("id"), method="POST")
+					input(name='name', type="text", value= 'player' + eastSeat.get("id"))
+					input(value='我要加入', type='submit')= '点击加入'
+			div.trumps
+			div.suits
 		
-	div.seat.south.cf
-		div.trumps
-			span.card.joker.big= 'Joker'
-			span.card.joker.small= 'Joker'
-			span.card.heart= 2
-		div.suits
-			span.card.club= 9
-			span.card.splade= 'A'
-			span.card.splade= 'K'
-			span.card.splade.hidden= 9
-			span.card.diamond= 'A'
-		div.player
-			span.name= 'Kerry Want'
-			span= '现在打:'
-			span.level= '2'
-			span.trick= 1
-		
+	-var southSeat = tractorGame.seats.getSeat('S')
+		-var seatClz = eastSeat.isTaken() ? "seat south cf" : "seat south cf notTaken"
+		div(class=seatClz)
+			div.player
+				span.name= (southSeat.player == undefined ? "" : southSeat.player.name)
+				span= '现在打:'
+				span.level= southSeat.rank.value
+			div.join
+				div.message.error.hidden= '无法加入该座位'
+				form(action="/tractor/" + tractorGame.get("id") + "/join/" + southSeat.get("id"), method="POST")
+					input(name='name', type="text", value= 'player' + southSeat.get("id"))
+					input(value='我要加入', type='submit')= '点击加入'
+			div.trumps
+			div.suits
 		
 
 div#footer
+script(src='/javascripts/jquery-1.7.2.min.js')
+script(src="/javascripts/game.js")

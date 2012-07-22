@@ -1,6 +1,7 @@
 var Backbone = require('backbone'), 
 	_ = require('underscore')._,
-	Card = require('./card.js').Card;
+	Card = require('./card.js').Card, 
+	util = require('util');
 
 var Player = Backbone.Model.extend({
 	initialize: function(name){
@@ -31,7 +32,6 @@ var Pair = Backbone.Model.extend({
 		this.seats = new Backbone.Collection();
 		this.seats.add(seat0);
 		this.seats.add(seat1);
-		this.rank = Card.Ranks.TWO;
 		this.isDefenders = false;
 		this.isAttackers = false;
 	}, 
@@ -43,12 +43,15 @@ var Pair = Backbone.Model.extend({
 	setDefender: function(isDefenders){
 		this.isDefenders = isDefenders;
 		this.isAttackers = !isDefenders;
+	}, 
+	rank: function(){
+		return this.seats.at(0).rank;
 	}
 });
 var Seat = Backbone.Model.extend({
-	initialize: function(index){
-		this.index = index;
-	}, 
+	initialize: function(){
+		this.rank = Card.Ranks.TWO;
+	},	
 	join: function(player){
 		if(this.isTaken()){
 			throw "Cannot take seat";
@@ -67,6 +70,7 @@ var Seats = Backbone.Model.extend({
 		this.seats.add(seat1);
 		this.seats.add(seat2);
 		this.seats.add(seat3);
+		console.log("========" + util.inspect(this.seats));
 		this.pairs = new Backbone.Collection();
 		this.pairs.add(new Pair("team0", seat0, seat2)); 
 		this.pairs.add(new Pair("team1", seat1, seat3));
@@ -126,10 +130,29 @@ var Seats = Backbone.Model.extend({
 		return _.find(this.players(), function(player){
 			return player != undefined && player.canFlip();
 		});
+	}, 
+	getSeat: function(direction){ 
+		var seatIndex;
+		switch(direction){
+			case 'N':
+				seatIndex = 0;
+				break;
+			case 'W':
+				seatIndex = 1;
+				break;
+			case 'S':
+				seatIndex = 2;
+				break;
+			case 'E':
+				seatIndex = 3;
+			    break;
+		}  
+		
+		return this.seats.at(seatIndex);
 	}
 }, {
 	prepareSeats: function(){
-		return new Seats(new Seat(0), new Seat(1), new Seat(2), new Seat(3));
+		return new Seats(new Seat({id:0}), new Seat({id:1}), new Seat({id:2}), new Seat({id:3}));
 	}
 });
 var Flipping = Backbone.Model.extend({
@@ -192,7 +215,7 @@ var Flipping = Backbone.Model.extend({
 		return 10;
 	}, 
 	matchRank: function(pair){
-		return this.rank == Card.Ranks.SMALL_JOKER || this.rank == Card.Ranks.BIG_JOKER || this.rank == pair.rank;
+		return this.rank == Card.Ranks.SMALL_JOKER || this.rank == Card.Ranks.BIG_JOKER || this.rank == pair.rank();
 	}
 });
 var TractorRound = Backbone.Model.extend({

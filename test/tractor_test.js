@@ -6,7 +6,7 @@ _ = require("underscore")._;
 
 
 exports['Tractor game is new'] = function(test){
-	var tractorGame = new TractorGame();
+	var tractorGame = new TractorGame(1);
 	test.equals(tractorGame.gameState, TractorGame.GameState.WAITING);
 	test.ok(!tractorGame.seats.full());
 
@@ -14,7 +14,7 @@ exports['Tractor game is new'] = function(test){
 };
 
 exports['Tractor game can be joined'] = function(test){
-	var tractorGame = new TractorGame();
+	var tractorGame = new TractorGame(1);
 	tractorGame.join(jacky, 0);
 	test.ok(!tractorGame.seats.full());
 	test.equals(tractorGame.gameState, TractorGame.GameState.WAITING);
@@ -23,14 +23,14 @@ exports['Tractor game can be joined'] = function(test){
 };
 
 exports['Tractor game cannot be joined by same player'] = function(test){
-	var tractorGame = new TractorGame();
+	var tractorGame = new TractorGame(1);
 	tractorGame.join(jacky, 0);
 	test.throws(function(){tractorGame.join(jacky, 1)}, "Cannot take seat");
 
 	test.done();
 };
 exports['Tractor game cannot be joined when seat is taken'] = function(test){
-	var tractorGame = new TractorGame();
+	var tractorGame = new TractorGame(1);
 	tractorGame.join(jacky, 0);
 	test.throws(function(){tractorGame.join(nana, 0)}, "Cannot take seat");
 
@@ -38,7 +38,7 @@ exports['Tractor game cannot be joined when seat is taken'] = function(test){
 };
 
 exports['Tractor game can not be joined when there are already 4 players'] = function(test){	
-	var tractorGame = new TractorGame();
+	var tractorGame = new TractorGame(1);
 	tractorGame.join(jacky, 0);
 	tractorGame.join(nana, 1);
 	tractorGame.join(kerry, 2);
@@ -81,15 +81,15 @@ exports["Non team is defender at startup"] = function(test){
 	var tractorGame = readyGame();
 	var seats = tractorGame.seats;
 	test.equals(seats.pairs.size(), 2);
-	test.equals(seats.pairs.at(0).rank, Card.Ranks.TWO);
-	test.equals(seats.pairs.at(1).rank, Card.Ranks.TWO);
+	test.equals(seats.pairs.at(0).rank(), Card.Ranks.TWO);
+	test.equals(seats.pairs.at(1).rank(), Card.Ranks.TWO);
 	test.ok(seats.defenders() == undefined);
 	test.ok(seats.attackers() == undefined);
 	
 	test.done();
 };
 exports["cannot flip cards when tractor not ready."] = function(test){
-	var tractorGame = new TractorGame();	
+	var tractorGame = new TractorGame(1);	
 	test.throws(function(){tractorGame.flip(jacky, [smallJoker, heart2])}, "You cannot flip cards");
 	
 	test.done();
@@ -109,7 +109,7 @@ exports["Player can flip when having available jokers and trumps."] = function(t
 	tractorGame.flip(jacky, [smallJoker, heart2]);
 	
 	var seats = tractorGame.seats;
-	test.equals(seats.pairs.at(0).rank, Card.Ranks.TWO);
+	test.equals(seats.pairs.at(0).rank(), Card.Ranks.TWO);
 	test.ok(seats.defenders() != undefined);
 	test.equals(seats.defenders().hasPlayer(jacky), true);
 	test.equals(seats.defenders().hasPlayer(kerry), true);
@@ -226,6 +226,8 @@ exports["cannot flip cards when players has no trump cards"] = function(test){
 	test.done();
 };
 
+exports[""]
+
 var jacky = new Player('Jacky');
 var nana = new Player('Nana');
 var kerry = new Player('Kerry');
@@ -241,7 +243,7 @@ function stubDeal(cardsForPlayer){
 	});
 };
 function readyGame(){
-	var tractorGame = new TractorGame();
+	var tractorGame = new TractorGame(1);
 	tractorGame.join(jacky, 0);
 	tractorGame.join(nana, 1);
 	tractorGame.join(kerry, 2);
