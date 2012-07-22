@@ -95,7 +95,7 @@ exports["cannot flip cards when tractor not ready."] = function(test){
 	test.done();
 };
 
-exports["any pair could flip when dealing cards."] = function(test){
+exports["Player can flip when having available jokers and trumps."] = function(test){
 	var tractorGame = readyGame();
 	var tractorRound = tractorGame.tractorRound;
 	var originalDeal = tractorRound.deal;
@@ -121,7 +121,7 @@ exports["any pair could flip when dealing cards."] = function(test){
 	test.done();
 };
 
-exports["anyone else could overturn when dealing cards"] = function(test){
+exports["Player can overturn when having bigger jokers and trumps"] = function(test){
 	var tractorGame = readyGame();
 	var tractorRound = tractorGame.tractorRound;
 	var originalDeal = tractorRound.deal;
@@ -147,8 +147,33 @@ exports["anyone else could overturn when dealing cards"] = function(test){
 	tractorRound.deal = originalDeal;
 	test.done();
 };
+exports["Player cannot overturn when not having bigger jokers and trumps"] = function(test){
+	var tractorGame = readyGame();
+	var tractorRound = tractorGame.tractorRound;
+	var originalDeal = tractorRound.deal;
+	var smallJoker = Card.smallJoker();
+	var heart2 = Card.heart(Card.Ranks.TWO);
+	var diamond1 = Card.diamond(Card.Ranks.TWO);
+	tractorRound.deal = function(){
+		stubDeal([{player: jacky, cards: Card.cards(smallJoker, heart2)}, {player: yao, cards: Card.cards(smallJoker, diamond1)}]);
+	};	
+	tractorRound.start();
+	
+	tractorGame.flip(jacky, [smallJoker, heart2]);
+	
+	var seats = tractorGame.seats;
+	test.equals(seats.defenders().hasPlayer(jacky), true);
+	test.equals(seats.attackers().hasPlayer(yao), true);
+	
+	test.throws(function(){tractorGame.flip(yao, [smallJoker, diamond1])}, "");
+	test.equals(seats.defenders().hasPlayer(jacky), true);
+	test.equals(seats.attackers().hasPlayer(yao), true);
+	
+	tractorRound.deal = originalDeal;
+	test.done();
+};
 
-exports["cannot flip rank3 when currently playing rank 2"] = function(test){
+exports["Player cannot flip rank3 when currently playing rank 2"] = function(test){
 	var tractorGame = readyGame();
 	var tractorRound = tractorGame.tractorRound;
 	var originalDeal = tractorRound.deal;
@@ -156,6 +181,42 @@ exports["cannot flip rank3 when currently playing rank 2"] = function(test){
 	var heart3 = Card.heart(Card.Ranks.THREE);
 	tractorRound.deal = function(){
 		stubDeal([{player: jacky, cards: Card.cards(smallJoker, heart3)}]);
+	};	
+	tractorRound.start();
+	
+	test.throws(function(){tractorGame.flip(jacky, [smallJoker, heart3])}, "Cannot flip cards");
+		
+	tractorRound.deal = originalDeal;
+	test.done();
+};
+
+exports["Player can flip 2 jokers when currently playing rank2"] = function(test){
+	var tractorGame = readyGame();
+	var tractorRound = tractorGame.tractorRound;
+	var originalDeal = tractorRound.deal;
+	var smallJoker1 = Card.smallJoker();
+	var smallJoker2 = Card.smallJoker();
+	tractorRound.deal = function(){
+		stubDeal([{player: jacky, cards: Card.cards(smallJoker1, smallJoker2)}]);
+	};	
+	tractorRound.start();
+	
+	tractorGame.flip(jacky, [smallJoker1, smallJoker2]);
+	
+	var seats = tractorGame.seats;
+	test.equals(seats.defenders().hasPlayer(jacky), true);
+	// test.equals(seats.attackers().hasPlayer(yao), true);
+		// 
+	// tractorRound.deal = originalDeal;
+	test.done();
+};
+
+exports["cannot flip cards when players has no trump cards"] = function(test){
+	var tractorGame = readyGame();
+	var tractorRound = tractorGame.tractorRound;
+	var originalDeal = tractorRound.deal;
+	tractorRound.deal = function(){
+		stubDeal([]);
 	};	
 	tractorRound.start();
 	

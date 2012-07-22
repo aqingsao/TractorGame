@@ -112,3 +112,19 @@ exports["could create several cards"] = function(test){
 	test.done();
 };
 
+exports["Can flip when having 2 big jokers"] = function(test){
+	var cards = Card.cards([Card.bigJoker(), Card.bigJoker()]);
+	test.equals(cards.canFlip(), true);
+	test.done();
+};
+
+exports["Can flip when having 2 small jokers"] = function(test){
+	var cards = Card.cards([Card.smallJoker(), Card.smallJoker()]);
+	test.equals(cards.canFlip(), true);
+	test.done();
+};
+exports["Can flip when having 1 small joker and 1 heart"] = function(test){
+	var cards = Card.cards([Card.smallJoker(), Card.heart(Card.Ranks.TWO)]);
+	test.equals(cards.canFlip(), true);
+	test.done();
+};

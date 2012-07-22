@@ -20,6 +20,9 @@ var Player = Backbone.Model.extend({
 	}, 
 	equals: function(another){
 		return this.name == another.name;
+	}, 
+	canFlip: function(){
+		return this.cards.canFlip();
 	}
 });
 var Pair = Backbone.Model.extend({
@@ -113,6 +116,16 @@ var Seats = Backbone.Model.extend({
 		return this.pairs.find(function(pair){
 			return pair.hasPlayer(player);
 		});
+	}, 
+	players: function(){
+		return this.seats.map(function(seat){
+			return seat.player;
+		});
+	},
+	playersCanFlip: function(){
+		return _.find(this.players(), function(player){
+			return player != undefined && player.canFlip();
+		});
 	}
 }, {
 	prepareSeats: function(){
@@ -179,7 +192,7 @@ var Flipping = Backbone.Model.extend({
 		return 10;
 	}, 
 	matchRank: function(pair){
-		return this.rank == Card.Ranks.SMALL_JOERK || this.rank == Card.Ranks.BIG_JOERK || this.rank == pair.rank;
+		return this.rank == Card.Ranks.SMALL_JOKER || this.rank == Card.Ranks.BIG_JOKER || this.rank == pair.rank;
 	}
 });
 var TractorRound = Backbone.Model.extend({
@@ -202,16 +215,27 @@ var TractorRound = Backbone.Model.extend({
 	deal: function(){
 		var i = 0;
 		var that = this;
+		var cards = this.cards.shuffle();
 		var dealSlow = function(){
-			var card = that.cards.shift();
+			var card = cards.shift();
 			that.seats.getPlayer(i%4).deal(card);
 			//event.deal
 			if(i++ < 100){
 				setTimeout(dealSlow, that.dealInterval);
-			};
+			}else{
+				// event.dealdone
+				that.dealFinish();
+			}
 		};
 		dealSlow();
 	}, 
+	dealFinish: function(){
+		//
+		if(this.seats.playersCanFlip().length ==0 ){
+			console.log("No player is able to flip, will shuffle and deal again");
+			this.deal();
+		}
+	},
 	flip: function(player, jokers, trumps){
 		console.log("Player " + player.name +" is fliping.");
 		if(!player.hasCards(jokers) || !player.hasCards(trumps) || !jokers.allJokers() || !trumps.allSuits()){
@@ -281,6 +305,11 @@ var TractorGame = Backbone.Model.extend({
 		}
 		
 		this.tractorRound = new TractorRound(this.cards, this.dealInterval, this.seats);
+	}, 
+	// When at least player could flip, but he did not flip, will restart this round.
+	noFlipping: function(){
+		// event.restart round
+		this.nextRound();
 	}
 }, {
 	GameState: {WAITING: {value: 0, name: 'Waiting'}, READY: {value: 0, name: 'Ready'}, PLAYING: {value: 0, name:'Playing'}, DONE: {value: 0, name: 'Done'}}, 

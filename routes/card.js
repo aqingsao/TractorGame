@@ -125,7 +125,8 @@ var Cards = Backbone.Collection.extend({
 	}, 
 	shuffle: function(){
 		var cards = Backbone.Collection.prototype.shuffle.call(this);
-		return new Card(cards);
+		this.models = cards;
+		return this;
 	}, 
 	allSuits: function(){
 		return this.all(function(c){
@@ -145,13 +146,16 @@ var Cards = Backbone.Collection.extend({
 		return this.all(function(c){
 			return c.suit == suit;
 		});
+	}, 
+	canFlip: function(){
+		return true;
 	}
 });
 
 var Player = Backbone.Model.extend({
 	initialize: function(name){
 		this.name = name;
-		this.cards = new Backbone.Collection();
+		this.cards = Card.cards();
 	},
 	deal: function(card){
 		this.cards.add(card);
