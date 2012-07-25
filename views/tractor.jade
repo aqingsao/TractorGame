@@ -1,80 +1,81 @@
 div#header
 div#main 
-	div.hidden
-	-var northSeat = tractorGame.seats.getSeat('N')
-		-var seatClz = northSeat.isTaken() ? "seat north" : "seat north notTaken"
-		div(class=seatClz)
-			div.player
-				span.name= (northSeat.player == undefined ? "" : northSeat.player.name)
-				span= '现在打:'
-				span.level= northSeat.rank.value
-			div.join
-				div.message.error.hidden= '无法加入该座位'
-				form(action="/tractor/" + tractorGame.get("id") + "/join/" + northSeat.get("id"), method="POST")
-					input(name='name', type="text", value= 'player' + northSeat.get("id"))
-					input(value='我要加入', type='submit')= '点击加入'
-			div.trumps
-			div.suits
+	div.room(id= "room" + tractorGame.get("id"))
+		-var northSeat = tractorGame.seats.getSeat('N')
+			-var seatClz = northSeat.isTaken() ? "seat north" : "seat north notTaken"
+			div(class=seatClz, id= "seat" + northSeat.get("id"))
+				div.player
+					span.name= (northSeat.playerName())
+					span= '现在打:'
+					span.level= northSeat.rank.value
+				div.join
+					div.message.error.hidden= '无法加入该座位' 
+					div.waiting.hidden= '等待其他人加入'
+					form(action="/tractor/" + tractorGame.get("id") + "/join/" + northSeat.get("id"), method="POST")
+						input(name='name', type="text", value= 'player' + northSeat.get("id"))
+						input(value='我要加入', type='submit')= '点击加入'
+				div.trumps
+				div.suits
+		-var westSeat = tractorGame.seats.getSeat('W')
+			-var seatClz = westSeat.isTaken() ? "seat west" : "seat west notTaken"
+			div(class=seatClz, id= "seat" + westSeat.get("id"))
+				div.player
+					span.name= (westSeat.playerName())
+					span= '现在打:'
+					span.level= westSeat.rank.value
+				div.join
+					div.message.error.hidden= '无法加入该座位'
+					div.waiting.hidden= '等待其他人加入'
+					form(action="/tractor/" + tractorGame.get("id") + "/join/" + westSeat.get("id"), method="POST")
+						input(name='name', type="text", value= 'player' + westSeat.get("id"))
+						input(value='我要加入', type='submit')= '点击加入'
+				div.trumps
+				div.suits
+		div.playarea
+			div.flip
+				span= '亮主:'
+				span.name= 'Nana Jia'
+				span.card.heart= 2
+				span.card.heart= 2 	
+			div.score
+				span= '得分:'
+				span.point= 55
+			div.trick
+				span= '出牌:'
+				span.cards
 
-	-var westSeat = tractorGame.seats.getSeat('W')
-		-var seatClz = westSeat.isTaken() ? "seat west" : "seat west notTaken"
-		div(class=seatClz)
-			div.player
-				span.name= (westSeat.player == undefined ? "" : westSeat.player.name)
-				span= '现在打:'
-				span.level= westSeat.rank.value
-			div.join
-				div.message.error.hidden= '无法加入该座位'
-				form(action="/tractor/" + tractorGame.get("id") + "/join/" + westSeat.get("id"), method="POST")
-					input(name='name', type="text", value= 'player' + westSeat.get("id"))
-					input(value='我要加入', type='submit')= '点击加入'
-			div.trumps
-			div.suits
-	
-	div.playarea
-		div.flip
-			span= '亮主:'
-			span.name= 'Nana Jia'
-			span.card.heart= 2
-			span.card.heart= 2 	
-		div.score
-			span= '得分:'
-			span.point= 55
-		div.trick
-			span= '出牌:'
-			span.cards
-	
-	-var eastSeat = tractorGame.seats.getSeat('E')
-		-var seatClz = eastSeat.isTaken() ? "seat east" : "seat east notTaken"
-		div(class=seatClz)
-			div.player
-				span.name= (eastSeat.player == undefined ? "" : eastSeat.player.name)
-				span= '现在打:'
-				span.level= eastSeat.rank.value
-			div.join
-				div.message.error.hidden= '无法加入该座位'
-				form(action="/tractor/" + tractorGame.get("id") + "/join/" + eastSeat.get("id"), method="POST")
-					input(name='name', type="text", value= 'player' + eastSeat.get("id"))
-					input(value='我要加入', type='submit')= '点击加入'
-			div.trumps
-			div.suits
-		
-	-var southSeat = tractorGame.seats.getSeat('S')
-		-var seatClz = eastSeat.isTaken() ? "seat south cf" : "seat south cf notTaken"
-		div(class=seatClz)
-			div.player
-				span.name= (southSeat.player == undefined ? "" : southSeat.player.name)
-				span= '现在打:'
-				span.level= southSeat.rank.value
-			div.join
-				div.message.error.hidden= '无法加入该座位'
-				form(action="/tractor/" + tractorGame.get("id") + "/join/" + southSeat.get("id"), method="POST")
-					input(name='name', type="text", value= 'player' + southSeat.get("id"))
-					input(value='我要加入', type='submit')= '点击加入'
-			div.trumps
-			div.suits
-		
+		-var eastSeat = tractorGame.seats.getSeat('E')
+			-var seatClz = eastSeat.isTaken() ? "seat east" : "seat east notTaken"
+			div(class=seatClz, id= "seat" + eastSeat.get("id"))
+				div.player
+					span.name= (eastSeat.playerName())
+					span= '现在打:'
+					span.level= eastSeat.rank.value
+				div.join
+					div.message.error.hidden= '无法加入该座位' 
+					div.waiting.hidden= '等待其他人加入'
+					form(action="/tractor/" + tractorGame.get("id") + "/join/" + eastSeat.get("id"), method="POST")
+						input(name='name', type="text", value= 'player' + eastSeat.get("id"))
+						input(value='我要加入', type='submit')= '点击加入'
+				div.trumps
+				div.suits
+		-var southSeat = tractorGame.seats.getSeat('S')
+			-var seatClz = southSeat.isTaken() ? "seat south cf" : "seat south cf notTaken"
+			div(class=seatClz, id= "seat" + southSeat.get("id"))
+				div.player
+					span.name= (southSeat.playerName())
+					span= '现在打:'
+					span.level= southSeat.rank.value
+				div.join
+					div.message.error.hidden= '无法加入该座位'   
+					div.waiting.hidden= '等待其他人加入'
+					form(action="/tractor/" + tractorGame.get("id") + "/join/" + southSeat.get("id"), method="POST")
+						input(name='name', type="text", value= 'player' + southSeat.get("id"))
+						input(value='我要加入', type='submit')= '点击加入'
+				div.trumps
+				div.suits 	
 
 div#footer
-script(src='/javascripts/jquery-1.7.2.min.js')
+script(src='/javascripts/jquery-1.7.2.min.js') 
+script(src="/socket.io/socket.io.js")
 script(src="/javascripts/game.js")

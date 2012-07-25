@@ -3,7 +3,8 @@ var _ = require('underscore')._,
 	Card = require('./card.js').Card;
 	TractorGame = require("./tractor.js").TractorGame,
 	Player = require("./tractor.js").Player; 
-	util = require('util');
+	util = require('util'), 
+	broader = require("../model/broader.js").Broader;
 	
 /*
  * GET home page.
@@ -29,7 +30,9 @@ exports.tractor = function(req, res){
 	if(tractorGame == undefined){
 		console.log("Open a new tractor room: " + id);
 		tractorGame = new TractorGame({id: id, dealInterval: dealInterval}); 
-		tractorGames.add(tractorGame);
+		tractorGames.add(tractorGame);   
+		broader.onNewRoom(id);
+		
 	}    
 	res.render('tractor', {tractorGame: tractorGame, title: 'Tractor'});
 };
@@ -45,9 +48,13 @@ exports.tractorJoin = function(req, res){
 	}
 	var player = new Player({name: req.body.name});   
 	try{
-		tractorGame.join(player, seatId);    
+		console.log("Player " + player.get("name") + "  is joining room " + id + " on seat " + seatId);
+		tractorGame.join(player, seatId); 
+		broader.onJoin(id, seatId, player);
+		                       
 		res.json(player.toJSON());
-	}catch(error){
+	}catch(error){  
+		console.log("Player " + player + " failed to join room " + id + " on seat " + seatId +": " + error);
 		res.json(error, 400);
 	}
 };

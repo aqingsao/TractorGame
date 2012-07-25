@@ -22,6 +22,9 @@ a {
 /*start of seat not taken*/
 .seat.notTaken .trumps, .seat.notTaken .suits{
 	display: none;
+}                             
+.seat .join{
+	display: none;
 }
 .seat.notTaken .join{
 	display: block;

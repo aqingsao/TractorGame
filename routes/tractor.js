@@ -1,11 +1,11 @@
 var Backbone = require('backbone'), 
 	_ = require('underscore')._,
 	Card = require('./card.js').Card, 
-	util = require('util');
+	util = require('util'), 
+	broader = require('../model/broader.js').Broader;
 
 var Player = Backbone.Model.extend({
-	initialize: function(name){
-		this.name = name;
+	initialize: function(){
 		this.cards = Card.cards();
 	}, 
 	hasCards: function(cards){
@@ -20,7 +20,7 @@ var Player = Backbone.Model.extend({
 		this.cards.add(card);
 	}, 
 	equals: function(another){
-		return this.name == another.name;
+		return this.get("name") == another.get("name");
 	}, 
 	canFlip: function(){
 		return this.cards.canFlip();
@@ -53,13 +53,17 @@ var Seat = Backbone.Model.extend({
 		this.rank = Card.Ranks.TWO;
 	},	
 	join: function(player){
-		if(this.isTaken()){
+		if(this.isTaken()){   
+			console.log("Seat cannot be taken as " + this.get("id") + " is already taken by " + this.player.get("name"));
 			throw "Cannot take seat";
 		}
 		this.player = player;
 	}, 
 	isTaken: function(){
-		return typeof(this.player) == 'object';
+		return this.player != undefined;
+	}, 
+	playerName: function(){   
+		return this.player == undefined ? "" : this.player.get("name");
 	}
 });
 var Seats = Backbone.Model.extend({
@@ -70,7 +74,6 @@ var Seats = Backbone.Model.extend({
 		this.seats.add(seat1);
 		this.seats.add(seat2);
 		this.seats.add(seat3);
-		console.log("========" + util.inspect(this.seats));
 		this.pairs = new Backbone.Collection();
 		this.pairs.add(new Pair("team0", seat0, seat2)); 
 		this.pairs.add(new Pair("team1", seat1, seat3));
@@ -81,13 +84,17 @@ var Seats = Backbone.Model.extend({
 		});
 	},
 	join: function(player, seatIndex){
-		if(seatIndex < 0 || seatIndex > 3){
+		if(seatIndex < 0 || seatIndex > 3){  
+			console.log("Seat cannot be taken as invalid seat index " + seatIndex);
+			
 			throw "Cannot take seat";
 		}
-		if(this.hasPlayer(player)){
+		if(this.hasPlayer(player)){ 
+			console.log("Seat cannot be taken as player " + player.get("name") + " has already taken seat in this room");
+			
 			throw "Cannot take seat";
-		}
-		this.seats.at(seatIndex).join(player, seatIndex);
+		}   
+		this.seats.at(seatIndex).join(player);
 	}, 
 	defenders: function(){
 		return this.pairs.find(function(pair){
@@ -148,7 +155,8 @@ var Seats = Backbone.Model.extend({
 			    break;
 		}  
 		
-		return this.seats.at(seatIndex);
+		var seat = this.seats.at(seatIndex);
+		return seat;
 	}
 }, {
 	prepareSeats: function(){
@@ -291,16 +299,17 @@ var TractorGame = Backbone.Model.extend({
 		this.cards = Card.decks(2);
 		this.dealInterval = 1 || dealInterval;
 	},
-	join: function(player, seat){
+	join: function(player, seatId){
 		if(this.gameState != TractorGame.GameState.WAITING){
 			throw "Cannot join this game";
 		}
 		// event.join
-		this.seats.join(player, seat);
+		this.seats.join(player, seatId);
 		if(this.seats.full()){
 			// event.ready
 			this.gameState = TractorGame.GameState.READY;
-			this.nextRound();
+			this.nextRound(); 
+			broader.onGameReady(this.get("id"));
 		}
 	},
 	flip: function(player, cards){

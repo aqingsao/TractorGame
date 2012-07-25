@@ -5,9 +5,12 @@
 
 var express = require('express')
   , routes = require('./routes')
-  , routes = require('./routes');
+  , io = require("socket.io")
+  , util = require('util')
+  , broader = require('./model/broader.js').Broader;
 
-var app = module.exports = express.createServer();
+var app = module.exports = express.createServer(), 
+	io = io.listen(app);
 
 // Configuration
 
@@ -38,3 +41,5 @@ app.post('/tractor/:id/join/:seatId', routes.tractorJoin);
 app.listen(3000, function(){
   console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
 });
+       
+broader.init(io);
