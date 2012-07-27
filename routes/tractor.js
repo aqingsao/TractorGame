@@ -24,6 +24,11 @@ var Player = Backbone.Model.extend({
 	}, 
 	canFlip: function(){
 		return this.cards.canFlip();
+	}, 
+	sortedCards: function(){
+		return this.cards.sortBy(function(card){
+			return card.rank.value;
+		});
 	}
 });
 var Pair = Backbone.Model.extend({
@@ -67,7 +72,6 @@ var Seat = Backbone.Model.extend({
 	}
 });
 var Seats = Backbone.Model.extend({
-	model: Seat,
 	initialize: function(seat0, seat1, seat2, seat3){
 		this.seats = new Backbone.Collection();
 		this.seats.add(seat0);
@@ -93,7 +97,7 @@ var Seats = Backbone.Model.extend({
 			console.log("Seat cannot be taken as player " + player.get("name") + " has already taken seat in this room");
 			
 			throw "Cannot take seat";
-		}   
+		} 		  
 		this.seats.at(seatIndex).join(player);
 	}, 
 	defenders: function(){
@@ -155,7 +159,7 @@ var Seats = Backbone.Model.extend({
 			    break;
 		}  
 		
-		var seat = this.seats.at(seatIndex);
+		var seat = this.seats.at(seatIndex); 
 		return seat;
 	}
 }, {
@@ -227,46 +231,48 @@ var Flipping = Backbone.Model.extend({
 	}
 });
 var TractorRound = Backbone.Model.extend({
-	initialize: function(cards, dealInterval, seats){
+	initialize: function(cards, dealInterval, seats, roomNo){
 		this.cards = cards;		
 		this.state = TractorGame.RoundState.READY;
 		this.dealInterval= dealInterval;
-		this.seats = seats;
+		this.seats = seats;                                
+		this.roomNo = roomNo;
 		this.currentBanker = null;
 		this.currentRank = null;
 	},
 	start: function(){
 		if(this.state != TractorGame.RoundState.READY){
 			throw "This round cannot be started";
-		}
+		}     		
 		// event.start
 		this.state = TractorGame.RoundState.DEALING;
 		this.deal();
 	},
 	deal: function(){
-		var i = 0;
+		var round = 1;
 		var that = this;
 		var cards = this.cards.shuffle();
-		var dealSlow = function(){
-			var card = cards.shift();
-			that.seats.getPlayer(i%4).deal(card);
+		var dealSlow = function(){ 
+			var i = 0;
+			for(i = 0; i < 4; i++){
+				var card = cards.shift(); 
+				var seat = that.seats.seats.at(i);  
+				seat.player.deal(card);
+				broader.onDeal(that.roomNo, card, seat, round);
+			}
 			//event.deal
-			if(i++ < 100){
+			if(round++ < 25){
 				setTimeout(dealSlow, that.dealInterval);
 			}else{
 				// event.dealdone
-				that.dealFinish();
+				dealFinish();
 			}
+		};
+		var dealFinish = function(){
+			 broader.onDealFinish(that.roomNo);
 		};
 		dealSlow();
 	}, 
-	dealFinish: function(){
-		//
-		if(this.seats.playersCanFlip().length ==0 ){
-			console.log("No player is able to flip, will shuffle and deal again");
-			this.deal();
-		}
-	},
 	flip: function(player, jokers, trumps){
 		console.log("Player " + player.name +" is fliping.");
 		if(!player.hasCards(jokers) || !player.hasCards(trumps) || !jokers.allJokers() || !trumps.allSuits()){
@@ -303,7 +309,9 @@ var TractorGame = Backbone.Model.extend({
 		if(this.gameState != TractorGame.GameState.WAITING){
 			throw "Cannot join this game";
 		}
-		// event.join
+		// event.join 
+		console.log("---------player " + player.get("name") + " is going to join at seat " + seatId);
+		
 		this.seats.join(player, seatId);
 		if(this.seats.full()){
 			// event.ready
@@ -311,6 +319,12 @@ var TractorGame = Backbone.Model.extend({
 			this.nextRound(); 
 			broader.onGameReady(this.get("id"));
 		}
+	},
+	start: function(){
+		if(this.gameState != TractorGame.GameState.READY){
+			throw "Game cannot be started";
+		}
+		this.tractorRound.start();
 	},
 	flip: function(player, cards){
 		if(this.tractorRound == undefined){
@@ -336,7 +350,7 @@ var TractorGame = Backbone.Model.extend({
 			throw "Cannot play next round";
 		}
 		
-		this.tractorRound = new TractorRound(this.cards, this.dealInterval, this.seats);
+		this.tractorRound = new TractorRound(this.cards, this.dealInterval, this.seats, this.get("id"));
 	}, 
 	// When at least player could flip, but he did not flip, will restart this round.
 	noFlipping: function(){

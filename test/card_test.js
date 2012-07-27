@@ -128,3 +128,10 @@ exports["Can flip when having 1 small joker and 1 heart"] = function(test){
 	test.equals(cards.canFlip(), true);
 	test.done();
 };
+
+exports["show have suit name and rank name"] = function(test){
+	var heart2 = Card.heart(Card.Ranks.TWO);
+	test.equals(heart2.suit.name, 'HEART');
+	test.equals(heart2.rank.name, '2'); 
+	test.done();
+}

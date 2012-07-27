@@ -8,64 +8,58 @@ var Connection = Backbone.Model.extend({
 		this.roomNo = roomNo;  
 		this.socketIds = [];
 	},                        
-	onJoin: function(seatId, player){ 
-		var roomNo = this.roomNo;
-		_.each(this.socketIds, function(socketId){   
-			try{  
-				console.log("Broadcast onJoin event to socket " + socketId);
-				io.sockets.socket(socketId).emit("onJoin", {roomNo: roomNo, seatId: seatId, player: player.name});
-			}catch(error){
-				console.log("Failed to broadcast onJoin event to socket " + socketId +": " + error);
-			}
-		});
-	}, 
 	addSocket: function(socketId){
 		this.socketIds.push(socketId);
 	}, 
-	onGameReady: function(){
-	   	_.each(this.socketIds, function(socketId){   
+	broadcast: function(event, data){
+		console.log("Broadcast event " + event +" to " + this.socketIds.length + " sockets: " + util.inspect(data));
+		 _.each(this.socketIds, function(socketId){   
 			try{  
-				console.log("Broadcast onGameReady event to socket " + socketId);
-				io.sockets.socket(socketId).emit("onGameReady", {roomNo: roomNo});
+				console.log("Broadcast event " + event +" to " + socketId);
+				io.sockets.socket(socketId).emit(event, data);
 			}catch(error){
-				console.log("Failed to broadcast onGameReady event to socket " + socketId +": " + error);
+				console.log("Failed to broadcast event " + event + " to socket " + socketId +": " + error);
 			}
 		}); 
 	}
 });
-var Connections = Backbone.Collection.extend({
-	getConnection: function(roomNo){
-		var connection = this.find(function(connection){
-			return connection.roomNo == roomNo;
-		});
-		if(connection == undefined){
-			connection = new Connection(roomNo);
-			this.add(connection);
-		} 
-		return connection;
-	}
-});  
 var Broader = Backbone.Model.extend({
 	init: function(tempIO){   
    	  	io = tempIO;
-		var connections = new Connections();
-		this.connections = connections;
+		this.connections = new Backbone.Collection();
+		var that = this;
 		io.sockets.on('connection', function (socket) {
 		  	socket.emit('connected', {});             
 			socket.on("onRoom", function(data){   
 				console.log("Socket " + socket.id + " is on room " + data.roomNo);
-				connections.getConnection(data.roomNo).addSocket(socket.id);
+				that.getConnection(data.roomNo).addSocket(socket.id);
 			});
 		}); 
 	}, 
 	onJoin: function(roomNo, seatId, player){
-		this.connections.getConnection(roomNo).onJoin(seatId, player);
+		this.getConnection(roomNo).broadcast("onJoin", {roomNo: roomNo, seatId: seatId, player: player.get("name")});
 	}, 
 	onNewRoom: function(roomNo){
 		// this.connections.add(new Connection(roomNo));
 	}, 
 	onGameReady: function(roomNo){
-	   this.connections.getConnection(roomNo).onGameReady(roomNo);    
+	   this.getConnection(roomNo).broadcast("onGameReady", {roomNo: roomNo});  
+	}, 
+	onDeal: function(roomNo, card, seat, round){
+	   this.getConnection(roomNo).broadcast("onDeal", {roomNo: roomNo, card: card.toJSON(), seat: seat.get("id"), round: round});    
+	},
+	onDealFinish: function(roomNo){
+	   this.getConnection(roomNo).broadcast("onDealFinish", {roomNo: roomNo});  
+	},
+	getConnection: function(roomNo){
+	   	var connection = this.connections.find(function(connection){
+			return connection.roomNo == roomNo;
+		});
+		if(connection == undefined){
+			connection = new Connection(roomNo);
+			this.connections.add(connection);
+		} 
+		return connection; 
 	}
 });                     
        

@@ -45,7 +45,7 @@ a {
 }
 .seat.east, .seat.west{
 	width: 450px;  
-	height: ;
+	height: 190px;
 }
 .seat.east{
 	float: left;

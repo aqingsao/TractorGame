@@ -16,45 +16,64 @@ exports.index = function(req, res){
 
 
 console.log('init all tractor games');
-var tractorGames = new Backbone.Collection();     
+var TractorRooms = Backbone.Collection.extend({
+	getRoom: function(roomNo){ 
+		if(roomNo < 0 || roomNo > maxRooms){
+			throw "Invalid room no " + roomNo;
+		}
+		
+		return this.find(function(room){
+			return room.get("id") == roomNo;
+		});	
+	}
+}); 
+var tractorRooms = new TractorRooms();    
 var maxRooms = 100;
 var dealInterval = 100;
 exports.tractor = function(req, res){
 	var id = req.params.id;        
-	if(id < 0 || id > maxRooms){
-		throw "Invalid room id " + id;
-	}
-	var tractorGame = tractorGames.find(function(game){
-		return game.id == id;
-	});
-	if(tractorGame == undefined){
+	var room = tractorRooms.getRoom(id);
+	if(room == undefined){
 		console.log("Open a new tractor room: " + id);
-		tractorGame = new TractorGame({id: id, dealInterval: dealInterval}); 
-		tractorGames.add(tractorGame);   
+		room = new TractorGame({id: id, dealInterval: dealInterval}); 
+		tractorRooms.add(room);   
 		broader.onNewRoom(id);
-		
 	}    
-	res.render('tractor', {tractorGame: tractorGame, title: 'Tractor'});
+	res.render('tractor', {tractorGame: room, title: 'Tractor'});
 };
 
 exports.tractorJoin = function(req, res){
 	var id = req.params.id;
 	var seatId = req.params.seatId;
-	var tractorGame = tractorGames.find(function(game){
-		return game.id == id;
-	});
-	if(tractorGame == undefined){
+	var room = tractorRooms.getRoom(id);
+	if(room == undefined){
 		throw "Invalid room id " + id;
 	}
 	var player = new Player({name: req.body.name});   
 	try{
 		console.log("Player " + player.get("name") + "  is joining room " + id + " on seat " + seatId);
-		tractorGame.join(player, seatId); 
+		room.join(player, seatId); 
 		broader.onJoin(id, seatId, player);
 		                       
 		res.json(player.toJSON());
 	}catch(error){  
-		console.log("Player " + player + " failed to join room " + id + " on seat " + seatId +": " + error);
-		res.json(error, 400);
+		console.log("Player " + player.get("name") + " failed to join room " + id + " on seat " + seatId +": " + error);
+		res.json({error: error}, 400);
 	}
-};
+}; 
+
+exports.tractorStart = function(req, res){
+	var id = req.params.id;
+	var room = tractorRooms.getRoom(id);
+	try{
+		if(room == undefined){
+			throw "Invalid room id " + id;
+		}
+		room.start();
+		console.log("Start game in room " + id);
+		res.json({});
+	}catch(error){  
+		console.log("Failed to start game in room " + id + ": " + error);
+		res.json({error: error, tractorGame: room.toJSON()}, 400);
+	}
+}

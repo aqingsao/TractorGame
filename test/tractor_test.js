@@ -2,7 +2,10 @@ var TractorGame = require('../routes/tractor.js').TractorGame,
 Player = require('../routes/tractor.js').Player, 
 TractorRound = require('../routes/tractor.js').TractorRound;
 var Card = require('../routes/card.js').Card, 
-_ = require("underscore")._;
+_ = require("underscore")._, 
+broader = require('../model/broader.js').Broader; 
+var io = {sockets: {on: function(){}}};
+broader.init(io);
 
 
 exports['Tractor game is new'] = function(test){
@@ -226,12 +229,21 @@ exports["cannot flip cards when players has no trump cards"] = function(test){
 	test.done();
 };
 
-exports[""]
+exports["Player could sort card by suit"] = function(test){  
+	var jacky = new Player({name: 'Jacky'});
+    jacky.deal(Card.smallJoker());
+	jacky.deal(Card.heart(Card.Ranks.TWO));
+	var cards = jacky.sortedCards();
+	test.equals(cards.length, 2);  
+	test.ok(cards[1].equals(Card.smallJoker()));
+	test.ok(cards[0].equals(Card.heart(Card.Ranks.TWO)));
+	test.done();
+}
 
-var jacky = new Player('Jacky');
-var nana = new Player('Nana');
-var kerry = new Player('Kerry');
-var yao = new Player('Yao');
+var jacky = new Player({name: 'Jacky'});
+var nana = new Player({name: 'Nana'});
+var kerry = new Player({name: 'Kerry'});
+var yao = new Player({name: 'Yao'});
 
 function stubDeal(cardsForPlayer){
 	_.each(cardsForPlayer, function(obj){

@@ -14,8 +14,11 @@ div#main
 					form(action="/tractor/" + tractorGame.get("id") + "/join/" + northSeat.get("id"), method="POST")
 						input(name='name', type="text", value= 'player' + northSeat.get("id"))
 						input(value='我要加入', type='submit')= '点击加入'
-				div.trumps
-				div.suits
+				div.cards
+					-if(northSeat.isTaken()) 
+						-var cards =  northSeat.player.sortedCards()
+						-for(var i in cards)
+							div.card(class= cards[i].suit.name.toLowerCase())= cards[i].rank.name
 		-var westSeat = tractorGame.seats.getSeat('W')
 			-var seatClz = westSeat.isTaken() ? "seat west" : "seat west notTaken"
 			div(class=seatClz, id= "seat" + westSeat.get("id"))
@@ -29,20 +32,23 @@ div#main
 					form(action="/tractor/" + tractorGame.get("id") + "/join/" + westSeat.get("id"), method="POST")
 						input(name='name', type="text", value= 'player' + westSeat.get("id"))
 						input(value='我要加入', type='submit')= '点击加入'
-				div.trumps
-				div.suits
+				div.cards 
+					-if(northSeat.isTaken())
+						-var cards =  northSeat.player.sortedCards()
+						-for(var i in cards)
+							div.card(class= cards[i].suit.name.toLowerCase())= cards[i].rank.name
+				
 		div.playarea
-			div.flip
-				span= '亮主:'
-				span.name= 'Nana Jia'
-				span.card.heart= 2
-				span.card.heart= 2 	
-			div.score
+			div.nodefenders
+				span= '台上:'
+				span= '当前没有人在台上'   
+			div.attackers
 				span= '得分:'
-				span.point= 55
-			div.trick
-				span= '出牌:'
-				span.cards
+				span= '0'   
+			div.currentStatus
+				span.description= ''
+				form.hidden(action='/tractor/' + tractorGame.get("id")+"/start", method="POST")
+					input(value='点击开始游戏', type='submit')
 
 		-var eastSeat = tractorGame.seats.getSeat('E')
 			-var seatClz = eastSeat.isTaken() ? "seat east" : "seat east notTaken"
@@ -57,8 +63,12 @@ div#main
 					form(action="/tractor/" + tractorGame.get("id") + "/join/" + eastSeat.get("id"), method="POST")
 						input(name='name', type="text", value= 'player' + eastSeat.get("id"))
 						input(value='我要加入', type='submit')= '点击加入'
-				div.trumps
-				div.suits
+				div.cards 
+					-if(eastSeat.isTaken()) 
+						-var cards =  eastSeat.player.sortedCards()
+						-for(var i in cards)
+							div.card(class= cards[i].suit.name.toLowerCase())= cards[i].rank.name
+				
 		-var southSeat = tractorGame.seats.getSeat('S')
 			-var seatClz = southSeat.isTaken() ? "seat south cf" : "seat south cf notTaken"
 			div(class=seatClz, id= "seat" + southSeat.get("id"))
@@ -72,8 +82,12 @@ div#main
 					form(action="/tractor/" + tractorGame.get("id") + "/join/" + southSeat.get("id"), method="POST")
 						input(name='name', type="text", value= 'player' + southSeat.get("id"))
 						input(value='我要加入', type='submit')= '点击加入'
-				div.trumps
-				div.suits 	
+				div.cards 
+					-if(southSeat.isTaken()) 
+						-var cards =  southSeat.player.sortedCards()
+						-for(var i in cards)
+							div.card(class= cards[i].suit.name.toLowerCase())= cards[i].rank.name
+				
 
 div#footer
 script(src='/javascripts/jquery-1.7.2.min.js') 
