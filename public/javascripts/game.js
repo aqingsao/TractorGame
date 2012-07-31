@@ -12,7 +12,7 @@ $(function(){
 		socket.emit("onRoom", {roomNo: roomNo});
   	});
     socket.on("onJoin", function(data){ 
-		takeSeat(data.seatId, data.player);
+		othersTakeSeat(data.seatId, data.player);
 	});
     socket.on("onGameReady", function(data){ 
 		gameReady();
@@ -34,11 +34,7 @@ $(function(){
 			$.post($(this).attr("action"), $(this).serialize(), function(data){ 
 				var seatId = seat.attr("id").substring(4);
 				var playerName = form.find("input[name='name']").val();  
-				console.log("I take seat " + seatId);
-				seat.find("form input[name='name']").val(playerName); 
-				seat.addClass("my");
-		   		takeSeat(seatId, playerName);  
-				// disableSeats();
+				iTakeSeat(seatId, playerName);
 			}).error(function(data){
 				seat.find(".message.error").removeClass("hidden");
 			});	
@@ -94,15 +90,23 @@ function dealCard(card, seat){
 }
 function dealCardFinish(){
 	$(".playarea .currentStatus .description").text("发牌结束，等待亮主"); 
-}
-function takeSeat(seatId, player){ 
-	console.log("Player " + player + " take seat " + seatId + " successfully.");
+}         
+function iTakeSeat(seatId, player){ 
+	console.log("I take seat " + seatId + " successfully.");
 	var seat = $("#seat" + seatId);
+	seat.find("form input[name='name']").val(player); 
+	seat.addClass("my").removeClass("notTaken");
+	takeSeat(seat, player);  
+	// disableSeats();
+} 
+function othersTakeSeat(seatId, player){
+	console.log("Player " + player + " take seat " + seatId + " successfully.");
+   	var seat = $("#seat" + seatId);
+	seat.addClass("others").removeClass("notTaken");  
+	takeSeat(seat, player);
+}
+function takeSeat(seat, player){ 
 	seat.find(".player .name").text(player);
-	seat.removeClass("notTaken");  
-	if(!seat.hasClass("my")){
-		seat.addClass("others");
-	}
 }     
 function disableSeats(){
 	$(".seat").each(function(index, seat){

@@ -1,0 +1,22 @@
+-var isTaken = seat.isTaken() ? " " : " notTaken"
+div.seat(class=seatClz + isTaken, id= "seat" + seat.get("id"))
+	div.player
+		span.name= (seat.playerName())
+		span= '现在打:'
+		span.level= seat.rank.value
+		-var canFlip =  tractorGame.canFlip() ? '' : 'hidden'
+		span.flip(class=canFlip)
+			form(action="/tractor/" + tractorGame.get("id") + "/flip", method="POST", onclick="return false;") 
+				input(name='name', type='hidden')
+				input(type='submit', value='亮主')
+	div.join
+		div.message.error.hidden= '无法加入该座位' 
+		div.waiting.hidden= '等待其他人加入'
+		form(action="/tractor/" + tractorGame.get("id") + "/join/" + seat.get("id"), method="POST", onclick="return false;")
+			input(name='name', type="text", value= 'player' + seat.get("id"))
+			input(value='我要加入', type='submit')= '点击加入'
+	div.cards
+		-if(seat.isTaken()) 
+			-var cards =  seat.player.sortedCards()
+			-for(var i in cards)
+				div.card(class= cards[i].suit.name.toLowerCase())= cards[i].rank.name

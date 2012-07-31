@@ -1,48 +1,8 @@
 div#header
 div#main 
 	div.room(id= "room" + tractorGame.get("id"))
-		-var northSeat = tractorGame.seats.getSeat('N')
-			-var seatClz = northSeat.isTaken() ? "" : "notTaken"
-			div.seat.north(class=seatClz, id= "seat" + northSeat.get("id"))
-				div.player
-					span.name= (northSeat.playerName())
-					span= '现在打:'
-					span.level= northSeat.rank.value
-					-var canFlip =  tractorGame.canFlip() ? '' : 'hidden'
-					span.flip(class=canFlip)
-						form(action="/tractor/" + tractorGame.get("id") + "/flip", method="POST", onclick="return false;") 
-							input(name='name', type='hidden')
-							input(type='submit', value='亮主')
-				div.join
-					div.message.error.hidden= '无法加入该座位' 
-					div.waiting.hidden= '等待其他人加入'
-					form(action="/tractor/" + tractorGame.get("id") + "/join/" + northSeat.get("id"), method="POST", onclick="return false;")
-						input(name='name', type="text", value= 'player' + northSeat.get("id"))
-						input(value='我要加入', type='submit')= '点击加入'
-				div.cards
-					-if(northSeat.isTaken()) 
-						-var cards =  northSeat.player.sortedCards()
-						-for(var i in cards)
-							div.card(class= cards[i].suit.name.toLowerCase())= cards[i].rank.name
-		-var westSeat = tractorGame.seats.getSeat('W')
-			-var seatClz = westSeat.isTaken() ? "seat west" : "seat west notTaken"
-			div(class=seatClz, id= "seat" + westSeat.get("id"))
-				div.player
-					span.name= (westSeat.playerName())
-					span= '现在打:'
-					span.level= westSeat.rank.value
-				div.join
-					div.message.error.hidden= '无法加入该座位'
-					div.waiting.hidden= '等待其他人加入'
-					form(action="/tractor/" + tractorGame.get("id") + "/join/" + westSeat.get("id"), method="POST", onclick="return false;")
-						input(name='name', type="text", value= 'player' + westSeat.get("id"))
-						input(value='我要加入', type='submit')= '点击加入'
-				div.cards 
-					-if(northSeat.isTaken())
-						-var cards =  northSeat.player.sortedCards()
-						-for(var i in cards)
-							div.card(class= cards[i].suit.name.toLowerCase())= cards[i].rank.name
-				
+		!=partial("_seat.jade", {tractorGame: tractorGame, seat: tractorGame.seats.getSeat('N'), seatClz: 'north'})
+		!=partial("_seat.jade", {tractorGame: tractorGame, seat: tractorGame.seats.getSeat('W'), seatClz: 'west'})
 		div.playarea
 			div.nodefenders
 				span= '台上:'
@@ -56,44 +16,9 @@ div#main
 				form(class=canStart, action='/tractor/' + tractorGame.get("id")+"/start", method="POST")
 					input(value='点击开始游戏', type='submit')
 
-		-var eastSeat = tractorGame.seats.getSeat('E')
-			-var seatClz = eastSeat.isTaken() ? "seat east" : "seat east notTaken"
-			div(class=seatClz, id= "seat" + eastSeat.get("id"))
-				div.player
-					span.name= (eastSeat.playerName())
-					span= '现在打:'
-					span.level= eastSeat.rank.value
-				div.join
-					div.message.error.hidden= '无法加入该座位' 
-					div.waiting.hidden= '等待其他人加入'
-					form(action="/tractor/" + tractorGame.get("id") + "/join/" + eastSeat.get("id"), method="POST", onclick="return false;")
-						input(name='name', type="text", value= 'player' + eastSeat.get("id"))
-						input(value='我要加入', type='submit')= '点击加入'
-				div.cards 
-					-if(eastSeat.isTaken()) 
-						-var cards =  eastSeat.player.sortedCards()
-						-for(var i in cards)
-							div.card(class= cards[i].suit.name.toLowerCase())= cards[i].rank.name
-				
-		-var southSeat = tractorGame.seats.getSeat('S')
-			-var seatClz = southSeat.isTaken() ? "seat south cf" : "seat south cf notTaken"
-			div(class=seatClz, id= "seat" + southSeat.get("id"))
-				div.player
-					span.name= (southSeat.playerName())
-					span= '现在打:'
-					span.level= southSeat.rank.value
-				div.join
-					div.message.error.hidden= '无法加入该座位'   
-					div.waiting.hidden= '等待其他人加入'
-					form(action="/tractor/" + tractorGame.get("id") + "/join/" + southSeat.get("id"), method="POST", onclick="return false;")
-						input(name='name', type="text", value= 'player' + southSeat.get("id"))
-						input(value='我要加入', type='submit')= '点击加入'
-				div.cards 
-					-if(southSeat.isTaken()) 
-						-var cards =  southSeat.player.sortedCards()
-						-for(var i in cards)
-							div.card(class= cards[i].suit.name.toLowerCase())= cards[i].rank.name
-				
+		!=partial("_seat.jade", {tractorGame: tractorGame, seat: tractorGame.seats.getSeat('E'), seatClz: 'east'})
+		!=partial("_seat.jade", {tractorGame: tractorGame, seat: tractorGame.seats.getSeat('S'), seatClz: 'south cf'})
+								
 
 div#footer
 script(src='/javascripts/jquery-1.7.2.min.js') 
