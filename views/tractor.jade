@@ -2,16 +2,21 @@ div#header
 div#main 
 	div.room(id= "room" + tractorGame.get("id"))
 		-var northSeat = tractorGame.seats.getSeat('N')
-			-var seatClz = northSeat.isTaken() ? "seat north" : "seat north notTaken"
-			div(class=seatClz, id= "seat" + northSeat.get("id"))
+			-var seatClz = northSeat.isTaken() ? "" : "notTaken"
+			div.seat.north(class=seatClz, id= "seat" + northSeat.get("id"))
 				div.player
 					span.name= (northSeat.playerName())
 					span= '现在打:'
 					span.level= northSeat.rank.value
+					-var canFlip =  tractorGame.canFlip() ? '' : 'hidden'
+					span.flip(class=canFlip)
+						form(action="/tractor/" + tractorGame.get("id") + "/flip", method="POST", onclick="return false;") 
+							input(name='name', type='hidden')
+							input(type='submit', value='亮主')
 				div.join
 					div.message.error.hidden= '无法加入该座位' 
 					div.waiting.hidden= '等待其他人加入'
-					form(action="/tractor/" + tractorGame.get("id") + "/join/" + northSeat.get("id"), method="POST")
+					form(action="/tractor/" + tractorGame.get("id") + "/join/" + northSeat.get("id"), method="POST", onclick="return false;")
 						input(name='name', type="text", value= 'player' + northSeat.get("id"))
 						input(value='我要加入', type='submit')= '点击加入'
 				div.cards
@@ -29,7 +34,7 @@ div#main
 				div.join
 					div.message.error.hidden= '无法加入该座位'
 					div.waiting.hidden= '等待其他人加入'
-					form(action="/tractor/" + tractorGame.get("id") + "/join/" + westSeat.get("id"), method="POST")
+					form(action="/tractor/" + tractorGame.get("id") + "/join/" + westSeat.get("id"), method="POST", onclick="return false;")
 						input(name='name', type="text", value= 'player' + westSeat.get("id"))
 						input(value='我要加入', type='submit')= '点击加入'
 				div.cards 
@@ -46,8 +51,9 @@ div#main
 				span= '得分:'
 				span= '0'   
 			div.currentStatus
-				span.description= ''
-				form.hidden(action='/tractor/' + tractorGame.get("id")+"/start", method="POST")
+				span.description= '' 
+				-var canStart =  tractorGame.canStart() ? '' : 'hidden'				
+				form(class=canStart, action='/tractor/' + tractorGame.get("id")+"/start", method="POST")
 					input(value='点击开始游戏', type='submit')
 
 		-var eastSeat = tractorGame.seats.getSeat('E')
@@ -60,7 +66,7 @@ div#main
 				div.join
 					div.message.error.hidden= '无法加入该座位' 
 					div.waiting.hidden= '等待其他人加入'
-					form(action="/tractor/" + tractorGame.get("id") + "/join/" + eastSeat.get("id"), method="POST")
+					form(action="/tractor/" + tractorGame.get("id") + "/join/" + eastSeat.get("id"), method="POST", onclick="return false;")
 						input(name='name', type="text", value= 'player' + eastSeat.get("id"))
 						input(value='我要加入', type='submit')= '点击加入'
 				div.cards 
@@ -79,7 +85,7 @@ div#main
 				div.join
 					div.message.error.hidden= '无法加入该座位'   
 					div.waiting.hidden= '等待其他人加入'
-					form(action="/tractor/" + tractorGame.get("id") + "/join/" + southSeat.get("id"), method="POST")
+					form(action="/tractor/" + tractorGame.get("id") + "/join/" + southSeat.get("id"), method="POST", onclick="return false;")
 						input(name='name', type="text", value= 'player' + southSeat.get("id"))
 						input(value='我要加入', type='submit')= '点击加入'
 				div.cards 

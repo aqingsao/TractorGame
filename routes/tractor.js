@@ -309,9 +309,7 @@ var TractorGame = Backbone.Model.extend({
 		if(this.gameState != TractorGame.GameState.WAITING){
 			throw "Cannot join this game";
 		}
-		// event.join 
-		console.log("---------player " + player.get("name") + " is going to join at seat " + seatId);
-		
+		// event.join 		
 		this.seats.join(player, seatId);
 		if(this.seats.full()){
 			// event.ready
@@ -324,6 +322,7 @@ var TractorGame = Backbone.Model.extend({
 		if(this.gameState != TractorGame.GameState.READY){
 			throw "Game cannot be started";
 		}
+		this.gameState = TractorGame.GameState.PLAYING;
 		this.tractorRound.start();
 	},
 	flip: function(player, cards){
@@ -352,13 +351,18 @@ var TractorGame = Backbone.Model.extend({
 		
 		this.tractorRound = new TractorRound(this.cards, this.dealInterval, this.seats, this.get("id"));
 	}, 
+	canFlip: function(){
+		return this.gameState == TractorGame.GameState.PLAYING && this.roundState() == TractorGame.RoundState.DEALING;
+	}, 
+	canStart: function(){
+		return this.gameState == TractorGame.GameState.READY;
+	},
 	// When at least player could flip, but he did not flip, will restart this round.
 	noFlipping: function(){
 		// event.restart round
-		this.nextRound();
 	}
 }, {
-	GameState: {WAITING: {value: 0, name: 'Waiting'}, READY: {value: 0, name: 'Ready'}, PLAYING: {value: 0, name:'Playing'}, DONE: {value: 0, name: 'Done'}}, 
+	GameState: {WAITING: {value: 0, name: 'Waiting'}, READY: {value: 1, name: 'Ready'}, PLAYING: {value: 3, name:'Playing'}, DONE: {value: 4, name: 'Done'}}, 
 	RoundState: {READY: {value: 1, name:'Ready'}, DEALING: {value: 2, name: 'Dealing'}, PLAYING: {value: 3, name: 'Playing'}, DONE: {value: 4, name: 'Done'}}
 });
 

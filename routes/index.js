@@ -76,4 +76,21 @@ exports.tractorStart = function(req, res){
 		console.log("Failed to start game in room " + id + ": " + error);
 		res.json({error: error, tractorGame: room.toJSON()}, 400);
 	}
-}
+};
+ 
+exports.tractorFlip = function(req, res){
+	var id = req.params.id; 
+	var playerName = req.body.name;
+	var room = tractorRooms.getRoom(id);
+	try{
+		if(room == undefined){
+			throw "Invalid room id " + id;
+		}
+		room.flip();
+		console.log("Start game in room " + id);
+		res.json({});
+	}catch(error){  
+		console.log("Failed to start game in room " + id + ": " + error);
+		res.json({error: error, tractorGame: room.toJSON()}, 400);
+	}
+};

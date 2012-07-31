@@ -1,3 +1,4 @@
+var player;
 $(function(){
 	if(!("WebSocket" in window)){  
 	    alert("No web socket is supported!"); 
@@ -28,11 +29,15 @@ $(function(){
 	     
 	$(".seat").each(function(index){    
 		var seat = $(this);   
-		var seatId = seat.attr("id").substring(4);
 		seat.find(".join form").click(function(){ 
 			var form = $(this);                      
 			$.post($(this).attr("action"), $(this).serialize(), function(data){ 
-		   		takeSeat(seatId, form.find("input[name='name']").val());  
+				var seatId = seat.attr("id").substring(4);
+				var playerName = form.find("input[name='name']").val();  
+				console.log("I take seat " + seatId);
+				seat.find("form input[name='name']").val(playerName); 
+				seat.addClass("my");
+		   		takeSeat(seatId, playerName);  
 				// disableSeats();
 			}).error(function(data){
 				seat.find(".message.error").removeClass("hidden");
@@ -48,9 +53,21 @@ $(function(){
 		    gameStartError(data);
 		});	
 		return false;
-	});   
+	});
+	$('.card').live('click', function(){
+		if(!$(this).hasClass("unknown")){
+			$(this).toggleClass("selected");
+		}
+	});  
+	$(".room .seat .flip form").click(function(){
+		$.post($(this).attr("action"), $(this).serialize(), function(data){ 
+	   		flip();  
+		}).error(function(data){
+		    flipError(data);
+		});	
+		return false;
+	});
 });      
- 
 function gameReady(){
 	console.log("Game is ready to start.");
 	$(".playarea .currentStatus form").removeClass("hidden");
@@ -58,7 +75,8 @@ function gameReady(){
 function gameStart(){
 	console.log("Game is started.")
 	$(".playarea .currentStatus form").addClass("hidden");
-	$(".playarea .currentStatus .description").text("游戏已开始"); 
+	$(".playarea .currentStatus .description").text("游戏已开始");
+	$(".room .seat .flip").removeClass("hidden");
 }
 function gameStartError(data){
 	console.log("Failed to start game: " + data.error); 
@@ -66,9 +84,13 @@ function gameStartError(data){
 	console.log("Latest game status: " + tractorGame);
 } 
 function dealCard(card, seat){  
-	console.log("Deal card " + card + " to seat " + seat);             
-	var cardDiv = "<div class='card heart'>2</div>";
+	console.log("Deal card " + card.suit + " " + card.rank + " to seat " + seat);             
+	var cardDiv = "<div class='card " + card.suit + "'>" + card.rank + "</div>";
 	$("#seat" + seat + " .cards").append(cardDiv);
+
+	if(isPlayer() && isCardForMe(seat)){
+		console.log("I get card " + card.suit + " " + card.rank);
+	}
 }
 function dealCardFinish(){
 	$(".playarea .currentStatus .description").text("发牌结束，等待亮主"); 
@@ -76,12 +98,21 @@ function dealCardFinish(){
 function takeSeat(seatId, player){ 
 	console.log("Player " + player + " take seat " + seatId + " successfully.");
 	var seat = $("#seat" + seatId);
-	seat.find(".player .name").text(player); 
-	seat.removeClass("notTaken");
+	seat.find(".player .name").text(player);
+	seat.removeClass("notTaken");  
+	if(!seat.hasClass("my")){
+		seat.addClass("others");
+	}
 }     
 function disableSeats(){
 	$(".seat").each(function(index, seat){
 		$(seat).find(".join form").addClass("hidden");
 		$(seat).find(".join .waiting.hidden").removeClass("hidden");
 	});
+} 
+function isPlayer(){
+	return $(".seat.my").length > 0;
+}
+function isCardForMe(seat){
+	return $(".seat.my").attr("id").substring("4") == seat;
 }

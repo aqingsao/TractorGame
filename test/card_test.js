@@ -134,4 +134,4 @@ exports["show have suit name and rank name"] = function(test){
 	test.equals(heart2.suit.name, 'HEART');
 	test.equals(heart2.rank.name, '2'); 
 	test.done();
-}
+};

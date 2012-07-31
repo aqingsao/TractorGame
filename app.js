@@ -37,6 +37,7 @@ app.get('/', routes.index);
 app.get('/tractor/:id', routes.tractor);
 app.post('/tractor/:id/join/:seatId', routes.tractorJoin);
 app.post('/tractor/:id/start', routes.tractorStart);
+app.post('/tractor/:id/flip', routes.tractorFlip);
 
 
 app.listen(3000, function(){
