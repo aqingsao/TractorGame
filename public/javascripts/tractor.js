@@ -9,9 +9,10 @@ var Player = Backbone.Model.extend({
 	initialize: function(){
 		this.cards = Card.cards();
 	}, 
-	hasCards: function(cards){
+	hasCards: function(cards){ 
+		var that = this;
 		_.each(cards, function(card){
-			if(!this.cards.contains(card)){
+			if(!that.cards.contains(card)){
 				return false;
 			}
 		});
@@ -211,27 +212,25 @@ var TractorRound = Backbone.Model.extend({
 		};
 		dealSlow();
 	}, 
-	flip: function(player, jokers, trumps){
-		console.log("Player " + player.name +" is fliping.");
-		if(!player.hasCards(jokers) || !player.hasCards(trumps) || !jokers.allJokers() || !trumps.allSuits()){
+	flip: function(player, cards){
+		console.log("Player " + player.name +" is fliping: " + cards.toString());
+		if(!player.hasCards(cards)){
 			throw "You cannot flip cards";
-		}     
-		console.log("+++++++++++" + util.inspect(Flipping));
-		var flipping = new Flipping(player, jokers, trumps);
+		}
+		var currentRank;
+		var defenders = this.seats.defenders();
+		if(defenders != undefined){
+			curentRank = defenders.rank();
+		};
+		var flipping = new Flipping(player, cards, currentRank); 
 		if(!flipping.isValid()){
 			throw "You cannot flip cards";			
 		}
-		var defenders = this.seats.defenders();
-		if(defenders == undefined){
-			defenders = this.seats.getPair(player);
-			if(!flipping.matchRank(defenders.rank())){
-				throw "You cannot flip cards";
-			}
-		};
-		if(this.flipping != undefined &&  flipping.level <= this.flipping.level){
+		if(this.flipping != undefined && !flipping.canOverturn(this.flipping)){
 			throw "You cannot overturn cards";	
 		}
 		// event.flip
+		// this.defenders = this.seats.getPair(player); 
 		this.flipping = flipping;
 		this.seats.setDefender(player);
 	}
@@ -252,7 +251,7 @@ var TractorGame = Backbone.Model.extend({
 		this.seats.join(player, seatId);
 		if(this.seats.full()){
 			// event.ready
-			this.gameState = TractorGame.GameState.READY;
+			this.gameState = TractorGame.GameState.PLAYING;
 			this.nextRound(); 
 			broader.onGameReady(this.get("id"));
 		}
@@ -265,20 +264,10 @@ var TractorGame = Backbone.Model.extend({
 		this.tractorRound.start();
 	},
 	flip: function(player, cards){
-		if(this.tractorRound == undefined){
+		if(!this.canFlip()){
 			throw "You cannot flip cards";
 		}
-		var jokers = Card.cards();
-		var suits = Card.cards();
-		_.each(cards, function(card){
-			if(card.isJoker()){
-				jokers.add(card);
-			}
-			else{
-				suits.add(card);
-			}
-		});
-		this.tractorRound.flip(player, jokers, suits);
+		this.tractorRound.flip(player, cards);
 	}, 
 	roundState: function(){
 		return this.tractorRound ? this.tractorRound.state: null;
@@ -290,18 +279,18 @@ var TractorGame = Backbone.Model.extend({
 		
 		this.tractorRound = new TractorRound(this.cards, this.dealInterval, this.seats, this.get("id"));
 	}, 
-	canFlip: function(){
-		return this.gameState == TractorGame.GameState.PLAYING && this.roundState() == TractorGame.RoundState.DEALING;
+	canFlip: function(){ 
+		return this.gameState == TractorGame.GameState.PLAYING && this.tractorRound != undefined && this.tractorRound.state == TractorGame.RoundState.DEALING;
 	}, 
 	canStart: function(){
-		return this.gameState == TractorGame.GameState.READY;
+		return this.gameState == TractorGame.GameState.PLAYING && this.tractorRound != undefined && this.tractorRound.state == TractorGame.RoundState.READY; 
 	},
 	// When at least player could flip, but he did not flip, will restart this round.
 	noFlipping: function(){
 		// event.restart round
 	}
 }, {
-	GameState: {WAITING: {value: 0, name: 'Waiting'}, READY: {value: 1, name: 'Ready'}, PLAYING: {value: 3, name:'Playing'}, DONE: {value: 4, name: 'Done'}}, 
+	GameState: {WAITING: {value: 0, name: 'Waiting'}, PLAYING: {value: 3, name:'Playing'}, DONE: {value: 4, name: 'Done'}}, 
 	RoundState: {READY: {value: 1, name:'Ready'}, DEALING: {value: 2, name: 'Dealing'}, PLAYING: {value: 3, name: 'Playing'}, DONE: {value: 4, name: 'Done'}}
 });
 

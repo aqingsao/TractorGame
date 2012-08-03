@@ -47,7 +47,7 @@ exports['Tractor game can not be joined when there are already 4 players'] = fun
 	tractorGame.join(kerry, 2);
 	tractorGame.join(yao, 3);
 	test.ok(tractorGame.seats.full());
-	test.equals(tractorGame.gameState, TractorGame.GameState.READY);
+	test.equals(tractorGame.gameState, TractorGame.GameState.PLAYING);
 	test.throws(function(){tractorGame.join('Bin', 0)}, "Cannot join this game");
 	
 	test.done();
@@ -109,7 +109,7 @@ exports["Player can flip when having available jokers and trumps."] = function(t
 	};	
 	tractorRound.start();
 	
-	tractorGame.flip(jacky, [smallJoker, heart2]);
+	tractorGame.flip(jacky, Card.cards([smallJoker, heart2]));
 	
 	var seats = tractorGame.seats;
 	test.equals(seats.pairs.at(0).rank(), Card.Ranks.TWO);
@@ -137,13 +137,13 @@ exports["Player can overturn when having bigger jokers and trumps"] = function(t
 	};	
 	tractorRound.start();
 	
-	tractorGame.flip(jacky, [smallJoker, heart2]);
+	tractorGame.flip(jacky, Card.cards([smallJoker, heart2]));
 	
 	var seats = tractorGame.seats;
 	test.equals(seats.defenders().hasPlayer(jacky), true);
 	test.equals(seats.attackers().hasPlayer(yao), true);
 	
-	tractorGame.flip(yao, [smallJoker, diamond1, diamond2]);
+	tractorGame.flip(yao, Card.cards([smallJoker, diamond1, diamond2]));
 	test.equals(seats.defenders().hasPlayer(yao), true);
 	test.equals(seats.attackers().hasPlayer(jacky), true);
 	
@@ -162,7 +162,7 @@ exports["Player cannot overturn when not having bigger jokers and trumps"] = fun
 	};	
 	tractorRound.start();
 	
-	tractorGame.flip(jacky, [smallJoker, heart2]);
+	tractorGame.flip(jacky, Card.cards([smallJoker, heart2]));
 	
 	var seats = tractorGame.seats;
 	test.equals(seats.defenders().hasPlayer(jacky), true);
@@ -187,7 +187,7 @@ exports["Player cannot flip rank3 when currently playing rank 2"] = function(tes
 	};	
 	tractorRound.start();
 	
-	test.throws(function(){tractorGame.flip(jacky, [smallJoker, heart3])}, "Cannot flip cards");
+	test.throws(function(){tractorGame.flip(jacky, [smallJoker, heart3])}, "You cannot flip cards");
 		
 	tractorRound.deal = originalDeal;
 	test.done();
@@ -204,7 +204,7 @@ exports["Player can flip 2 jokers when currently playing rank2"] = function(test
 	};	
 	tractorRound.start();
 	
-	tractorGame.flip(jacky, [smallJoker1, smallJoker2]);
+	tractorGame.flip(jacky, Card.cards([smallJoker1, smallJoker2]));
 	
 	var seats = tractorGame.seats;
 	test.equals(seats.defenders().hasPlayer(jacky), true);

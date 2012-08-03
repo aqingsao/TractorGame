@@ -1,5 +1,6 @@
 var Backbone = require('backbone'), 
-	_ = require('underscore')._;
+	_ = require('underscore')._, 
+	util = require('util');
 
 var Suit = Backbone.Model.extend({
 	initialize: function(name){
@@ -9,20 +10,18 @@ var Suit = Backbone.Model.extend({
 		};
 	}
 });
-var Rank = Backbone.Model.extend({
-	initialize: function(name, value, point, isJoker){
-		this.name = name;
-		this.value = value;
-		this.point = point;
-		this.isJoker = this.value >= 300;
-		this.equals = function(other){
-			return this.name == other.name && this.value == other.value;
-		};
-		this.matchSuit = function(suit){
-			return (suit == Card.Suits.J && this.isJoker) || (suit != Card.Suits.J && !this.isJoker);
-		}
+var Rank = function(name, value, point, isJoker){
+	this.name = name;
+	this.value = value;
+	this.point = point;
+	this.isJoker = this.value >= 300;
+	this.equals = function(other){
+		return this.name == other.name && this.value == other.value;
+	};
+	this.matchSuit = function(suit){
+		return (suit == Card.Suits.J && this.isJoker) || (suit != Card.Suits.J && !this.isJoker);
 	}
-});
+};
 
 var Card = Backbone.Model.extend({
 	initialize: function(suit, rank){
@@ -33,7 +32,7 @@ var Card = Backbone.Model.extend({
 		this.suit = suit;
 		this.rank = rank;
 		this.equals = function(other){
-			return this.suit == other.suit && this.rank.equals(other.rank);
+			return this.suit.equals(other.suit) && this.rank.equals(other.rank);
 		}
 	}, 
 	isJoker: function(){
@@ -53,6 +52,9 @@ var Card = Backbone.Model.extend({
 	}, 
 	sameSuit: function(another){
 		return this.suit == another.suit;
+	}, 
+	toString: function(){
+		return this.suit.name + this.rank.name;
 	}
 }, {
 	heart: function(rank){
@@ -113,7 +115,7 @@ var Card = Backbone.Model.extend({
 	Ranks: {TWO: new Rank('2', 2, 0), THREE: new Rank('3', 3, 0), FOUR: new Rank('4', 4, 0), FIVE: new Rank('5', 5, 5), 
 		SIX: new Rank('6', 6, 0), SEVEN: new Rank('7', 7, 0), EIGHT: new Rank('8', 8, 0), NINE: new Rank('9', 9, 0), TEN: new Rank('10', 10, 10), 
 		JACK: new Rank('J', 11, 0), QUEEN: new Rank('Q', 12, 0), KING: new Rank('K', 13, 10), ACE: new Rank('A', 14, 0), 
-		SMALL_JOKER: new Rank('Joker', 300, 0), BIG_JOKER: new Rank('Joker', 500, 0)}, 
+		SMALL_JOKER: new Rank('Small', 300, 0), BIG_JOKER: new Rank('Big', 500, 0)}, 
 	Suits: {H: new Suit('HEART'), S: new Suit("SPADE"), D: new Suit("DIAMOND"), C: new Suit("CLUB"), J: new Suit("Joker")}
 });
 var Cards = Backbone.Collection.extend({
@@ -149,6 +151,14 @@ var Cards = Backbone.Collection.extend({
 	}, 
 	canFlip: function(){
 		return true;
+	}, 
+	toString: function(){
+		var str = "[";
+		this.each(function(card){
+			str += card.toString();
+		});         
+		str += ']';
+		return str;
 	}
 });
 

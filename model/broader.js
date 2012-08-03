@@ -12,7 +12,7 @@ var Connection = Backbone.Model.extend({
 		this.socketIds.push(socketId);
 	}, 
 	broadcast: function(event, data){
-		console.log("Broadcast event " + event +" to " + this.socketIds.length + " sockets: " + util.inspect(data));
+		// console.log("Broadcast event " + event +" to " + this.socketIds.length + " sockets: " + util.inspect(data));
 		 _.each(this.socketIds, function(socketId){   
 			try{  
 				console.log("Broadcast event " + event +" to " + socketId);
