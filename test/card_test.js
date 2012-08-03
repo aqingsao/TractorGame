@@ -1,4 +1,4 @@
-var Card = require('../routes/card.js').Card;
+var Card = require('../public/javascripts/card.js').Card;
 
 exports['Rank equals'] = function(test){
 	test.ok(Card.Ranks.QUEEN.equals(Card.Ranks.QUEEN));

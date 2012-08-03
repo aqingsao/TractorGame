@@ -1,8 +1,8 @@
-var TractorGame = require('../routes/tractor.js').TractorGame, 
-Player = require('../routes/tractor.js').Player, 
-TractorRound = require('../routes/tractor.js').TractorRound, 
-Flipping = require('../routes/tractor.js').Flipping, 
-Card = require('../routes/card.js').Card;
+var TractorGame = require('../public/javascripts/tractor.js').TractorGame, 
+Player = require('../public/javascripts/tractor.js').Player, 
+TractorRound = require('../public/javascripts/tractor.js').TractorRound, 
+Flipping = require('../public/javascripts/flipping.js').Flipping, 
+Card = require('../public/javascripts/card.js').Card;
 
 
 exports['Cannot flip when jokers size is 0'] = function(test){

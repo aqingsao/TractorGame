@@ -4,7 +4,8 @@ var _ = require('underscore')._,
 	TractorGame = require("./tractor.js").TractorGame,
 	Player = require("./tractor.js").Player; 
 	util = require('util'), 
-	broader = require("../model/broader.js").Broader;
+	broader = require("../model/broader.js").Broader; 
+var Book = require('../public/javascripts/book.js').Book;
 	
 /*
  * GET home page.
@@ -93,4 +94,9 @@ exports.tractorFlip = function(req, res){
 		console.log("Failed to start game in room " + id + ": " + error);
 		res.json({error: error, tractorGame: room.toJSON()}, 400);
 	}
-};
+};  
+exports.books = function(req, res){  
+	var books = new Backbone.Collection();
+	books.add(new Book("zhang san"));
+	res.render('books', {books: books, title:'books'});
+}

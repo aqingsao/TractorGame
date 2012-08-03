@@ -1,7 +1,7 @@
-var TractorGame = require('../routes/tractor.js').TractorGame, 
-Player = require('../routes/tractor.js').Player, 
-TractorRound = require('../routes/tractor.js').TractorRound;
-var Card = require('../routes/card.js').Card, 
+var TractorGame = require('../public/javascripts/tractor.js').TractorGame, 
+Player = require('../public/javascripts/tractor.js').Player, 
+TractorRound = require('../public/javascripts/tractor.js').TractorRound;
+var Card = require('../public/javascripts/card.js').Card, 
 _ = require("underscore")._, 
 broader = require('../model/broader.js').Broader; 
 var io = {sockets: {on: function(){}}};

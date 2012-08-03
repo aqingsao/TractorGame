@@ -1,0 +1,60 @@
+div#header
+div#main
+	<body>
+
+	  <div id="todoapp">
+
+	    <header>
+	      <h1>Todos</h1>
+	      <input id="new-todo" type="text" placeholder="What needs to be done?">
+	    </header>
+
+	    <section id="main" style="display: block; ">
+	      <input id="toggle-all" type="checkbox">
+	      <label for="toggle-all">Mark all as complete</label>
+	      <ul id="todo-list"><li class="done">
+	    <div class="view">
+	      <input class="toggle" type="checkbox" checked="checked">
+	      <label>fdaf</label>
+	      <a class="destroy"></a>
+	    </div>
+	    <input class="edit" type="text" value="fdaf">
+	  </li></ul>
+	    </section>
+
+	    <footer style="display: block; ">
+
+	      <a id="clear-completed">Clear 1 completed item</a>
+
+	    <div class="todo-count"><b>0</b> items left</div>
+	  </footer>
+
+	  </div>
+
+	  <div id="instructions">
+	    Double-click to edit a todo.
+	  </div>
+
+	  <div id="credits">
+	    Created by
+	    <br>
+	    <a href="http://jgn.me/">Jérôme Gravel-Niquet</a>.
+	    <br>Rewritten by: <a href="http://addyosmani.github.com/todomvc">TodoMVC</a>.
+	  </div>
+
+	  <!-- Templates -->
+	  <script type="text/template" id="book-template">
+	    <div class="view">
+	      <input class="toggle" type="checkbox" <%= done ? 'checked="checked"' : '' %> />
+	      <label><%= name %></label>
+	      <a class="destroy"></a>
+	    </div>
+	    <input class="edit" type="text" value="<%= name %>" />
+	  </script>
+	</body>
+div#footer                                                                                                            
+
+script(src='/javascripts/jquery-1.7.2.min.js') 
+script(src="/javascripts/underscore.js")
+script(src="/javascripts/backbone.js")
+script(src="/javascripts/book.js")

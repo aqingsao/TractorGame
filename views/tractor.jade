@@ -18,9 +18,9 @@ div#main
 
 		!=partial("_seat.jade", {tractorGame: tractorGame, seat: tractorGame.seats.getSeat('E'), seatClz: 'east'})
 		!=partial("_seat.jade", {tractorGame: tractorGame, seat: tractorGame.seats.getSeat('S'), seatClz: 'south cf'})
-								
+div#footer                                                                                                            
 
-div#footer
 script(src='/javascripts/jquery-1.7.2.min.js') 
 script(src="/socket.io/socket.io.js")
+script(src="/javascripts/book.js")
 script(src="/javascripts/game.js")
