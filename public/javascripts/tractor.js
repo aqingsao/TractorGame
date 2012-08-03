@@ -218,13 +218,13 @@ var TractorRound = Backbone.Model.extend({
 		}     
 		console.log("+++++++++++" + util.inspect(Flipping));
 		var flipping = new Flipping(player, jokers, trumps);
-		if(!flipping.isValid){
+		if(!flipping.isValid()){
 			throw "You cannot flip cards";			
 		}
 		var defenders = this.seats.defenders();
 		if(defenders == undefined){
 			defenders = this.seats.getPair(player);
-			if(!flipping.matchRank(defenders)){
+			if(!flipping.matchRank(defenders.rank())){
 				throw "You cannot flip cards";
 			}
 		};
