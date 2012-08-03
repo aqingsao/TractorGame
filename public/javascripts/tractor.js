@@ -3,7 +3,7 @@ var Backbone = require('backbone'),
 	Card = require('./card.js').Card, 
 	util = require('util'), 
 	broader = require('../../model/broader.js').Broader, 
-	Flipping = require("./flipping.js").Flipping;
+	Flipping = require("./flipping.js");
 
 var Player = Backbone.Model.extend({
 	initialize: function(){
@@ -215,7 +215,8 @@ var TractorRound = Backbone.Model.extend({
 		console.log("Player " + player.name +" is fliping.");
 		if(!player.hasCards(jokers) || !player.hasCards(trumps) || !jokers.allJokers() || !trumps.allSuits()){
 			throw "You cannot flip cards";
-		}
+		}     
+		console.log("+++++++++++" + util.inspect(Flipping));
 		var flipping = new Flipping(player, jokers, trumps);
 		if(!flipping.isValid){
 			throw "You cannot flip cards";			
