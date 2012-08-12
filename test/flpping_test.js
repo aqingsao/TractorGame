@@ -1,5 +1,5 @@
 var TractorGame = require('../public/javascripts/tractor.js').TractorGame, 
-Player = require('../public/javascripts/tractor.js').Player, 
+Player = require('../public/javascripts/player.js').Player, 
 TractorRound = require('../public/javascripts/tractor.js').TractorRound, 
 Flipping = require('../public/javascripts/flipping.js'), 
 Card = require('../public/javascripts/card.js').Card;
