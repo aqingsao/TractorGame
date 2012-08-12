@@ -1,8 +1,8 @@
 var _ = require('underscore')._,
     Backbone = require('backbone'), 
-	Card = require('./card.js').Card;
-	TractorGame = require("./tractor.js").TractorGame,
-	Player = require("./tractor.js").Player; 
+	Card = require('../public/javascripts/card.js').Card;
+	Room = require("../public/javascripts/room.js").Room,
+	Player = require("../public/javascripts/player.js").Player; 
 	util = require('util'), 
 	broader = require("../model/broader.js").Broader; 
 var Book = require('../public/javascripts/book.js').Book;
@@ -17,7 +17,7 @@ exports.index = function(req, res){
 
 
 console.log('init all tractor games');
-var TractorRooms = Backbone.Collection.extend({
+var Rooms = Backbone.Collection.extend({
 	getRoom: function(roomNo){ 
 		if(roomNo < 0 || roomNo > maxRooms){
 			throw "Invalid room no " + roomNo;
@@ -28,25 +28,25 @@ var TractorRooms = Backbone.Collection.extend({
 		});	
 	}
 }); 
-var tractorRooms = new TractorRooms();    
+var rooms = new Rooms();    
 var maxRooms = 100;
 var dealInterval = 100;
 exports.tractor = function(req, res){
 	var id = req.params.id;        
-	var room = tractorRooms.getRoom(id);
+	var room = rooms.getRoom(id);
 	if(room == undefined){
 		console.log("Open a new tractor room: " + id);
-		room = new TractorGame({id: id, dealInterval: dealInterval}); 
-		tractorRooms.add(room);   
+		room = new Room({id: id, dealInterval: dealInterval}); 
+		rooms.add(room);   
 		broader.onNewRoom(id);
 	}    
 	res.render('tractor', {tractorGame: room, title: 'Tractor'});
 };
 
-exports.tractorJoin = function(req, res){
+exports.roomJoin = function(req, res){
 	var id = req.params.id;
 	var seatId = req.params.seatId;
-	var room = tractorRooms.getRoom(id);
+	var room = rooms.getRoom(id);
 	if(room == undefined){
 		throw "Invalid room id " + id;
 	}
@@ -63,9 +63,9 @@ exports.tractorJoin = function(req, res){
 	}
 }; 
 
-exports.tractorStart = function(req, res){
+exports.roundStart = function(req, res){
 	var id = req.params.id;
-	var room = tractorRooms.getRoom(id);
+	var room = rooms.getRoom(id);
 	try{
 		if(room == undefined){
 			throw "Invalid room id " + id;
@@ -74,7 +74,7 @@ exports.tractorStart = function(req, res){
 		console.log("Start game in room " + id);
 		res.json({});
 	}catch(error){  
-		console.log("Failed to start game in room " + id + ": " + error);
+		console.log("Failed to start next round in room " + id + ": " + error);
 		res.json({error: error, tractorGame: room.toJSON()}, 400);
 	}
 };
@@ -82,16 +82,16 @@ exports.tractorStart = function(req, res){
 exports.tractorFlip = function(req, res){
 	var id = req.params.id; 
 	var playerName = req.body.name;
-	var room = tractorRooms.getRoom(id);
+	var room = rooms.getRoom(id);
 	try{
 		if(room == undefined){
 			throw "Invalid room id " + id;
 		}
 		room.flip();
-		console.log("Start game in room " + id);
+		console.log("Fliping in room " + id);
 		res.json({});
 	}catch(error){  
-		console.log("Failed to start game in room " + id + ": " + error);
+		console.log("Failed to flip in room " + id + ": " + error);
 		res.json({error: error, tractorGame: room.toJSON()}, 400);
 	}
 };  

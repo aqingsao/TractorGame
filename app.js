@@ -34,10 +34,10 @@ app.configure('production', function(){
 // Routes
 
 app.get('/', routes.index);
-app.get('/tractor/:id', routes.tractor);
 app.get('/books', routes.books);
-app.post('/tractor/:id/join/:seatId', routes.tractorJoin);
-app.post('/tractor/:id/start', routes.tractorStart);
+app.get('/tractor/:id', routes.tractor);
+app.post('/tractor/:id/join/:seatId', routes.roomJoin);
+app.post('/tractor/:id/start', routes.roundStart);
 app.post('/tractor/:id/flip', routes.tractorFlip);
 
 

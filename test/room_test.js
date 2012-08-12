@@ -5,7 +5,7 @@ Card = require('../public/javascripts/card.js').Card;
 
 exports['Room is new'] = function(test){
 	var room = new Room(1);
-	test.equals(room.gameState, Room.RoomState.WAITING);
+	test.equals(room.roomState, Room.RoomState.WAITING);
 	test.ok(!room.seats.full());
 
 	test.done();
@@ -15,7 +15,7 @@ exports['Room can be joined'] = function(test){
 	var room = new Room(1);
 	room.join(jacky, 0);
 	test.ok(!room.seats.full());
-	test.equals(room.gameState, Room.RoomState.WAITING);
+	test.equals(room.roomState, Room.RoomState.WAITING);
 
 	test.done();
 };
@@ -42,7 +42,7 @@ exports['Room can not be joined when there are already 4 players'] = function(te
 	room.join(kerry, 2);
 	room.join(yao, 3);
 	test.ok(room.seats.full());
-	test.equals(room.gameState, Room.RoomState.PLAYING);
+	test.equals(room.roomState, Room.RoomState.PLAYING);
 	test.throws(function(){room.join('Bin', 0)}, "Cannot join this game");
 	
 	test.done();
