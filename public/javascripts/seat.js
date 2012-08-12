@@ -1,8 +1,7 @@
 var Backbone = require('backbone'), 
 	Card = require('./card.js').Card, 
 	util = require('util'), 
-	Pair = require('./player').Pair,
-	Round = require('./tractor.js').Round;
+	Pair = require('./player').Pair;
 
 var Seat = Backbone.Model.extend({
 	initialize: function(){

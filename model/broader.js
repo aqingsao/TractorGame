@@ -23,10 +23,12 @@ var Connection = Backbone.Model.extend({
 		}); 
 	}
 });
-var Broader = Backbone.Model.extend({
+var Broader = Backbone.Model.extend({ 
+	initialize: function(){
+		this.connections = new Backbone.Collection();
+	},
 	init: function(tempIO){   
    	  	io = tempIO;
-		this.connections = new Backbone.Collection();
 		var that = this;
 		io.sockets.on('connection', function (socket) {
 		  	socket.emit('connected', {});             

@@ -162,14 +162,4 @@ var Cards = Backbone.Collection.extend({
 	}
 });
 
-var Player = Backbone.Model.extend({
-	initialize: function(name){
-		this.name = name;
-		this.cards = Card.cards();
-	},
-	deal: function(card){
-		this.cards.add(card);
-	}
-});
-
 exports.Card= Card;
