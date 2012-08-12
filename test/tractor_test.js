@@ -1,71 +1,71 @@
-var TractorGame = require('../public/javascripts/tractor.js').TractorGame, 
+var Room = require('../public/javascripts/room.js').Room, 
 Player = require('../public/javascripts/player.js').Player, 
-TractorRound = require('../public/javascripts/tractor.js').TractorRound;
+Round = require('../public/javascripts/tractor.js').Round;
 var Card = require('../public/javascripts/card.js').Card, 
 _ = require("underscore")._, 
-broader = require('../model/broader.js').Broader; 
+broader = require('../model/broader.js').Broader;                           
 var io = {sockets: {on: function(){}}};
 broader.init(io);
 
 
 exports['Tractor game is new'] = function(test){
-	var tractorGame = new TractorGame(1);
-	test.equals(tractorGame.gameState, TractorGame.GameState.WAITING);
-	test.ok(!tractorGame.seats.full());
+	var room = new Room(1);
+	test.equals(room.gameState, Room.RoomState.WAITING);
+	test.ok(!room.seats.full());
 
 	test.done();
 };
 
 exports['Tractor game can be joined'] = function(test){
-	var tractorGame = new TractorGame(1);
-	tractorGame.join(jacky, 0);
-	test.ok(!tractorGame.seats.full());
-	test.equals(tractorGame.gameState, TractorGame.GameState.WAITING);
+	var room = new Room(1);
+	room.join(jacky, 0);
+	test.ok(!room.seats.full());
+	test.equals(room.gameState, Room.RoomState.WAITING);
 
 	test.done();
 };
 
 exports['Tractor game cannot be joined by same player'] = function(test){
-	var tractorGame = new TractorGame(1);
-	tractorGame.join(jacky, 0);
-	test.throws(function(){tractorGame.join(jacky, 1)}, "Cannot take seat");
+	var room = new Room(1);
+	room.join(jacky, 0);
+	test.throws(function(){room.join(jacky, 1)}, "Cannot take seat");
 
 	test.done();
 };
 exports['Tractor game cannot be joined when seat is taken'] = function(test){
-	var tractorGame = new TractorGame(1);
-	tractorGame.join(jacky, 0);
-	test.throws(function(){tractorGame.join(nana, 0)}, "Cannot take seat");
+	var room = new Room(1);
+	room.join(jacky, 0);
+	test.throws(function(){room.join(nana, 0)}, "Cannot take seat");
 
 	test.done();
 };
 
 exports['Tractor game can not be joined when there are already 4 players'] = function(test){	
-	var tractorGame = new TractorGame(1);
-	tractorGame.join(jacky, 0);
-	tractorGame.join(nana, 1);
-	tractorGame.join(kerry, 2);
-	tractorGame.join(yao, 3);
-	test.ok(tractorGame.seats.full());
-	test.equals(tractorGame.gameState, TractorGame.GameState.PLAYING);
-	test.throws(function(){tractorGame.join('Bin', 0)}, "Cannot join this game");
+	var room = new Room(1);
+	room.join(jacky, 0);
+	room.join(nana, 1);
+	room.join(kerry, 2);
+	room.join(yao, 3);
+	test.ok(room.seats.full());
+	test.equals(room.gameState, Room.RoomState.PLAYING);
+	test.throws(function(){room.join('Bin', 0)}, "Cannot join this game");
 	
 	test.done();
 };
 
 exports['Tractor round should be ready when 4 players join'] = function(test){
 	var tractorRound = readyGame().tractorRound;
-	test.equals(tractorRound.state, TractorGame.RoundState.READY);
+	test.equals(tractorRound.state, Round.RoundState.READY);
 	
 	test.done();
 };
 
 exports['Tractor round can start and deal cards when ready'] = function(test){
 	var tractorRound = readyGame().tractorRound;
-	test.equals(tractorRound.state, TractorGame.RoundState.READY);
+	test.equals(tractorRound.state, Round.RoundState.READY);
 	
 	tractorRound.start();
-	test.equals(tractorRound.state, TractorGame.RoundState.DEALING);
+	test.equals(tractorRound.state, Round.RoundState.DEALING);
 	
 	var totalTime = 0;
 	var assertion = function(){
@@ -81,8 +81,8 @@ exports['Tractor round can start and deal cards when ready'] = function(test){
 };
 
 exports["Non team is defender at startup"] = function(test){
-	var tractorGame = readyGame();
-	var seats = tractorGame.seats;
+	var room = readyGame();
+	var seats = room.seats;
 	test.equals(seats.pairs.size(), 2);
 	test.equals(seats.pairs.at(0).rank(), Card.Ranks.TWO);
 	test.equals(seats.pairs.at(1).rank(), Card.Ranks.TWO);
@@ -92,15 +92,15 @@ exports["Non team is defender at startup"] = function(test){
 	test.done();
 };
 exports["cannot flip cards when tractor not ready."] = function(test){
-	var tractorGame = new TractorGame(1);	
-	test.throws(function(){tractorGame.flip(jacky, [smallJoker, heart2])}, "You cannot flip cards");
+	var room = new Room(1);	
+	test.throws(function(){room.flip(jacky, [smallJoker, heart2])}, "You cannot flip cards");
 	
 	test.done();
 };
 
 exports["Player can flip when having available jokers and trumps."] = function(test){
-	var tractorGame = readyGame();
-	var tractorRound = tractorGame.tractorRound;
+	var room = readyGame();
+	var tractorRound = room.tractorRound;
 	var originalDeal = tractorRound.deal;
 	var smallJoker = Card.smallJoker();
 	var heart2 = Card.heart(Card.Ranks.TWO);
@@ -109,9 +109,9 @@ exports["Player can flip when having available jokers and trumps."] = function(t
 	};	
 	tractorRound.start();
 	
-	tractorGame.flip(jacky, Card.cards([smallJoker, heart2]));
+	room.flip(jacky, Card.cards([smallJoker, heart2]));
 	
-	var seats = tractorGame.seats;
+	var seats = room.seats;
 	test.equals(seats.pairs.at(0).rank(), Card.Ranks.TWO);
 	test.ok(seats.defenders() != undefined);
 	test.equals(seats.defenders().hasPlayer(jacky), true);
@@ -125,8 +125,8 @@ exports["Player can flip when having available jokers and trumps."] = function(t
 };
 
 exports["Player can overturn when having bigger jokers and trumps"] = function(test){
-	var tractorGame = readyGame();
-	var tractorRound = tractorGame.tractorRound;
+	var room = readyGame();
+	var tractorRound = room.tractorRound;
 	var originalDeal = tractorRound.deal;
 	var smallJoker = Card.smallJoker();
 	var heart2 = Card.heart(Card.Ranks.TWO);
@@ -137,13 +137,13 @@ exports["Player can overturn when having bigger jokers and trumps"] = function(t
 	};	
 	tractorRound.start();
 	
-	tractorGame.flip(jacky, Card.cards([smallJoker, heart2]));
+	room.flip(jacky, Card.cards([smallJoker, heart2]));
 	
-	var seats = tractorGame.seats;
+	var seats = room.seats;
 	test.equals(seats.defenders().hasPlayer(jacky), true);
 	test.equals(seats.attackers().hasPlayer(yao), true);
 	
-	tractorGame.flip(yao, Card.cards([smallJoker, diamond1, diamond2]));
+	room.flip(yao, Card.cards([smallJoker, diamond1, diamond2]));
 	test.equals(seats.defenders().hasPlayer(yao), true);
 	test.equals(seats.attackers().hasPlayer(jacky), true);
 	
@@ -151,8 +151,8 @@ exports["Player can overturn when having bigger jokers and trumps"] = function(t
 	test.done();
 };
 exports["Player cannot overturn when not having bigger jokers and trumps"] = function(test){
-	var tractorGame = readyGame();
-	var tractorRound = tractorGame.tractorRound;
+	var room = readyGame();
+	var tractorRound = room.tractorRound;
 	var originalDeal = tractorRound.deal;
 	var smallJoker = Card.smallJoker();
 	var heart2 = Card.heart(Card.Ranks.TWO);
@@ -162,13 +162,13 @@ exports["Player cannot overturn when not having bigger jokers and trumps"] = fun
 	};	
 	tractorRound.start();
 	
-	tractorGame.flip(jacky, Card.cards([smallJoker, heart2]));
+	room.flip(jacky, Card.cards([smallJoker, heart2]));
 	
-	var seats = tractorGame.seats;
+	var seats = room.seats;
 	test.equals(seats.defenders().hasPlayer(jacky), true);
 	test.equals(seats.attackers().hasPlayer(yao), true);
 	
-	test.throws(function(){tractorGame.flip(yao, [smallJoker, diamond1])}, "");
+	test.throws(function(){room.flip(yao, [smallJoker, diamond1])}, "");
 	test.equals(seats.defenders().hasPlayer(jacky), true);
 	test.equals(seats.attackers().hasPlayer(yao), true);
 	
@@ -177,8 +177,8 @@ exports["Player cannot overturn when not having bigger jokers and trumps"] = fun
 };
 
 exports["Player cannot flip rank3 when currently playing rank 2"] = function(test){
-	var tractorGame = readyGame();
-	var tractorRound = tractorGame.tractorRound;
+	var room = readyGame();
+	var tractorRound = room.tractorRound;
 	var originalDeal = tractorRound.deal;
 	var smallJoker = Card.smallJoker();
 	var heart3 = Card.heart(Card.Ranks.THREE);
@@ -187,15 +187,15 @@ exports["Player cannot flip rank3 when currently playing rank 2"] = function(tes
 	};	
 	tractorRound.start();
 	
-	test.throws(function(){tractorGame.flip(jacky, [smallJoker, heart3])}, "You cannot flip cards");
+	test.throws(function(){room.flip(jacky, [smallJoker, heart3])}, "You cannot flip cards");
 		
 	tractorRound.deal = originalDeal;
 	test.done();
 };
 
 exports["Player can flip 2 jokers when currently playing rank2"] = function(test){
-	var tractorGame = readyGame();
-	var tractorRound = tractorGame.tractorRound;
+	var room = readyGame();
+	var tractorRound = room.tractorRound;
 	var originalDeal = tractorRound.deal;
 	var smallJoker1 = Card.smallJoker();
 	var smallJoker2 = Card.smallJoker();
@@ -204,9 +204,9 @@ exports["Player can flip 2 jokers when currently playing rank2"] = function(test
 	};	
 	tractorRound.start();
 	
-	tractorGame.flip(jacky, Card.cards([smallJoker1, smallJoker2]));
+	room.flip(jacky, Card.cards([smallJoker1, smallJoker2]));
 	
-	var seats = tractorGame.seats;
+	var seats = room.seats;
 	test.equals(seats.defenders().hasPlayer(jacky), true);
 	// test.equals(seats.attackers().hasPlayer(yao), true);
 		// 
@@ -215,15 +215,15 @@ exports["Player can flip 2 jokers when currently playing rank2"] = function(test
 };
 
 exports["cannot flip cards when players has no trump cards"] = function(test){
-	var tractorGame = readyGame();
-	var tractorRound = tractorGame.tractorRound;
+	var room = readyGame();
+	var tractorRound = room.tractorRound;
 	var originalDeal = tractorRound.deal;
 	tractorRound.deal = function(){
 		stubDeal([]);
 	};	
 	tractorRound.start();
 	
-	test.throws(function(){tractorGame.flip(jacky, [smallJoker, heart3])}, "Cannot flip cards");
+	test.throws(function(){room.flip(jacky, [smallJoker, heart3])}, "Cannot flip cards");
 		
 	tractorRound.deal = originalDeal;
 	test.done();
@@ -255,11 +255,11 @@ function stubDeal(cardsForPlayer){
 	});
 };
 function readyGame(){
-	var tractorGame = new TractorGame(1);
-	tractorGame.join(jacky, 0);
-	tractorGame.join(nana, 1);
-	tractorGame.join(kerry, 2);
-	tractorGame.join(yao, 3);
+	var room = new Room(1);
+	room.join(jacky, 0);
+	room.join(nana, 1);
+	room.join(kerry, 2);
+	room.join(yao, 3);
 	
-	return tractorGame;
+	return room;
 }
