@@ -35,6 +35,7 @@ app.configure('production', function(){
 
 app.get('/', routes.index);
 app.get('/books', routes.books);
+app.get('/tractors', routes.tractors);
 app.get('/tractor/:id', routes.tractor);
 app.post('/tractor/:id/join/:seatId', routes.roomJoin);
 app.post('/tractor/:id/start', routes.roundStart);

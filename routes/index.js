@@ -1,7 +1,17 @@
+var requirejs = require('requirejs');
+
+requirejs.config({
+    //Pass the top-level main.js/index.js require
+    //function to requirejs so that node modules
+    //are loaded relative to the top-level JS file.
+    nodeRequire: require
+});
+
 var _ = require('underscore')._,
     Backbone = require('backbone'), 
 	Card = require('../public/javascripts/card.js').Card;
 	Room = require("../public/javascripts/room.js").Room,
+	Rooms = require("../public/javascripts/room.js").Rooms,
 	Player = require("../public/javascripts/player.js").Player; 
 	util = require('util'), 
 	broader = require("../model/broader.js").Broader; 
@@ -11,26 +21,18 @@ var Book = require('../public/javascripts/book.js').Book;
  * GET home page.
  */
 
-exports.index = function(req, res){
+exports.index = function(req, res){ 
 	res.render('index', { title: 'Express' })
 };
 
 
 console.log('init all tractor games');
-var Rooms = Backbone.Collection.extend({
-	getRoom: function(roomNo){ 
-		if(roomNo < 0 || roomNo > maxRooms){
-			throw "Invalid room no " + roomNo;
-		}
-		
-		return this.find(function(room){
-			return room.get("id") == roomNo;
-		});	
-	}
-}); 
 var rooms = new Rooms();    
-var maxRooms = 100;
-var dealInterval = 100;
+var dealInterval = 100; 
+exports.tractors = function(req, res){
+	console.log("------" + util.inspect(rooms));
+	res.render('tractors', {rooms: rooms, title: 'Tractors'});
+};
 exports.tractor = function(req, res){
 	var id = req.params.id;        
 	var room = rooms.getRoom(id);
