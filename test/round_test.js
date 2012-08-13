@@ -2,7 +2,7 @@ var requirejs = require('requirejs');
 requirejs.config({
     nodeRequire: require
 });
-requirejs(['util', "underscore", "../public/javascripts/app/card", "../public/javascripts/app/cards", "../public/javascripts/app/player", "../public/javascripts/app/round", "../public/javascripts/app/rooms", "../public/javascripts/app/rank"], function(util, _, Card, Cards, Player, Round, Rooms, Rank){
+requirejs(['util', "underscore", "../public/javascripts/app/cards", "../public/javascripts/app/player", "../public/javascripts/app/round", "../public/javascripts/app/rooms", "../public/javascripts/app/rank"], function(util, _, Cards, Player, Round, Rooms, Rank){
 	exports['Tractor round should be ready when 4 players join'] = function(test){
 		var tractorRound = readyGame().tractorRound;
 		test.equals(tractorRound.state, Round.RoundState.READY);
@@ -52,8 +52,8 @@ requirejs(['util', "underscore", "../public/javascripts/app/card", "../public/ja
 		var room = readyGame();
 		var tractorRound = room.tractorRound;
 		var originalDeal = tractorRound.deal;
-		var smallJoker = Card.smallJoker();
-		var heart2 = Card.heart(Rank.TWO);
+		var smallJoker = Cards.smallJoker();
+		var heart2 = Cards.heart(Rank.TWO);
 		tractorRound.deal = function(){
 			stubDeal([{player: jacky, cards: Cards.cards(smallJoker, heart2)}]);
 		};	
@@ -78,10 +78,10 @@ requirejs(['util', "underscore", "../public/javascripts/app/card", "../public/ja
 		var room = readyGame();
 		var tractorRound = room.tractorRound;
 		var originalDeal = tractorRound.deal;
-		var smallJoker = Card.smallJoker();
-		var heart2 = Card.heart(Rank.TWO);
-		var diamond1 = Card.diamond(Rank.TWO);
-		var diamond2 = Card.diamond(Rank.TWO);
+		var smallJoker = Cards.smallJoker();
+		var heart2 = Cards.heart(Rank.TWO);
+		var diamond1 = Cards.diamond(Rank.TWO);
+		var diamond2 = Cards.diamond(Rank.TWO);
 		tractorRound.deal = function(){
 			stubDeal([{player: jacky, cards: Cards.cards(smallJoker, heart2)}, {player: yao, cards: Cards.cards(smallJoker, diamond1, diamond2)}]);
 		};	
@@ -104,9 +104,9 @@ requirejs(['util', "underscore", "../public/javascripts/app/card", "../public/ja
 		var room = readyGame();
 		var tractorRound = room.tractorRound;
 		var originalDeal = tractorRound.deal;
-		var smallJoker = Card.smallJoker();
-		var heart2 = Card.heart(Rank.TWO);
-		var diamond1 = Card.diamond(Rank.TWO);
+		var smallJoker = Cards.smallJoker();
+		var heart2 = Cards.heart(Rank.TWO);
+		var diamond1 = Cards.diamond(Rank.TWO);
 		tractorRound.deal = function(){
 			stubDeal([{player: jacky, cards: Cards.cards(smallJoker, heart2)}, {player: yao, cards: Cards.cards(smallJoker, diamond1)}]);
 		};	
@@ -130,8 +130,8 @@ requirejs(['util', "underscore", "../public/javascripts/app/card", "../public/ja
 		var room = readyGame();
 		var tractorRound = room.tractorRound;
 		var originalDeal = tractorRound.deal;
-		var smallJoker = Card.smallJoker();
-		var heart3 = Card.heart(Rank.THREE);
+		var smallJoker = Cards.smallJoker();
+		var heart3 = Cards.heart(Rank.THREE);
 		tractorRound.deal = function(){
 			stubDeal([{player: jacky, cards: Cards.cards(smallJoker, heart3)}]);
 		};	
@@ -147,8 +147,8 @@ requirejs(['util', "underscore", "../public/javascripts/app/card", "../public/ja
 		var room = readyGame();
 		var tractorRound = room.tractorRound;
 		var originalDeal = tractorRound.deal;
-		var smallJoker1 = Card.smallJoker();
-		var smallJoker2 = Card.smallJoker();
+		var smallJoker1 = Cards.smallJoker();
+		var smallJoker2 = Cards.smallJoker();
 		tractorRound.deal = function(){
 			stubDeal([{player: jacky, cards: Cards.cards(smallJoker1, smallJoker2)}]);
 		};	
@@ -181,12 +181,12 @@ requirejs(['util', "underscore", "../public/javascripts/app/card", "../public/ja
 
 	exports["Player could sort card by suit"] = function(test){  
 		var jacky = new Player({name: 'Jacky'});
-	    jacky.deal(Card.smallJoker());
-		jacky.deal(Card.heart(Rank.TWO));
+	    jacky.deal(Cards.smallJoker());
+		jacky.deal(Cards.heart(Rank.TWO));
 		var cards = jacky.sortedCards();
 		test.equals(cards.length, 2);  
-		test.ok(cards[1].equals(Card.smallJoker()));
-		test.ok(cards[0].equals(Card.heart(Rank.TWO)));
+		test.ok(cards[1].equals(Cards.smallJoker()));
+		test.ok(cards[0].equals(Cards.heart(Rank.TWO)));
 		test.done();
 	}
 

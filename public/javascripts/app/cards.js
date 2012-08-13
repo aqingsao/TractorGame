@@ -4,7 +4,41 @@ if (typeof define !== 'function') {
     var define = require('amdefine')(module);
 }
 
-define(['backbone', 'underscore', 'util', './card', './rank'], function(Backbone, _, util, Card, Rank){
+define(['backbone', 'underscore', 'util', './rank', './suit'], function(Backbone, _, util, Rank, Suit){ 
+	var Card = Backbone.Model.extend({
+		initialize: function(suit, rank){
+			if(!rank.matchSuit(suit)){
+				throw "Invalid card with suit " + suit +' and rank ' + rank;
+			}
+
+			this.suit = suit;
+			this.rank = rank;
+			this.equals = function(other){
+				return this.suit.equals(other.suit) && this.rank.equals(other.rank);
+			}
+		}, 
+		isJoker: function(){
+			return this.rank.isJoker;
+		}, 
+		isBlackSuit: function(){
+			return this.suit== Suit.C || this.suit == Suit.S;
+		},
+		isRedSuit: function(){
+			return this.suit== Suit.H || this.suit == Suit.D;
+		}, 
+		isSmallJoker: function(){
+			return this.rank == Rank.SMALL_JOKER;
+		},
+		isBigJoker: function(){
+			return this.rank == Rank.BIG_JOKER;
+		}, 
+		sameSuit: function(another){
+			return this.suit == another.suit;
+		}, 
+		toString: function(){
+			return this.suit.name + this.rank.name;
+		}
+	});
 	var Cards = Backbone.Collection.extend({
 		model: Card, 
 		contains: function(card){
@@ -54,15 +88,15 @@ define(['backbone', 'underscore', 'util', './card', './rank'], function(Backbone
 			while(count-- > 0){
 				_.each(Rank, function(rank){
 					if(rank.isJoker){
-						cards.add(Card.joker(rank));
+						cards.add(Cards.joker(rank));
 					}
 				});
 				_.each(Rank, function(rank){
 					if(!rank.isJoker){
-						cards.add(Card.heart(rank));
-						cards.add(Card.spade(rank));
-						cards.add(Card.diamond(rank));
-						cards.add(Card.club(rank));
+						cards.add(Cards.heart(rank));
+						cards.add(Cards.spade(rank));
+						cards.add(Cards.diamond(rank));
+						cards.add(Cards.club(rank));
 					}
 				});
 			} 
@@ -82,7 +116,28 @@ define(['backbone', 'underscore', 'util', './card', './rank'], function(Backbone
 				cards.add(initialCards);	
 			}
 			return cards;
+		}, 
+		heart: function(rank){
+			return new Card(Suit.H, rank);
+		}, 
+		club: function(rank){
+			return new Card(Suit.C, rank);
 		},
+		diamond: function(rank){
+			return new Card(Suit.D, rank);
+		},
+		spade: function(rank){
+			return new Card(Suit.S, rank);
+		},
+		joker: function(rank){
+			return new Card(Suit.J, rank);
+		}, 
+		smallJoker: function(){
+			return Cards.joker(Rank.SMALL_JOKER);
+		},
+		bigJoker: function(){
+			return Cards.joker(Rank.BIG_JOKER);
+		}
 	}); 
 	return Cards;
 });

@@ -4,7 +4,7 @@ if (typeof define !== 'function') {
     var define = require('amdefine')(module);
 }
   
-define(['backbone', 'util', './card', './rank', './pair'], function(Backbone, util, Card, Rank, Pair){
+define(['backbone', 'util', './rank', './pair'], function(Backbone, util, Rank, Pair){
 	var Seat = Backbone.Model.extend({
 		initialize: function(){
 			this.rank = Rank.TWO;

@@ -4,7 +4,7 @@ if (typeof define !== 'function') {
     var define = require('amdefine')(module);
 }
 
-define(['backbone', 'underscore', 'util', './card', './cards'], function(Backbone, _, util, Card, Cards){
+define(['backbone', 'underscore', 'util', './cards'], function(Backbone, _, util, Cards){
 	var Flipping = function(player, cards, currentRank){     
 		var jokers = Cards.cards(cards.filter(function(card){return card.isJoker();}));
 		var trumps = Cards.cards(cards.reject(function(card){return card.isJoker();})); 
