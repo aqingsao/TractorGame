@@ -3,29 +3,29 @@ var requirejs = require('requirejs');
 if (typeof define !== 'function') {
     var define = require('amdefine')(module);
 }
-define(['backbone', 'util', './card', './seat', './tractor', '../../model/broader'], function(Backbone, util, Card, Seat, Round){
+define(['backbone', 'util', './cards', './seats', './round', '../broader'], function(Backbone, util, Cards, Seats, Round, broader){
 	var Room = Backbone.Model.extend({
 		initialize: function(dealInterval){
 			this.seats = Seats.prepareSeats();
-			this.roomState = Room.RoomState.WAITING;
-			this.cards = Card.decks(2);
+			this.roomState = Rooms.RoomState.WAITING;
+			this.cards = Cards.decks(2);
 			this.dealInterval = 1 || dealInterval;
 		},
 		join: function(player, seatId){
-			if(this.roomState != Room.RoomState.WAITING){
+			if(this.roomState != Rooms.RoomState.WAITING){
 				throw "Cannot join this game";
 			}
 			// event.join 		
 			this.seats.join(player, seatId);
 			if(this.seats.full()){
 				// event.ready
-				this.roomState = Room.RoomState.PLAYING;
+				this.roomState = Rooms.RoomState.PLAYING;
 				this.nextRound(); 
 				broader.onGameReady(this.get("id"));
 			}
 		},
 		start: function(){
-			if(this.roomState != Room.RoomState.PLAYING){
+			if(this.roomState != Rooms.RoomState.PLAYING){
 				throw "Game cannot be started";
 			}
 			this.tractorRound.start();
@@ -47,33 +47,29 @@ define(['backbone', 'util', './card', './seat', './tractor', '../../model/broade
 			this.tractorRound = new Round(this.cards, this.dealInterval, this.seats, this.get("id"));
 		}, 
 		canFlip: function(){ 
-			return this.roomState == Room.RoomState.PLAYING && this.tractorRound != undefined && this.tractorRound.state == Round.RoundState.DEALING;
+			return this.roomState == Rooms.RoomState.PLAYING && this.tractorRound != undefined && this.tractorRound.state == Round.RoundState.DEALING;
 		}, 
 		canStart: function(){
-			return this.roomState == Room.RoomState.PLAYING && this.tractorRound != undefined && this.tractorRound.state == Round.RoundState.READY; 
+			return this.roomState == Rooms.RoomState.PLAYING && this.tractorRound != undefined && this.tractorRound.state == Round.RoundState.READY; 
 		},
 		// When at least player could flip, but he did not flip, will restart this round.
 		noFlipping: function(){
 			// event.restart round
 		}
+	});
+
+	var Rooms = Backbone.Collection.extend({ 
+		initialize: function(){
+			this.dealInterval = 100;
+		},
+		create: function(){  
+			var count = this.size();
+			var room = new Room({id: count + 1, dealInterval: this.dealInterval});
+			this.add(room);                                  
+			return room;
+		}
 	}, {
 		RoomState: {WAITING: {value: 0, name: 'Waiting'}, PLAYING: {value: 3, name:'Playing'}, DONE: {value: 4, name: 'Done'}}
 	});
-
-	var maxRooms = 100;
-	var Rooms = Backbone.Collection.extend({
-		getRoom: function(roomNo){ 
-			if(roomNo < 0 || roomNo > maxRooms){
-				throw "Invalid room no " + roomNo;
-			}
-
-			return this.find(function(room){
-				return room.get("id") == roomNo;
-			});	
-		}
-	}); 
-	return {
-		Room: Room,
-		Rooms: Rooms
-	};
+	return Rooms;
 });

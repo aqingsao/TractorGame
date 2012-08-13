@@ -28,18 +28,16 @@ exports.index = function(req, res){
 
 console.log('init all tractor games');
 var rooms = new Rooms();    
-var dealInterval = 100; 
 exports.tractors = function(req, res){
 	console.log("------" + util.inspect(rooms));
 	res.render('tractors', {rooms: rooms, title: 'Tractors'});
 };
 exports.tractor = function(req, res){
 	var id = req.params.id;        
-	var room = rooms.getRoom(id);
+	var room = rooms.get(id);
 	if(room == undefined){
 		console.log("Open a new tractor room: " + id);
-		room = new Room({id: id, dealInterval: dealInterval}); 
-		rooms.add(room);   
+		room = rooms.create(); 
 		broader.onNewRoom(id);
 	}    
 	res.render('tractor', {tractorGame: room, title: 'Tractor'});
@@ -48,7 +46,7 @@ exports.tractor = function(req, res){
 exports.roomJoin = function(req, res){
 	var id = req.params.id;
 	var seatId = req.params.seatId;
-	var room = rooms.getRoom(id);
+	var room = rooms.get(id);
 	if(room == undefined){
 		throw "Invalid room id " + id;
 	}
@@ -67,7 +65,7 @@ exports.roomJoin = function(req, res){
 
 exports.roundStart = function(req, res){
 	var id = req.params.id;
-	var room = rooms.getRoom(id);
+	var room = rooms.get(id);
 	try{
 		if(room == undefined){
 			throw "Invalid room id " + id;
@@ -84,7 +82,7 @@ exports.roundStart = function(req, res){
 exports.tractorFlip = function(req, res){
 	var id = req.params.id; 
 	var playerName = req.body.name;
-	var room = rooms.getRoom(id);
+	var room = rooms.get(id);
 	try{
 		if(room == undefined){
 			throw "Invalid room id " + id;
@@ -96,9 +94,4 @@ exports.tractorFlip = function(req, res){
 		console.log("Failed to flip in room " + id + ": " + error);
 		res.json({error: error, tractorGame: room.toJSON()}, 400);
 	}
-};  
-exports.books = function(req, res){  
-	var books = new Backbone.Collection();
-	books.add(new Book("zhang san"));
-	res.render('books', {books: books, title:'books'});
-}
+};
