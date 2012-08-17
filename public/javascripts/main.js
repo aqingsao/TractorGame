@@ -32,7 +32,7 @@ require(['jquery', 'underscore', 'backbone', 'app/rooms'], function($, _, Backbo
 		$(".newRoom").click(function(){
 			var form = $(this);                      
 			$.post($(this).attr("action"), function(data){
-				 alert("create room successfully with room id ");
+				 alert("create room successfully with room id " + data.id);
 			}).error(function(data){
 				$(".message.error").removeClass("hidden");
 			});	

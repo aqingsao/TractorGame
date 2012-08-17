@@ -1,10 +1,15 @@
 define(['app/cards', 'app/rooms', 'app/player', 'broader'], function(Cards, Rooms, Player, broader){
 	var rooms = new Rooms();
 	return{
-		rooms: function(req, res){
+		roomsIndex: function(req, res){
 			res.render('rooms', {title: 'Rooms'});
 		}, 
-		jsonRooms: function(req, res){
+		roomsCreate: function(req, res){
+			var room = rooms.create(); 
+			console.log("Create room " + room.toJSON());
+			res.json(room.toJSON());
+		}, 
+		roomsIndexJson: function(req, res){
 			res.json(rooms.toJSON());
 		},
 		index: function(req, res){ 

@@ -34,13 +34,15 @@ requirejs(['express', 'routes/index.js', 'socket.io', 'broader'], function(expre
   	
   	// Routes
   	app.get('/', routes.index);
-  	app.get('/rooms', routes.rooms);
+  	app.get('/rooms', routes.roomsIndex);
+  	app.post('/rooms', routes.roomsCreate);
+  	app.get('/data/rooms', routes.roomsIndexJson);
+
   	app.get('/room/:id', routes.room);
   	app.post('/room/:id/join/:seatId', routes.roomJoin);
+
   	app.post('/room/:id/start', routes.roundStart);
   	app.post('/room/:id/flip', routes.tractorFlip);
-  	// Some json request
-  	app.get('/data/rooms', routes.jsonRooms);
   	
   	app.listen(3000, function(){
   	  console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);

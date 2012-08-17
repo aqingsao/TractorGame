@@ -1,19 +1,17 @@
 define(function(require, exports, module){ 
-	if(typeof(require.nodeRequire) == 'function'){
-		var r2 = require.nodeRequire;
-		var Backbone = r2('backbone');
+	if(typeof(requirejs.nodeRequire) == 'function'){
+		var r2 = requirejs.nodeRequire;
 		var _ = r2("underscore");
-		// var util = r2("util");    
+		var util = r2("util");    
 	}
 	else{
 		var r2 = require;  
-		var Backbone = r2('backbone');
 		var _ = r2("underscore");
-		// var util = r2("util");    
+		var util = {};    
 	}
 	return { 
-		Backbone: Backbone,
+		Backbone: r2('backbone'),
 		_: _,              
-		util: {}
+		util: util
 	};
 });
