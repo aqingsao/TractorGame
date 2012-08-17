@@ -1,11 +1,5 @@
-var requirejs = require('requirejs');
-
-if (typeof define !== 'function') {
-    var define = require('amdefine')(module);
-}
-
-define(['backbone', 'underscore', 'util', './flipping', '../broader'], function(Backbone, _, util, Flipping, broader){  
-	var Round = Backbone.Model.extend({
+define(['common', 'app/flipping', 'broader'], function(Common, Flipping, broader){  
+	var Round = Common.Backbone.Model.extend({
 		initialize: function(cards, dealInterval, seats, roomNo){
 			this.cards = cards;		
 			this.state = Round.RoundState.READY;

@@ -1,10 +1,4 @@
-var requirejs = require('requirejs');
-
-if (typeof define !== 'function') {
-    var define = require('amdefine')(module);
-}
-
-define(['backbone', 'underscore', 'util', './cards'], function(Backbone, _, util, Cards){
+define(['common', 'app/cards'], function(Common, Cards){
 	var Flipping = function(player, cards, currentRank){     
 		var jokers = Cards.cards(cards.filter(function(card){return card.isJoker();}));
 		var trumps = Cards.cards(cards.reject(function(card){return card.isJoker();})); 

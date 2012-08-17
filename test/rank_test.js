@@ -1,9 +1,10 @@
 var requirejs = require('requirejs');
 requirejs.config({
-    nodeRequire: require
-});
+	baseUrl: 'public/javascripts', 
+	nodeRequire: require
+}); 
  
-requirejs(['../public/javascripts/app/rank.js'], function(Rank){  
+requirejs(['app/rank'], function(Rank){  
 	exports['Rank equals'] = function(test){
 		test.ok(Rank.QUEEN.equals(Rank.QUEEN));
 		test.ok(!Rank.QUEEN.equals(Rank.KING));

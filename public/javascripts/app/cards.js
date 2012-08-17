@@ -1,11 +1,5 @@
-var requirejs = require('requirejs');
-
-if (typeof define !== 'function') {
-    var define = require('amdefine')(module);
-}
-
-define(['backbone', 'underscore', 'util', './rank', './suit'], function(Backbone, _, util, Rank, Suit){ 
-	var Card = Backbone.Model.extend({
+define(['common', 'app/rank', 'app/suit'], function(Common, Rank, Suit){ 
+	var Card = Common.Backbone.Model.extend({
 		initialize: function(suit, rank){
 			if(!rank.matchSuit(suit)){
 				throw "Invalid card with suit " + suit +' and rank ' + rank;
@@ -39,7 +33,7 @@ define(['backbone', 'underscore', 'util', './rank', './suit'], function(Backbone
 			return this.suit.name + this.rank.name;
 		}
 	});
-	var Cards = Backbone.Collection.extend({
+	var Cards = Common.Backbone.Collection.extend({
 		model: Card, 
 		contains: function(card){
 			return this.any(function(c){
@@ -47,7 +41,7 @@ define(['backbone', 'underscore', 'util', './rank', './suit'], function(Backbone
 			});
 		}, 
 		shuffle: function(){
-			var cards = Backbone.Collection.prototype.shuffle.call(this);
+			var cards = Common.Backbone.Collection.prototype.shuffle.call(this);
 			this.models = cards;
 			return this;
 		}, 
@@ -86,12 +80,12 @@ define(['backbone', 'underscore', 'util', './rank', './suit'], function(Backbone
 			var cards = new Cards();
 			
 			while(count-- > 0){
-				_.each(Rank, function(rank){
+				Common._.each(Rank, function(rank){
 					if(rank.isJoker){
 						cards.add(Cards.joker(rank));
 					}
 				});
-				_.each(Rank, function(rank){
+				Common._.each(Rank, function(rank){
 					if(!rank.isJoker){
 						cards.add(Cards.heart(rank));
 						cards.add(Cards.spade(rank));
@@ -108,7 +102,7 @@ define(['backbone', 'underscore', 'util', './rank', './suit'], function(Backbone
 				return cards;
 			}
 			if(initialCards.constructor === Array){
-				_.each(initialCards, function(card){
+				Common._.each(initialCards, function(card){
 					cards.add(card);
 				});
 			}

@@ -4,9 +4,9 @@ if (typeof define !== 'function') {
     var define = require('amdefine')(module);
 }
 
-define(['backbone', 'underscore', 'util'], function(Backbone, _, util){
+define(['common'], function(Common){
 	var io;
-	var Connection = Backbone.Model.extend({
+	var Connection = Common.Backbone.Model.extend({
 		initialize: function(roomNo){
 			this.roomNo = roomNo;  
 			this.socketIds = [];
@@ -16,7 +16,7 @@ define(['backbone', 'underscore', 'util'], function(Backbone, _, util){
 		}, 
 		broadcast: function(event, data){
 			// console.log("Broadcast event " + event +" to " + this.socketIds.length + " sockets: " + util.inspect(data));
-			 _.each(this.socketIds, function(socketId){   
+			 Common._.each(this.socketIds, function(socketId){   
 				try{  
 					console.log("Broadcast event " + event +" to " + socketId);
 					io.sockets.socket(socketId).emit(event, data);
@@ -26,9 +26,9 @@ define(['backbone', 'underscore', 'util'], function(Backbone, _, util){
 			}); 
 		}
 	});
-	var Broader = Backbone.Model.extend({ 
+	var Broader = Common.Backbone.Model.extend({ 
 		initialize: function(){
-			this.connections = new Backbone.Collection();
+			this.connections = new Common.Backbone.Collection();
 		},
 		init: function(tempIO){   
 	   	  	io = tempIO;

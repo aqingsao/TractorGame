@@ -3,12 +3,11 @@ div#main
 	div.summary
 		div
 			当前共有
-			span.count= rooms.size()
+			span.count= 0
 			个房间 ，您可以加入已有的房间，也可以创建自己的房间
 			form.newRoom(action="/tractors", method="POST", onclick="return false;")
 				input(value='创建新房间', type='submit')= '点击加入'
 			span.message.error.hidden= '无法创建新房间'
-	div= rooms.size()
 	div.rooms
 		
 div#footer                                                                                                            
@@ -17,7 +16,6 @@ script#room-template(type="text/template")
 	div.room(id="room")= 'room '
 
 script(src='/javascripts/jquery-1.7.2.min.js') 
-script(src="/socket.io/socket.io.js")
-script(src="/javascripts/require.js")
-script(src="/javascripts/room.js")
-script(src="/javascripts/rooms-view.js")
+script(src='/javascripts/require.js')
+script(src='/javascripts/main.js') 
+# script(src='/javascripts/app/cards.js')

@@ -1,8 +1,9 @@
 var requirejs = require('requirejs');
 requirejs.config({
-    nodeRequire: require
-});
-requirejs(['util', "../public/javascripts/app/cards", "../public/javascripts/app/rank"], function(util, Cards, Rank){
+	baseUrl: 'public/javascripts', 
+	nodeRequire: require
+}); 
+requirejs(['common', "app/cards", "app/rank"], function(Common, Cards, Rank){
 	exports['Card equals'] = function(test){
 		test.ok(Cards.heart(Rank.QUEEN).equals(Cards.heart(Rank.QUEEN)));
 		test.ok(Cards.smallJoker().equals(Cards.smallJoker()));

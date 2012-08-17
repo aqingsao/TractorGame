@@ -1,11 +1,5 @@
-var requirejs = require('requirejs');
-
-if (typeof define !== 'function') {
-    var define = require('amdefine')(module);
-}
-  
-define(['backbone', 'util', './rank', './pair'], function(Backbone, util, Rank, Pair){
-	var Seat = Backbone.Model.extend({
+define(['common', 'app/rank', 'app/pair'], function(Common, Rank, Pair){
+	var Seat = Common.Backbone.Model.extend({
 		initialize: function(){
 			this.rank = Rank.TWO;
 		},	
@@ -23,14 +17,14 @@ define(['backbone', 'util', './rank', './pair'], function(Backbone, util, Rank, 
 			return this.player == undefined ? "" : this.player.get("name");
 		}
 	}); 
-	var Seats = Backbone.Model.extend({
+	var Seats = Common.Backbone.Model.extend({
 		initialize: function(seat0, seat1, seat2, seat3){
-			this.seats = new Backbone.Collection();
+			this.seats = new Common.Backbone.Collection();
 			this.seats.add(seat0);
 			this.seats.add(seat1);
 			this.seats.add(seat2);
 			this.seats.add(seat3);
-			this.pairs = new Backbone.Collection();
+			this.pairs = new Common.Backbone.Collection();
 			this.pairs.add(new Pair("team0", seat0, seat2)); 
 			this.pairs.add(new Pair("team1", seat1, seat3));
 		},

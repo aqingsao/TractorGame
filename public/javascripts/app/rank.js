@@ -1,8 +1,3 @@
-var requirejs = require('requirejs');
-
-if (typeof define !== 'function') {
-    var define = require('amdefine')(module);
-}
 define(function(){ 
 	var Rank = function(name, value, point, isJoker){
 		this.name = name;

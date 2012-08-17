@@ -1,10 +1,5 @@
-var requirejs = require('requirejs');
-
-if (typeof define !== 'function') {
-    var define = require('amdefine')(module);
-}
-define(['backbone', 'util', './cards', './seats', './round', '../broader'], function(Backbone, util, Cards, Seats, Round, broader){
-	var Room = Backbone.Model.extend({
+define(['common', 'app/cards', 'app/seats', 'app/round', 'broader'], function(Common, Cards, Seats, Round, broader){ 
+	var Room = Common.Backbone.Model.extend({
 		initialize: function(dealInterval){
 			this.seats = Seats.prepareSeats();
 			this.roomState = Rooms.RoomState.WAITING;
@@ -58,7 +53,7 @@ define(['backbone', 'util', './cards', './seats', './round', '../broader'], func
 		}
 	});
 
-	var Rooms = Backbone.Collection.extend({ 
+	var Rooms = Common.Backbone.Collection.extend({ 
 		initialize: function(){
 			this.dealInterval = 100;
 		},

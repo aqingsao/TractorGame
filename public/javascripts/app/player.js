@@ -1,17 +1,11 @@
-var requirejs = require('requirejs');
-
-if (typeof define !== 'function') {
-    var define = require('amdefine')(module);
-}
-
-define(['backbone', 'underscore', 'util', './cards'], function(Backbone, _, util, Cards){
-	var Player = Backbone.Model.extend({
+define(['common', 'app/cards'], function(Common, Cards){
+	var Player = Common.Backbone.Model.extend({
 		initialize: function(){
 			this.cards = Cards.cards();
 		}, 
 		hasCards: function(cards){ 
 			var that = this;
-			_.each(cards, function(card){
+			Common._.each(cards, function(card){
 				if(!that.cards.contains(card)){
 					return false;
 				}

@@ -1,9 +1,10 @@
 var requirejs = require('requirejs');
 requirejs.config({
-    nodeRequire: require
-});
+	baseUrl: 'public/javascripts', 
+	nodeRequire: require
+}); 
  
-requirejs(['../public/javascripts/app/rooms.js', '../public/javascripts/app/player.js'], function(Rooms, Player){  
+requirejs(['app/rooms', 'app/player'], function(Rooms, Player){  
 	var rooms = new Rooms();
 	exports['Room is new'] = function(test){
 		var room = rooms.create();

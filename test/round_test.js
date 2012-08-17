@@ -1,8 +1,9 @@
 var requirejs = require('requirejs');
 requirejs.config({
-    nodeRequire: require
-});
-requirejs(['util', "underscore", "../public/javascripts/app/cards", "../public/javascripts/app/player", "../public/javascripts/app/round", "../public/javascripts/app/rooms", "../public/javascripts/app/rank"], function(util, _, Cards, Player, Round, Rooms, Rank){
+	baseUrl: 'public/javascripts', 
+	nodeRequire: require
+}); 
+requirejs(['common', "app/cards", "app/player", "app/round", "app/rooms", "app/rank"], function(Common, Cards, Player, Round, Rooms, Rank){
 	exports['Tractor round should be ready when 4 players join'] = function(test){
 		var tractorRound = readyGame().tractorRound;
 		test.equals(tractorRound.state, Round.RoundState.READY);
@@ -196,7 +197,7 @@ requirejs(['util', "underscore", "../public/javascripts/app/cards", "../public/j
 	var yao = new Player({name: 'Yao'});
 
 	function stubDeal(cardsForPlayer){
-		_.each(cardsForPlayer, function(obj){
+		Common._.each(cardsForPlayer, function(obj){
 			var player = obj.player;
 			var cards = obj.cards;
 			cards.each(function(card){

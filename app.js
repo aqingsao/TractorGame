@@ -1,49 +1,50 @@
+var requirejs = require('requirejs');
+requirejs.config({
+	baseUrl: 'public/javascripts', 
+	paths: {
+		routes: 'routes'
+	},
+	nodeRequire: require
+}); 
+ 
+if (typeof define !== 'function') {
+    var define = require('amdefine')(module);
+}
 
-/**
- * Module dependencies.
- */
-
-var express = require('express')
-  , routes = require('./routes')
-  , io = require("socket.io")
-  , util = require('util')
-  , broader = require('./model/broader.js').Broader;
-
-var app = module.exports = express.createServer(), 
-	io = io.listen(app);
-
-// Configuration
-
-app.configure(function(){
-  app.set('views', __dirname + '/views');
-  app.set('view engine', 'jade');
-  app.use(express.bodyParser());
-  app.use(express.methodOverride());
-  app.use(app.router);
-  app.use(express.static(__dirname + '/public'));
+requirejs(['express', 'routes/index.js', 'socket.io', 'broader'], function(express, routes, io, broader){
+   	var app = module.exports = express.createServer();
+	var io = io.listen(app);
+  	
+  	app.configure(function(){
+  	  app.set('views', __dirname + '/views');
+  	  app.set('view engine', 'jade');
+  	  app.use(express.bodyParser());
+  	  app.use(express.methodOverride());
+  	  app.use(app.router);
+  	  app.use(express.static(__dirname + '/public'));
+  	});
+  	
+  	app.configure('development', function(){
+  	  app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
+  	});
+  	
+  	app.configure('production', function(){
+  	  app.use(express.errorHandler());
+  	});
+  	
+  	// Routes
+  	app.get('/', routes.index);
+  	app.get('/rooms', routes.rooms);
+  	app.get('/room/:id', routes.room);
+  	app.post('/room/:id/join/:seatId', routes.roomJoin);
+  	app.post('/room/:id/start', routes.roundStart);
+  	app.post('/room/:id/flip', routes.tractorFlip);
+  	// Some json request
+  	app.get('/data/rooms', routes.jsonRooms);
+  	
+  	app.listen(3000, function(){
+  	  console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
+  	});
+  	
+  	broader.init(io);  
 });
-
-app.configure('development', function(){
-  app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
-});
-
-app.configure('production', function(){
-  app.use(express.errorHandler());
-});
-
-// Routes
-
-app.get('/', routes.index);
-app.get('/books', routes.books);
-app.get('/tractors', routes.tractors);
-app.get('/tractor/:id', routes.tractor);
-app.post('/tractor/:id/join/:seatId', routes.roomJoin);
-app.post('/tractor/:id/start', routes.roundStart);
-app.post('/tractor/:id/flip', routes.tractorFlip);
-
-
-app.listen(3000, function(){
-  console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
-});
-       
-broader.init(io);

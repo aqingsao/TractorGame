@@ -1,8 +1,12 @@
-$(function(){
+$(function(){  
+	$.get("/data/rooms", function(data){
+		var rooms = JSON.parse(data);
+		alert(rooms);
+	});
 	$(".newRoom").click(function(){
 		var form = $(this);                      
 		$.post($(this).attr("action"), function(data){
-			 
+			 alert("create room successfully with room id ");
 		}).error(function(data){
 			$(".message.error").removeClass("hidden");
 		});	
@@ -33,33 +37,15 @@ $(function(){
      return this;
    }
  });
-
- // The Application
- // ---------------
-
- // Our overall **AppView** is the top-level piece of UI.
  var AppView = Backbone.View.extend({
-
-   // Instead of generating a new element, bind to the existing skeleton of
-   // the App already present in the HTML.
    el: $(".rooms"),
-
-   // Our template for the line of statistics at the bottom of the app.
    roomsTemplate: _.template($('#rooms-template').html()),
-   
-   // At initialization we bind to the relevant events on the `Todos`
-   // collection, when items are added or changed. Kick things off by
-   // loading any preexisting todos that might be saved in *localStorage*.
    initialize: function() {
      
    },
-
-   // Re-rendering the App just means refreshing the statistics -- the rest
-   // of the app doesn't change.
    render: function() {
      
    }
  });
 
- // Finally, we kick things off by creating the **App**.
- var App = new AppView;
+ // var App = new AppView;

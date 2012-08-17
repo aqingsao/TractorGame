@@ -1,8 +1,9 @@
 var requirejs = require('requirejs');
 requirejs.config({
-    nodeRequire: require
-});
-requirejs(['util', "../public/javascripts/app/cards", "../public/javascripts/app/flipping", "../public/javascripts/app/player", "../public/javascripts/app/rank"], function(util, Cards, Flipping, Player, Rank){
+	baseUrl: 'public/javascripts', 
+	nodeRequire: require
+}); 
+requirejs(['common', "app/cards", "app/flipping", "app/player", "app/rank"], function(Common, Cards, Flipping, Player, Rank){
 	exports['Cannot flip when jokers size is 0'] = function(test){
 		var flipping = new Flipping(jacky, Cards.cards());
 		test.ok(!flipping.isValid());

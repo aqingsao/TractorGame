@@ -999,7 +999,7 @@ var requirejs, require, define;
                         this.exports = exports;
 
                         if (this.map.isDefine && !this.ignore) {
-                            defined[id] = exports;
+                            defined[id] = exports;  
 
                             if (req.onResourceLoad) {
                                 req.onResourceLoad(context, this.map, this.depMaps);
@@ -1422,7 +1422,7 @@ var requirejs, require, define;
                     //Normalize module name, if it contains . or ..
                     map = makeModuleMap(moduleName, relMap, false, true);
                     id = map.id;
-
+                    
                     if (!hasProp(defined, id)) {
                         return onError(makeError('notloaded', 'Module name "' +
                                     id +
