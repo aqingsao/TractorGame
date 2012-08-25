@@ -4,6 +4,7 @@ requirejs.config({
 	nodeRequire: require
 }); 
 requirejs(['common', "app/cards", "app/flipping", "app/player", "app/rank"], function(Common, Cards, Flipping, Player, Rank){
+	console.log("_________in flipping test: " + Common._.isObject("roomState"));
 	exports['Cannot flip when jokers size is 0'] = function(test){
 		var flipping = new Flipping(jacky, Cards.cards());
 		test.ok(!flipping.isValid());

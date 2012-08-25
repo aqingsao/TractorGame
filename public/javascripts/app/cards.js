@@ -12,7 +12,7 @@ define(['common', 'app/rank', 'app/suit'], function(Common, Rank, Suit){
 			}
 		}, 
 		isJoker: function(){
-			return this.rank.isJoker;
+			return this.rank.isJoker();
 		}, 
 		isBlackSuit: function(){
 			return this.suit== Suit.C || this.suit == Suit.S;
@@ -30,7 +30,7 @@ define(['common', 'app/rank', 'app/suit'], function(Common, Rank, Suit){
 			return this.suit == another.suit;
 		}, 
 		toString: function(){
-			return this.suit.name + this.rank.name;
+			return this.suit.get('name') + this.rank.get('name');
 		}
 	});
 	var Cards = Common.Backbone.Collection.extend({
@@ -80,13 +80,13 @@ define(['common', 'app/rank', 'app/suit'], function(Common, Rank, Suit){
 			var cards = new Cards();
 			
 			while(count-- > 0){
-				Common._.each(Rank, function(rank){
-					if(rank.isJoker){
+				Common._.each(Rank, function(rank){ 
+					if(rank.isJoker()){
 						cards.add(Cards.joker(rank));
 					}
 				});
 				Common._.each(Rank, function(rank){
-					if(!rank.isJoker){
+					if(!rank.isJoker()){
 						cards.add(Cards.heart(rank));
 						cards.add(Cards.spade(rank));
 						cards.add(Cards.diamond(rank));

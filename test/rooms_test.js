@@ -4,7 +4,8 @@ requirejs.config({
 	nodeRequire: require
 }); 
  
-requirejs(['app/rooms', 'app/player'], function(Rooms, Player){  
+requirejs(['common', 'app/rooms', 'app/player'], function(Common, Rooms, Player){  
+	console.log("_________in rooms test: " + Common._.isObject("roomState"));
 	var rooms = new Rooms();
 	exports['Room is new'] = function(test){
 		var room = rooms.create();

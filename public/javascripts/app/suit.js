@@ -1,12 +1,11 @@
-define(function(){ 
-	var Suit = function(name){
-		this.name = name,
-		this.equals = function(other){
-			return this.name == other.name;
+define(['common'], function(Common){ 
+	var Suit = Common.Backbone.Model.extend({  
+		equals: function(other){
+			return this.get('name') == other.get('name');
 		},
-		this.isJoker = function(){
-			return "Joker" == this.name;
+		isJoker: function(){
+			return "Joker" == this.get('name');
 		}
-	};
-	return {H: new Suit('HEART'), S: new Suit("SPADE"), D: new Suit("DIAMOND"), C: new Suit("CLUB"), J: new Suit("Joker")}
+	});
+	return {H: new Suit({name: 'HEART'}), S: new Suit({name: "SPADE"}), D: new Suit({name: "DIAMOND"}), C: new Suit({name: "CLUB"}), J: new Suit({name: "Joker"})}
 });

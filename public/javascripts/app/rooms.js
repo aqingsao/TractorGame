@@ -1,21 +1,19 @@
 define(['common', 'app/cards', 'app/seats', 'app/round', 'broader'], function(Common, Cards, Seats, Round, broader){ 
 	var Room = Common.Backbone.Model.extend({
 		defaults: {
-			cards: Cards.decks(2),
 			dealInterval: 1
 		},                 
 		initialize: function(){
-			this.set('seats', Seats.prepareSeats());
-			this.set('roomState', Rooms.RoomState.WAITING);
+			this.set({seats: Seats.prepareSeats(), roomState: Rooms.RoomState.WAITING, cards: Cards.decks(2)});
 		},
 		join: function(player, seatId){
 			if(this.get('roomState') != Rooms.RoomState.WAITING){
 				throw "Cannot join this game";
 			}         
 			this.get('seats').join(player, seatId);
-			if(this.get('seats').full()){
-				// event.ready
-				this.set('roomState', Rooms.RoomState.PLAYING);
+			if(this.get('seats').full()){ 
+				// event.ready 				
+				this.set({roomState: Rooms.RoomState.PLAYING});
 				this.nextRound(); 
 				broader.onGameReady(this.get("id"));
 			}

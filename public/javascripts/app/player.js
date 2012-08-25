@@ -1,8 +1,9 @@
 define(['common', 'app/cards'], function(Common, Cards){
 	var Player = Common.Backbone.Model.extend({
-		initialize: function(){
+		initialize: function(name){
+			this.set({name: name});
 			this.cards = Cards.cards();
-		}, 
+		},
 		hasCards: function(cards){ 
 			var that = this;
 			Common._.each(cards, function(card){
