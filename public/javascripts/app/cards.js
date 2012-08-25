@@ -5,32 +5,31 @@ define(['common', 'app/rank', 'app/suit'], function(Common, Rank, Suit){
 				throw "Invalid card with suit " + suit +' and rank ' + rank;
 			}
 
-			this.suit = suit;
-			this.rank = rank;
-			this.equals = function(other){
-				return this.suit.equals(other.suit) && this.rank.equals(other.rank);
-			}
+			this.set({suit: suit, rank: rank});
 		}, 
 		isJoker: function(){
-			return this.rank.isJoker();
+			return this.get('rank').isJoker();
 		}, 
 		isBlackSuit: function(){
-			return this.suit== Suit.C || this.suit == Suit.S;
+			return this.get('suit')== Suit.C || this.get('suit') == Suit.S;
 		},
 		isRedSuit: function(){
-			return this.suit== Suit.H || this.suit == Suit.D;
+			return this.get('suit')== Suit.H || this.get('suit') == Suit.D;
 		}, 
 		isSmallJoker: function(){
-			return this.rank == Rank.SMALL_JOKER;
+			return this.get('rank') == Rank.SMALL_JOKER;
 		},
 		isBigJoker: function(){
-			return this.rank == Rank.BIG_JOKER;
+			return this.get('rank') == Rank.BIG_JOKER;
 		}, 
 		sameSuit: function(another){
-			return this.suit == another.suit;
+			return this.get('suit') == another.suit;
 		}, 
+		equals: function(other){
+			return this.get('suit').equals(other.get('suit')) && this.get('rank').equals(other.get('rank'));
+		},
 		toString: function(){
-			return this.suit.get('name') + this.rank.get('name');
+			return this.get('suit').get('name') + ' ' + this.get('rank').get('name');
 		}
 	});
 	var Cards = Common.Backbone.Collection.extend({
@@ -59,9 +58,9 @@ define(['common', 'app/rank', 'app/suit'], function(Common, Rank, Suit){
 			if(this.size() < 2){
 				return true;
 			}
-			var suit = this.at(0).suit;
+			var suit = this.at(0).get('suit');
 			return this.all(function(c){
-				return c.suit == suit;
+				return c.get('suit') == suit;
 			});
 		}, 
 		canFlip: function(){

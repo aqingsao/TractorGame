@@ -33,8 +33,8 @@ requirejs(['common', "app/cards", "app/rank"], function(Common, Cards, Rank){
 
 	exports["show have suit name and rank name"] = function(test){
 		var heart2 = Cards.heart(Rank.TWO);
-		test.equals(heart2.suit.get('name'), 'HEART');
-		test.equals(heart2.rank.get('name'), '2'); 
+		test.equals(heart2.get('suit').get('name'), 'HEART');
+		test.equals(heart2.get('rank').get('name'), '2'); 
 		test.done();
 	};	
 	
