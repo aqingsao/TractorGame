@@ -45,7 +45,7 @@ define(['common'], function(Common){
 		   this.getConnection(roomNo).broadcast("onGameReady", {roomNo: roomNo});  
 		}, 
 		onDeal: function(roomNo, card, seat, round){
-		   this.getConnection(roomNo).broadcast("onDeal", {roomNo: roomNo, card: {suit: card.suit.name, rank: card.rank.name}, seat: seat.get("id"), round: round});    
+		   this.getConnection(roomNo).broadcast("onDeal", {roomNo: roomNo, card: {suit: card.get('suit').get('name'), rank: card.get('rank').get('name')}, seat: seat.get("id"), round: round});    
 		},
 		onDealFinish: function(roomNo){
 		   this.getConnection(roomNo).broadcast("onDealFinish", {roomNo: roomNo});  

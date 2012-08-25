@@ -20,11 +20,11 @@ requirejs(['common', "app/cards", "app/player", "app/round", "app/rooms", "app/r
 
 		var totalTime = 0;
 		var assertion = function(){
-			if(yao.cards.size() < 25 && totalTime < 10){
+			if(yao.get('cards').size() < 25 && totalTime < 10){
 				setTimeout(assertion, 1000);
 			}
 			else{
-				test.equals(yao.cards.size(), 25);
+				test.equals(yao.get('cards').size(), 25);
 				test.done();
 			}
 		}

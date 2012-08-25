@@ -1,30 +1,31 @@
 define(['common', 'app/cards'], function(Common, Cards){
 	var Player = Common.Backbone.Model.extend({
 		initialize: function(name){
-			this.set({name: name});
-			this.cards = Cards.cards();
+			this.set({name: name, cards: Cards.cards()});
 		},
 		hasCards: function(cards){ 
-			var that = this;
-			Common._.each(cards, function(card){
-				if(!that.cards.contains(card)){
-					return false;
-				}
-			});
-			return true;
+			var that = this;  
+			if(Common._.isArray(cards)){
+				return Common._.all(cards, function(card){
+					return that.get('cards').contains(card);
+				});
+			}
+			else{
+				return that.get('cards').contains(cards);
+			}
 		}, 
 		deal: function(card){
-			this.cards.add(card);
+			this.get('cards').add(card);
 		}, 
 		equals: function(another){
 			return this.get("name") == another.get("name");
 		}, 
 		canFlip: function(){
-			return this.cards.canFlip();
+			return this.get('cards').canFlip();
 		}, 
 		sortedCards: function(){
-			return this.cards.sortBy(function(card){
-				return card.rank.value;
+			return this.get('cards').sortBy(function(card){
+				return card.get('rank').get('value');
 			});
 		}
 	});
