@@ -43,6 +43,8 @@ requirejs(['express', 'routes/index.js', 'socket.io', 'broader'], function(expre
 
   	app.post('/room/:id/start', routes.roundStart);
   	app.post('/room/:id/flip', routes.tractorFlip);
+  	             
+	app.get('/data/books', routes.booksIndexJson);
   	
   	app.listen(3000, function(){
   	  console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);

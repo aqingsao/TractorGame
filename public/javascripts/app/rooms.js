@@ -1,26 +1,27 @@
 define(['common', 'app/cards', 'app/seats', 'app/round', 'broader'], function(Common, Cards, Seats, Round, broader){ 
 	var Room = Common.Backbone.Model.extend({
-		initialize: function(dealInterval){
-			this.seats = Seats.prepareSeats();
-			this.roomState = Rooms.RoomState.WAITING;
-			this.cards = Cards.decks(2);
-			this.dealInterval = 1 || dealInterval;
+		defaults: {
+			cards: Cards.decks(2),
+			dealInterval: 1
+		},                 
+		initialize: function(){
+			this.set('seats', Seats.prepareSeats());
+			this.set('roomState', Rooms.RoomState.WAITING);
 		},
 		join: function(player, seatId){
-			if(this.roomState != Rooms.RoomState.WAITING){
+			if(this.get('roomState') != Rooms.RoomState.WAITING){
 				throw "Cannot join this game";
-			}
-			// event.join 		
-			this.seats.join(player, seatId);
-			if(this.seats.full()){
+			}         
+			this.get('seats').join(player, seatId);
+			if(this.get('seats').full()){
 				// event.ready
-				this.roomState = Rooms.RoomState.PLAYING;
+				this.set('roomState', Rooms.RoomState.PLAYING);
 				this.nextRound(); 
 				broader.onGameReady(this.get("id"));
 			}
 		},
 		start: function(){
-			if(this.roomState != Rooms.RoomState.PLAYING){
+			if(this.get('roomState') != Rooms.RoomState.PLAYING){
 				throw "Game cannot be started";
 			}
 			this.tractorRound.start();
@@ -39,19 +40,16 @@ define(['common', 'app/cards', 'app/seats', 'app/round', 'broader'], function(Co
 				throw "Cannot play next round";
 			}
 
-			this.tractorRound = new Round(this.cards, this.dealInterval, this.seats, this.get("id"));
+			this.tractorRound = new Round(this.get('cards'), this.get('dealInterval'), this.get('seats'), this.get("id"));
 		}, 
 		canFlip: function(){ 
-			return this.roomState == Rooms.RoomState.PLAYING && this.tractorRound != undefined && this.tractorRound.state == Round.RoundState.DEALING;
+			return this.get('roomState') == Rooms.RoomState.PLAYING && this.tractorRound != undefined && this.tractorRound.state == Round.RoundState.DEALING;
 		}, 
 		canStart: function(){
-			return this.roomState == Rooms.RoomState.PLAYING && this.tractorRound != undefined && this.tractorRound.state == Round.RoundState.READY; 
-		},
-		// When at least player could flip, but he did not flip, will restart this round.
-		noFlipping: function(){
-			// event.restart round
+			return this.get('roomState') == RoomState.PLAYING && this.tractorRound != undefined && this.tractorRound.state == Round.RoundState.READY; 
 		}
 	});
+	var RoomState = function(name){this.name = name};
 
 	var Rooms = Common.Backbone.Collection.extend({ 
 		initialize: function(){
@@ -64,7 +62,7 @@ define(['common', 'app/cards', 'app/seats', 'app/round', 'broader'], function(Co
 			return room;
 		}
 	}, {
-		RoomState: {WAITING: {value: 0, name: 'Waiting'}, PLAYING: {value: 3, name:'Playing'}, DONE: {value: 4, name: 'Done'}}
+		RoomState: {WAITING: new RoomState('Waiting'), PLAYING: new RoomState('Playing'),DONE: new RoomState('Done')}
 	});
 	return Rooms;
 });

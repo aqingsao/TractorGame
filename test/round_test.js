@@ -33,7 +33,7 @@ requirejs(['common', "app/cards", "app/player", "app/round", "app/rooms", "app/r
 
 	exports["Non team is defender at startup"] = function(test){
 		var room = readyGame();
-		var seats = room.seats;
+		var seats = room.get('seats');
 		test.equals(seats.pairs.size(), 2);
 		test.equals(seats.pairs.at(0).rank(), Rank.TWO);
 		test.equals(seats.pairs.at(1).rank(), Rank.TWO);
@@ -62,7 +62,7 @@ requirejs(['common', "app/cards", "app/player", "app/round", "app/rooms", "app/r
 
 		room.flip(jacky, Cards.cards([smallJoker, heart2]));
 
-		var seats = room.seats;
+		var seats = room.get('seats');
 		test.equals(seats.pairs.at(0).rank(), Rank.TWO);
 		test.ok(seats.defenders() != undefined);
 		test.equals(seats.defenders().hasPlayer(jacky), true);
@@ -90,7 +90,7 @@ requirejs(['common', "app/cards", "app/player", "app/round", "app/rooms", "app/r
 
 		room.flip(jacky, Cards.cards([smallJoker, heart2]));
 
-		var seats = room.seats;
+		var seats = room.get('seats');
 		test.equals(seats.defenders().hasPlayer(jacky), true);
 		test.equals(seats.attackers().hasPlayer(yao), true);
 
@@ -115,7 +115,7 @@ requirejs(['common', "app/cards", "app/player", "app/round", "app/rooms", "app/r
 
 		room.flip(jacky, Cards.cards([smallJoker, heart2]));
 
-		var seats = room.seats;
+		var seats = room.get('seats');
 		test.equals(seats.defenders().hasPlayer(jacky), true);
 		test.equals(seats.attackers().hasPlayer(yao), true);
 
@@ -157,7 +157,7 @@ requirejs(['common', "app/cards", "app/player", "app/round", "app/rooms", "app/r
 
 		room.flip(jacky, Cards.cards([smallJoker1, smallJoker2]));
 
-		var seats = room.seats;
+		var seats = room.get('seats');
 		test.equals(seats.defenders().hasPlayer(jacky), true);
 		// test.equals(seats.attackers().hasPlayer(yao), true);
 			// 

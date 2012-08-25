@@ -1,16 +1,22 @@
-define(['app/cards', 'app/rooms', 'app/player', 'broader'], function(Cards, Rooms, Player, broader){
+define(['app/cards', 'app/rooms', 'app/player', 'broader', 'common'], function(Cards, Rooms, Player, broader, Common){
 	var rooms = new Rooms();
 	return{
+		booksIndexJson: function(req, res){
+			res.json({});
+		},
 		roomsIndex: function(req, res){
 			res.render('rooms', {title: 'Rooms'});
 		}, 
 		roomsCreate: function(req, res){
 			var room = rooms.create(); 
-			console.log("Create room " + room.toJSON());
+			console.log("Create room " + Common.util.inspect(room.toJSON()));
 			res.json(room.toJSON());
 		}, 
 		roomsIndexJson: function(req, res){
-			res.json(rooms.toJSON());
+			var roomsJson = rooms.xport();
+			console.log("_______: " + Common.util.inspect(roomsJson));
+			
+			res.json(roomsJson);
 		},
 		index: function(req, res){ 
 			res.render('index', { title: 'Express' })

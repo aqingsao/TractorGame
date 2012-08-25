@@ -8,6 +8,7 @@ define(['common', 'app/rank', 'app/pair'], function(Common, Rank, Pair){
 				console.log("Seat cannot be taken as " + this.get("id") + " is already taken by " + this.player.get("name"));
 				throw "Cannot take seat";
 			}
+			console.log("Seat " + this.get("id") + " is taken by " + player.get("name"));
 			this.player = player;
 		}, 
 		isTaken: function(){
@@ -33,16 +34,13 @@ define(['common', 'app/rank', 'app/pair'], function(Common, Rank, Pair){
 				return seat.isTaken();
 			});
 		},
-		join: function(player, seatIndex){
+		join: function(player, seatIndex){   
 			if(seatIndex < 0 || seatIndex > 3){  
-				console.log("Seat cannot be taken as invalid seat index " + seatIndex);
-
-				throw "Cannot take seat";
+				throw "Cannot take seat as seatIndex invalid";
 			}
 			if(this.hasPlayer(player)){ 
-				console.log("Seat cannot be taken as player " + player.get("name") + " has already taken seat in this room");
-
-				throw "Cannot take seat";
+				console.log('Player ' + player.get('name') +' hass already taken a seat in this room.');
+				throw "Cannot take seat as player already take seat";
 			} 		  
 			this.seats.at(seatIndex).join(player);
 		}, 
@@ -110,7 +108,7 @@ define(['common', 'app/rank', 'app/pair'], function(Common, Rank, Pair){
 		}
 	}, {
 		prepareSeats: function(){
-			return new Seats(new Seat({id:0}), new Seat({id:1}), new Seat({id:2}), new Seat({id:3}));
+			return new Seats(new Seat({id:0}), new Seat({id:1}), new Seat({id:2}), new Seat({id:3}));			
 		}
 	});
 	return Seats;
