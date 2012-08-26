@@ -56,7 +56,7 @@ requirejs(['common', "app/cards", "app/player", "app/round", "app/rooms", "app/r
 		var smallJoker = Cards.smallJoker();
 		var heart2 = Cards.heart(Rank.TWO);
 		tractorRound.deal = function(){
-			stubDeal([{player: jacky, cards: Cards.cards(smallJoker, heart2)}]);
+			stubDeal([{player: jacky, cards: [smallJoker, heart2]}]);
 		};	
 		tractorRound.start();
 
@@ -84,7 +84,7 @@ requirejs(['common', "app/cards", "app/player", "app/round", "app/rooms", "app/r
 		var diamond1 = Cards.diamond(Rank.TWO);
 		var diamond2 = Cards.diamond(Rank.TWO);
 		tractorRound.deal = function(){
-			stubDeal([{player: jacky, cards: Cards.cards(smallJoker, heart2)}, {player: yao, cards: Cards.cards(smallJoker, diamond1, diamond2)}]);
+			stubDeal([{player: jacky, cards: [smallJoker, heart2]}, {player: yao, cards: [smallJoker, diamond1, diamond2]}]);
 		};	
 		tractorRound.start();
 
@@ -109,7 +109,7 @@ requirejs(['common', "app/cards", "app/player", "app/round", "app/rooms", "app/r
 		var heart2 = Cards.heart(Rank.TWO);
 		var diamond1 = Cards.diamond(Rank.TWO);
 		tractorRound.deal = function(){
-			stubDeal([{player: jacky, cards: Cards.cards(smallJoker, heart2)}, {player: yao, cards: Cards.cards(smallJoker, diamond1)}]);
+			stubDeal([{player: jacky, cards: [smallJoker, heart2]}, {player: yao, cards: [smallJoker, diamond1]}]);
 		};	
 		tractorRound.start();
 
@@ -134,7 +134,7 @@ requirejs(['common', "app/cards", "app/player", "app/round", "app/rooms", "app/r
 		var smallJoker = Cards.smallJoker();
 		var heart3 = Cards.heart(Rank.THREE);
 		tractorRound.deal = function(){
-			stubDeal([{player: jacky, cards: Cards.cards(smallJoker, heart3)}]);
+			stubDeal([{player: jacky, cards: [smallJoker, heart3]}]);
 		};	
 		tractorRound.start();
 
@@ -151,7 +151,7 @@ requirejs(['common', "app/cards", "app/player", "app/round", "app/rooms", "app/r
 		var smallJoker1 = Cards.smallJoker();
 		var smallJoker2 = Cards.smallJoker();
 		tractorRound.deal = function(){
-			stubDeal([{player: jacky, cards: Cards.cards(smallJoker1, smallJoker2)}]);
+			stubDeal([{player: jacky, cards: [smallJoker1, smallJoker2]}]);
 		};	
 		tractorRound.start();
 
@@ -191,18 +191,19 @@ requirejs(['common', "app/cards", "app/player", "app/round", "app/rooms", "app/r
 		test.done();
 	}
 
-	var jacky = new Player({name: 'Jacky'});
-	var nana = new Player({name: 'Nana'});
-	var kerry = new Player({name: 'Kerry'});
-	var yao = new Player({name: 'Yao'});
+	var jacky = new Player('Jacky');
+	var nana = new Player('Nana');
+	var kerry = new Player('Kerry');
+	var yao = new Player('Yao');
 
 	function stubDeal(cardsForPlayer){
 		Common._.each(cardsForPlayer, function(obj){
 			var player = obj.player;
-			var cards = obj.cards;
-			cards.each(function(card){
+			var cards = obj.cards;                  
+			player.set({cards: Cards.cards()});
+			Common._.each(cards, function(card){
 				player.deal(card);
-			});
+			});    
 		});
 	}; 
 	var rooms = new Rooms();

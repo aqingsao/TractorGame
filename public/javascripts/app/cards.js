@@ -34,7 +34,7 @@ define(['common', 'app/rank', 'app/suit'], function(Common, Rank, Suit){
 	});
 	var Cards = Common.Backbone.Collection.extend({
 		model: Card, 
-		contains: function(card){
+		contains: function(card){  
 			return this.any(function(c){
 				return c.equals(card);
 			});
@@ -69,7 +69,8 @@ define(['common', 'app/rank', 'app/suit'], function(Common, Rank, Suit){
 		toString: function(){
 			var str = "[";
 			this.each(function(card){
-				str += card.toString();
+				str += card.toString();  
+				str += ', '
 			});         
 			str += ']';
 			return str;

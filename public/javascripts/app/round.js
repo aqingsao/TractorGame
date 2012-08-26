@@ -43,15 +43,17 @@ define(['common', 'app/flipping', 'broader'], function(Common, Flipping, broader
 			dealSlow();
 		}, 
 		flip: function(player, cards){
-			console.log("Player " + player.name +" is fliping: " + cards.toString());
+			console.log("Player " + player.get('name') +" is fliping: " + cards.toString());
 			if(!player.hasCards(cards)){
 				throw "You cannot flip cards";
 			}
+			console.log("Player " + player.get('name') +" has cards: " + cards.toString());
 			var currentRank;
 			var defenders = this.seats.defenders();
 			if(defenders != undefined){
 				curentRank = defenders.rank();
 			};
+			console.log("current rank is: " + currentRank);
 			var flipping = new Flipping(player, cards, currentRank); 
 			if(!flipping.isValid()){
 				throw "You cannot flip cards";			
@@ -60,7 +62,7 @@ define(['common', 'app/flipping', 'broader'], function(Common, Flipping, broader
 				throw "You cannot overturn cards";	
 			}
 			// event.flip
-			// this.defenders = this.seats.getPair(player); 
+			this.defenders = this.seats.getPair(player); 
 			this.flipping = flipping;
 			this.seats.setDefender(player);
 		}

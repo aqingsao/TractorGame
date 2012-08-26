@@ -8,7 +8,7 @@ requirejs(['common',"app/player", "app/cards", "app/rank"], function(Common, Pla
 		var player = new Player("Jacky"); 
 		player.deal(heart2);
 		
-		test.ok(player.hasCards(heart2));
+		test.ok(player.hasCards(Cards.cards(heart2)));
 
 		test.done();
 	};
@@ -16,7 +16,7 @@ requirejs(['common',"app/player", "app/cards", "app/rank"], function(Common, Pla
 		var heart2 = Cards.heart(Rank.TWO); 
 		var player = new Player("Jacky"); 
 		
-		test.ok(!player.hasCards(heart2));
+		test.ok(!player.hasCards(Cards.cards(heart2)));
 
 		test.done();
 	};
@@ -27,7 +27,7 @@ requirejs(['common',"app/player", "app/cards", "app/rank"], function(Common, Pla
 		player.deal(heart2);
 		player.deal(club3);
 				
-		test.ok(player.hasCards([heart2, club3]));
+		test.ok(player.hasCards(Cards.cards([heart2, club3])));
 
 		test.done();
 	};
@@ -37,7 +37,7 @@ requirejs(['common',"app/player", "app/cards", "app/rank"], function(Common, Pla
 		var player = new Player("Jacky"); 
 		player.deal(heart2);
 				
-		test.ok(!player.hasCards([heart2, club3]));
+		test.ok(!player.hasCards(Cards.cards([heart2, club3])));
 
 		test.done();
 	};

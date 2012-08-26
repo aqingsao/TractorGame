@@ -4,15 +4,10 @@ define(['common', 'app/cards'], function(Common, Cards){
 			this.set({name: name, cards: Cards.cards()});
 		},
 		hasCards: function(cards){ 
-			var that = this;  
-			if(Common._.isArray(cards)){
-				return Common._.all(cards, function(card){
-					return that.get('cards').contains(card);
-				});
-			}
-			else{
-				return that.get('cards').contains(cards);
-			}
+			var that = this; 
+		    return  cards.all(function(card){
+				return that.get('cards').contains(card);
+			});
 		}, 
 		deal: function(card){
 			this.get('cards').add(card);

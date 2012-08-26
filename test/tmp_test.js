@@ -9,7 +9,8 @@ requirejs(['common'], function(Common){
 			this.set({pages: pages});
 		}
 	});
-	exports['Book equals'] = function(test){
+	exports['Book equals'] = function(test){  
+		console.log("" + Common._.isArray(new Common.Backbone.Collection([new Book('', 200)])));
 		test.done();
 	};
 });
