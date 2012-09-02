@@ -2,11 +2,18 @@ define(['jQuery', 'underscore', 'backbone', 'app/rooms', 'app/room'], function($
 	var RoomView = Backbone.View.extend({
 		tagName:  "div",           
 	  	className: 'room',
-	  	template: _.template("<span.roomId>room <%= model.id %></span><span.status><%= model.roomState></span>"),
+	  	template: _.template("<span><a href='/rooms/<%= model.id%>'>room <%= model.id %></a></span><span class='description'><%=model.availableSeats() %> seats available</span><span class='status'><%= model.get('roomState').name%></span>"),
 		initialize: function(){
 			_.bindAll(this, 'render'); 
 		},
-	  	render: function() {   
+		events: {
+			"click a": 'showRoom'
+		},
+		showRoom: function(){
+			
+		},
+	  	render: function() {                 
+		 	this.$el.attr("id", "room" + this.model.id);
 	    	this.$el.html(this.template({model: this.model}));
 	    	return this;
 	  	}
@@ -21,7 +28,9 @@ define(['jQuery', 'underscore', 'backbone', 'app/rooms', 'app/room'], function($
 			this.model.bind("add", this.roomAdded) ;
 			var self = this;
 			$.get("/data/rooms", function(data){
-				for(var i = 0; i < data.length; i++){  
+				for(var i = 0; i < data.length; i++){
+					console.log(data[i]);
+					 
 					var room = Room.fjod(data[i]);
 					self.model.add(room);
 				}

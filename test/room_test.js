@@ -49,6 +49,21 @@ requirejs(['app/room', 'app/player', 'app/roomState'], function(Room, Player, Ro
 
 		test.done();
 	};  
+
+	exports['Room available seats are 4'] = function(test){	
+		var room = new Room();
+		test.equals(room.availableSeats(), 4);
+
+		test.done();
+	};  
+
+	exports['Room available seats are 3'] = function(test){	
+		var room = new Room(); 
+		room.join(jacky, 0)
+		test.equals(room.availableSeats(), 3);
+
+		test.done();
+	};  
 	
 	exports['room can be generated from json'] = function(test){
 		var room = new Room({id: 1});
@@ -57,6 +72,15 @@ requirejs(['app/room', 'app/player', 'app/roomState'], function(Room, Player, Ro
 		test.ok(another.equals(room)); 
 		test.equals(another.get("id"), 1);
 		
+		test.done();
+	};
+    
+	exports["Room is divided into 2 pairs"] = function(test){
+		var room = new Room();
+		console.log(room.get('pair1'));
+		test.equals(room.get('pair1').rank(), Rank.TWO);
+		test.equals(room.get('pair2').rank(), Rank.TWO);
+
 		test.done();
 	};
 

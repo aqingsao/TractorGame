@@ -2,12 +2,11 @@ define(['backbone', 'underscore', 'app/rank', 'app/suit'], function(Backbone, _,
 	var Card = Backbone.Model.extend({
 		initialize: function(){
 		}, 
-		validate: function(attrs){  
-			console.log(attrs);
-			if(!attrs.rank.matchSuit(attrs.suit)){
-				throw "Invalid card with suit " + attrs.suit +' and rank ' + attrs.rank;
-			}
-		},
+		// validate: function(attrs){  
+		// 	if(!attrs.rank.matchSuit(attrs.suit)){
+		// 		throw "Invalid card with suit " + attrs.suit +' and rank ' + attrs.rank;
+		// 	}
+		// },
 		isJoker: function(){
 			return this.get('rank').isJoker();
 		}, 
@@ -57,10 +56,10 @@ define(['backbone', 'underscore', 'app/rank', 'app/suit'], function(Backbone, _,
 			return new Card({suit: Suit.J, rank: rank});
 		}, 
 		smallJoker: function(){
-			return Cards.joker(Rank.SMALL_JOKER);
+			return Card.joker(Rank.SMALL_JOKER);
 		},
 		bigJoker: function(){
-			return Cards.joker(Rank.BIG_JOKER);
+			return Card.joker(Rank.BIG_JOKER);
 		}, 
 		fjod: function(json){    
 			var card = new Card();

@@ -1,24 +1,19 @@
-define(['backbone', 'underscore'], function(Backbone, _){
-	var Pair = Backbone.Model.extend({
-		initialize: function(name, seat0, seat1){
-			this.name = name;
-			this.seats = new Backbone.Collection();
-			this.seats.add(seat0);
-			this.seats.add(seat1);
-			this.isDefenders = false;
-			this.isAttackers = false;
-		}, 
+define(['backbone', 'underscore', 'app/seat'], function(Backbone, _, Seat){
+	var Pair = Backbone.Collection.extend({ 
+		model: Seat,
 		hasPlayer: function(player){
-			return this.seats.any(function(seat){
+			return this.any(function(seat){
 				return seat.player.equals(player);
 			});
 		}, 
-		setDefender: function(isDefenders){
-			this.isDefenders = isDefenders;
-			this.isAttackers = !isDefenders;
+		isDefender: function(){
+			return this.at(0).get('defender');
+		}, 
+		isAttacker: function(){
+			return this.at(0).get('attacker');
 		}, 
 		rank: function(){
-			return this.seats.at(0).rank;
+			return this.at(0).get('rank');
 		}
 	});
 	return Pair;

@@ -25,8 +25,8 @@ define(['backbone', 'underscore', 'app/flipping', 'broader'], function(Backbone,
 				var i = 0;
 				for(i = 0; i < 4; i++){
 					var card = cards.shift(); 
-					var seat = that.seats.seats.at(i);  
-					seat.player.deal(card);
+					var seat = that.seats.at(i);  
+					seat.get('player').deal(card);
 					broader.onDeal(that.roomNo, card, seat, round);
 				}
 				//event.deal

@@ -1,10 +1,11 @@
-define(['backbone', 'underscore', 'app/cards', 'app/seats', 'app/round', 'app/roomState'], function(Backbone, _, Cards, Seats, Round, RoomState){ 
+define(['backbone', 'underscore', 'app/cards', 'app/seats', 'app/round', 'app/roomState', 'app/pair'], function(Backbone, _, Cards, Seats, Round, RoomState, Pair){ 
 	var Room = Backbone.Model.extend({
 		defaults: {
 			dealInterval: 1
 		},                 
-		initialize: function(){
-			this.set({seats: Seats.prepareSeats(), roomState: RoomState.WAITING, cards: Cards.decks(2)});
+		initialize: function(){   
+			var seats = Seats.prepareSeats();
+			this.set({seats: seats, pair1: new Pair([seats.at(0), seats.at(2)]), pair2: new Pair([seats.at(1), seats.at(3)]),roomState: RoomState.WAITING, cards: Cards.decks(2)});
 		},
 		join: function(player, seatId){
 			if(this.get('roomState') != RoomState.WAITING){
@@ -57,6 +58,28 @@ define(['backbone', 'underscore', 'app/cards', 'app/seats', 'app/round', 'app/ro
 				}
 			}
 			return true;
+		}, 
+		availableSeats: function(){
+			var seats = this.get('seats');
+			var count = 0; 
+			seats.each(function(seat){
+				if(!seat.isTaken()){count ++;}
+			});
+			return count;
+		}, 
+		defenders: function(){
+			return this.get('pairs').find(function(pair){
+				if(pair.isDefender()){
+					return pair;
+				}
+			});
+		}, 
+		attackers: function(){
+			return this.get('pairs').find(function(pair){
+				if(pair.isAttacker()){
+					return pair;
+				}
+			});
 		}
 	}, {
 		fjod: function(json){

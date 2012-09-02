@@ -1,0 +1,9 @@
+.rooms{
+	margin: 20px 0;
+} 
+.rooms .room{
+	margin-top: 10px;
+}
+.rooms .room span{
+	margin-right: 20px;
+}

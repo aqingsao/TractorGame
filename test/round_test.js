@@ -3,7 +3,7 @@ requirejs.config({
 	baseUrl: 'public/javascripts', 
 	nodeRequire: require
 }); 
-requirejs(['common', "app/cards", "app/player", "app/round", "app/rooms", "app/rank"], function(Common, Cards, Player, Round, Rooms, Rank){
+requirejs(["app/cards", "app/card", "app/player", "app/round", "app/rooms", "app/rank", "underscore"], function(Cards, Card, Player, Round, Rooms, Rank, _){
 	exports['Tractor round should be ready when 4 players join'] = function(test){
 		var tractorRound = readyGame().tractorRound;
 		test.equals(tractorRound.state, Round.RoundState.READY);
@@ -31,17 +31,6 @@ requirejs(['common', "app/cards", "app/player", "app/round", "app/rooms", "app/r
 		assertion();
 	};
 
-	exports["Non team is defender at startup"] = function(test){
-		var room = readyGame();
-		var seats = room.get('seats');
-		test.equals(seats.pairs.size(), 2);
-		test.equals(seats.pairs.at(0).rank(), Rank.TWO);
-		test.equals(seats.pairs.at(1).rank(), Rank.TWO);
-		test.ok(seats.defenders() == undefined);
-		test.ok(seats.attackers() == undefined);
-
-		test.done();
-	};
 	exports["cannot flip cards when tractor not ready."] = function(test){
 		var room = rooms.create();	
 		test.throws(function(){room.flip(jacky, [smallJoker, heart2])}, "You cannot flip cards");
@@ -53,14 +42,14 @@ requirejs(['common', "app/cards", "app/player", "app/round", "app/rooms", "app/r
 		var room = readyGame();
 		var tractorRound = room.tractorRound;
 		var originalDeal = tractorRound.deal;
-		var smallJoker = Cards.smallJoker();
-		var heart2 = Cards.heart(Rank.TWO);
+		var smallJoker = Card.smallJoker();
+		var heart2 = Card.heart(Rank.TWO);
 		tractorRound.deal = function(){
 			stubDeal([{player: jacky, cards: [smallJoker, heart2]}]);
 		};	
 		tractorRound.start();
 
-		room.flip(jacky, Cards.cards([smallJoker, heart2]));
+		room.flip(jacky, Card.cards([smallJoker, heart2]));
 
 		var seats = room.get('seats');
 		test.equals(seats.pairs.at(0).rank(), Rank.TWO);
@@ -79,22 +68,22 @@ requirejs(['common', "app/cards", "app/player", "app/round", "app/rooms", "app/r
 		var room = readyGame();
 		var tractorRound = room.tractorRound;
 		var originalDeal = tractorRound.deal;
-		var smallJoker = Cards.smallJoker();
-		var heart2 = Cards.heart(Rank.TWO);
-		var diamond1 = Cards.diamond(Rank.TWO);
-		var diamond2 = Cards.diamond(Rank.TWO);
+		var smallJoker = Card.smallJoker();
+		var heart2 = Card.heart(Rank.TWO);
+		var diamond1 = Card.diamond(Rank.TWO);
+		var diamond2 = Card.diamond(Rank.TWO);
 		tractorRound.deal = function(){
 			stubDeal([{player: jacky, cards: [smallJoker, heart2]}, {player: yao, cards: [smallJoker, diamond1, diamond2]}]);
 		};	
 		tractorRound.start();
 
-		room.flip(jacky, Cards.cards([smallJoker, heart2]));
+		room.flip(jacky, Card.cards([smallJoker, heart2]));
 
 		var seats = room.get('seats');
 		test.equals(seats.defenders().hasPlayer(jacky), true);
 		test.equals(seats.attackers().hasPlayer(yao), true);
 
-		room.flip(yao, Cards.cards([smallJoker, diamond1, diamond2]));
+		room.flip(yao, Card.cards([smallJoker, diamond1, diamond2]));
 		test.equals(seats.defenders().hasPlayer(yao), true);
 		test.equals(seats.attackers().hasPlayer(jacky), true);
 
@@ -105,15 +94,15 @@ requirejs(['common', "app/cards", "app/player", "app/round", "app/rooms", "app/r
 		var room = readyGame();
 		var tractorRound = room.tractorRound;
 		var originalDeal = tractorRound.deal;
-		var smallJoker = Cards.smallJoker();
-		var heart2 = Cards.heart(Rank.TWO);
-		var diamond1 = Cards.diamond(Rank.TWO);
+		var smallJoker = Card.smallJoker();
+		var heart2 = Card.heart(Rank.TWO);
+		var diamond1 = Card.diamond(Rank.TWO);
 		tractorRound.deal = function(){
 			stubDeal([{player: jacky, cards: [smallJoker, heart2]}, {player: yao, cards: [smallJoker, diamond1]}]);
 		};	
 		tractorRound.start();
 
-		room.flip(jacky, Cards.cards([smallJoker, heart2]));
+		room.flip(jacky, Card.cards([smallJoker, heart2]));
 
 		var seats = room.get('seats');
 		test.equals(seats.defenders().hasPlayer(jacky), true);
@@ -131,8 +120,8 @@ requirejs(['common', "app/cards", "app/player", "app/round", "app/rooms", "app/r
 		var room = readyGame();
 		var tractorRound = room.tractorRound;
 		var originalDeal = tractorRound.deal;
-		var smallJoker = Cards.smallJoker();
-		var heart3 = Cards.heart(Rank.THREE);
+		var smallJoker = Card.smallJoker();
+		var heart3 = Card.heart(Rank.THREE);
 		tractorRound.deal = function(){
 			stubDeal([{player: jacky, cards: [smallJoker, heart3]}]);
 		};	
@@ -148,8 +137,8 @@ requirejs(['common', "app/cards", "app/player", "app/round", "app/rooms", "app/r
 		var room = readyGame();
 		var tractorRound = room.tractorRound;
 		var originalDeal = tractorRound.deal;
-		var smallJoker1 = Cards.smallJoker();
-		var smallJoker2 = Cards.smallJoker();
+		var smallJoker1 = Card.smallJoker();
+		var smallJoker2 = Card.smallJoker();
 		tractorRound.deal = function(){
 			stubDeal([{player: jacky, cards: [smallJoker1, smallJoker2]}]);
 		};	
@@ -182,12 +171,12 @@ requirejs(['common', "app/cards", "app/player", "app/round", "app/rooms", "app/r
 
 	exports["Player could sort card by suit"] = function(test){  
 		var jacky = new Player({name: 'Jacky'});
-	    jacky.deal(Cards.smallJoker());
-		jacky.deal(Cards.heart(Rank.TWO));
+	    jacky.deal(Card.smallJoker());
+		jacky.deal(Card.heart(Rank.TWO));
 		var cards = jacky.sortedCards();
 		test.equals(cards.length, 2);  
-		test.ok(cards[1].equals(Cards.smallJoker()));
-		test.ok(cards[0].equals(Cards.heart(Rank.TWO)));
+		test.ok(cards[1].equals(Card.smallJoker()));
+		test.ok(cards[0].equals(Card.heart(Rank.TWO)));
 		test.done();
 	}
 
@@ -197,11 +186,11 @@ requirejs(['common', "app/cards", "app/player", "app/round", "app/rooms", "app/r
 	var yao = new Player('Yao');
 
 	function stubDeal(cardsForPlayer){
-		Common._.each(cardsForPlayer, function(obj){
+		_.each(cardsForPlayer, function(obj){
 			var player = obj.player;
 			var cards = obj.cards;                  
 			player.set({cards: Cards.cards()});
-			Common._.each(cards, function(card){
+			_.each(cards, function(card){
 				player.deal(card);
 			});    
 		});
