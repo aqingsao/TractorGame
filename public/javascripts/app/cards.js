@@ -1,38 +1,5 @@
-define(['common', 'app/rank', 'app/suit'], function(Common, Rank, Suit){ 
-	var Card = Common.Backbone.Model.extend({
-		initialize: function(suit, rank){
-			if(!rank.matchSuit(suit)){
-				throw "Invalid card with suit " + suit +' and rank ' + rank;
-			}
-
-			this.set({suit: suit, rank: rank});
-		}, 
-		isJoker: function(){
-			return this.get('rank').isJoker();
-		}, 
-		isBlackSuit: function(){
-			return this.get('suit')== Suit.C || this.get('suit') == Suit.S;
-		},
-		isRedSuit: function(){
-			return this.get('suit')== Suit.H || this.get('suit') == Suit.D;
-		}, 
-		isSmallJoker: function(){
-			return this.get('rank') == Rank.SMALL_JOKER;
-		},
-		isBigJoker: function(){
-			return this.get('rank') == Rank.BIG_JOKER;
-		}, 
-		sameSuit: function(another){
-			return this.get('suit') == another.suit;
-		}, 
-		equals: function(other){
-			return this.get('suit').equals(other.get('suit')) && this.get('rank').equals(other.get('rank'));
-		},
-		toString: function(){
-			return this.get('suit').get('name') + ' ' + this.get('rank').get('name');
-		}
-	});
-	var Cards = Common.Backbone.Collection.extend({
+define(['backbone', 'underscore', 'app/rank', 'app/suit', 'app/card'], function(Backbone, _, Rank, Suit, Card){ 
+	var Cards = Backbone.Collection.extend({
 		model: Card, 
 		contains: function(card){  
 			return this.any(function(c){
@@ -40,7 +7,7 @@ define(['common', 'app/rank', 'app/suit'], function(Common, Rank, Suit){
 			});
 		}, 
 		shuffle: function(){
-			var cards = Common.Backbone.Collection.prototype.shuffle.call(this);
+			var cards = Backbone.Collection.prototype.shuffle.call(this);
 			this.models = cards;
 			return this;
 		}, 
@@ -80,12 +47,12 @@ define(['common', 'app/rank', 'app/suit'], function(Common, Rank, Suit){
 			var cards = new Cards();
 			
 			while(count-- > 0){
-				Common._.each(Rank, function(rank){ 
+				_.each(Rank, function(rank){ 
 					if(rank.isJoker()){
 						cards.add(Cards.joker(rank));
 					}
 				});
-				Common._.each(Rank, function(rank){
+				_.each(Rank, function(rank){
 					if(!rank.isJoker()){
 						cards.add(Cards.heart(rank));
 						cards.add(Cards.spade(rank));
@@ -102,7 +69,7 @@ define(['common', 'app/rank', 'app/suit'], function(Common, Rank, Suit){
 				return cards;
 			}
 			if(initialCards.constructor === Array){
-				Common._.each(initialCards, function(card){
+				_.each(initialCards, function(card){
 					cards.add(card);
 				});
 			}

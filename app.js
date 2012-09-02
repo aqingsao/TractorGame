@@ -11,7 +11,7 @@ if (typeof define !== 'function') {
     var define = require('amdefine')(module);
 }
 
-requirejs(['express', 'routes/index.js', 'socket.io', 'broader'], function(express, routes, io, broader){
+requirejs(['express', 'socket.io', 'broader', 'routes/index.js'], function(express, io, broader, routes){
    	var app = module.exports = express.createServer();
 	var io = io.listen(app);
   	
@@ -37,18 +37,20 @@ requirejs(['express', 'routes/index.js', 'socket.io', 'broader'], function(expre
   	app.get('/rooms', routes.roomsIndex);
   	app.post('/rooms', routes.roomsCreate);
   	app.get('/data/rooms', routes.roomsIndexJson);
-
+  	
   	app.get('/room/:id', routes.room);
   	app.post('/room/:id/join/:seatId', routes.roomJoin);
-
+  	
   	app.post('/room/:id/start', routes.roundStart);
   	app.post('/room/:id/flip', routes.tractorFlip);
-  	             
-	app.get('/data/books', routes.booksIndexJson);
-  	
+  	               	
   	app.listen(3000, function(){
   	  console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
   	});
   	
   	broader.init(io);  
+
+	// define(['util'], function(util){
+		// console.log(util);
+	// });
 });

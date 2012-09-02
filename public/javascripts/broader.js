@@ -1,6 +1,6 @@
-define(['common'], function(Common){
+define(['backbone', 'underscore'], function(Backbone, _){
 	var io;
-	var Connection = Common.Backbone.Model.extend({
+	var Connection = Backbone.Model.extend({
 		initialize: function(roomNo){
 			this.roomNo = roomNo;  
 			this.socketIds = [];
@@ -10,7 +10,7 @@ define(['common'], function(Common){
 		}, 
 		broadcast: function(event, data){
 			// console.log("Broadcast event " + event +" to " + this.socketIds.length + " sockets: " + util.inspect(data));
-			 Common._.each(this.socketIds, function(socketId){   
+			 _.each(this.socketIds, function(socketId){   
 				try{  
 					console.log("Broadcast event " + event +" to " + socketId);
 					io.sockets.socket(socketId).emit(event, data);
@@ -20,9 +20,9 @@ define(['common'], function(Common){
 			}); 
 		}
 	});
-	var Broader = Common.Backbone.Model.extend({ 
+	var Broader = Backbone.Model.extend({ 
 		initialize: function(){
-			this.connections = new Common.Backbone.Collection();
+			this.connections = new Backbone.Collection();
 		},
 		init: function(tempIO){   
 	   	  	io = tempIO;

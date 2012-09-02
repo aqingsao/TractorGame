@@ -1,8 +1,8 @@
-define(['common'], function(Common){
-	var Pair = Common.Backbone.Model.extend({
+define(['backbone', 'underscore'], function(Backbone, _){
+	var Pair = Backbone.Model.extend({
 		initialize: function(name, seat0, seat1){
 			this.name = name;
-			this.seats = new Common.Backbone.Collection();
+			this.seats = new Backbone.Collection();
 			this.seats.add(seat0);
 			this.seats.add(seat1);
 			this.isDefenders = false;

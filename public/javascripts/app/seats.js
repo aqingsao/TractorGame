@@ -1,5 +1,5 @@
-define(['common', 'app/rank', 'app/pair'], function(Common, Rank, Pair){
-	var Seat = Common.Backbone.Model.extend({
+define(['backbone', 'underscore', 'app/rank', 'app/pair'], function(Backbone, _, Rank, Pair){
+	var Seat = Backbone.Model.extend({
 		initialize: function(){
 			this.rank = Rank.TWO;
 		},	
@@ -18,14 +18,14 @@ define(['common', 'app/rank', 'app/pair'], function(Common, Rank, Pair){
 			return this.player == undefined ? "" : this.player.get("name");
 		}
 	}); 
-	var Seats = Common.Backbone.Model.extend({
+	var Seats = Backbone.Model.extend({
 		initialize: function(seat0, seat1, seat2, seat3){
-			this.seats = new Common.Backbone.Collection();
+			this.seats = new Backbone.Collection();
 			this.seats.add(seat0);
 			this.seats.add(seat1);
 			this.seats.add(seat2);
 			this.seats.add(seat3);
-			this.pairs = new Common.Backbone.Collection();
+			this.pairs = new Backbone.Collection();
 			this.pairs.add(new Pair("team0", seat0, seat2)); 
 			this.pairs.add(new Pair("team1", seat1, seat3));
 		},

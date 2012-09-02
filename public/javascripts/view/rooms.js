@@ -1,4 +1,4 @@
-define(['jQuery', 'underscore', 'backbone', 'app/rooms'], function($, _, Backbone, Rooms){	          
+define(['jQuery', 'underscore', 'backbone', 'app/rooms', 'app/room'], function($, _, Backbone, Rooms, Room){	          
 	var RoomView = Backbone.View.extend({
 		tagName:  "div",           
 	  	className: 'room',
@@ -9,24 +9,47 @@ define(['jQuery', 'underscore', 'backbone', 'app/rooms'], function($, _, Backbon
 	  	}
 	}); 
 	var RoomsView = Backbone.View.extend({
-	  	el: $(".rooms"),  
+	  	el: $("#main"),  
 		
 	  	initialize: function() {  
-			this.count = $(".count");
 			_.bindAll(this, 'render', 'addRoom'); 
-			this.model.bind("add", this.addRoom); 
-			this.render();
-	  	}, 
-	  	addRoom: function(room){
+
+			this.model = new Rooms();
+			this.model.bind("add", this.addRoom) ;
+			this.model.bind("change", this.updateRoom) ;
+			var self = this;
+			$.get("/data/rooms", function(data){
+				for(var i = 0; i < data.length; i++){
+					var room = new Room(); 
+					self.model.add(room);
+				}
+			});
+			console.log("Rooms count " + self.model.length);
+			self.render();
+	  	},
+	 	events: {
+			"click .newRoom": 'createRoom'
+		},                               
+		createRoom: function(){  
+			console.log("create new room...");
+			console.log(arguments);
+			var form = this.$(".newRoom");                      
+			$.post(form.attr("action"), form.serialize(), function(data){ 
+		   		rooms.add(Room.fromJSON(data));
+			}).error(function(data){
+			    gameStartError(data);
+			});	
+			return false;
+		}
+	  	addRoom: function(room){   
 			var roomView = new RoomView({model: room});
-			$(this.el).append(roomView.render().el);
+			this.$(".rooms").append(roomView.render().el); 
+			this.$(".count").text(this.$(".count").text() + 1);
+		},
+		updateRoom: function(room){
+			console.log("Room has been changed");
 		}, 
 		render: function(){
-			var self = this; 
-			console.log("_____" + this.model.length);
-			_.each(this.model, function(room){
-				self.addRoom(room);
-			});
 		}
 	}); 
 	return RoomsView;

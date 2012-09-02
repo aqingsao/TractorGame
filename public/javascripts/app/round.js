@@ -1,5 +1,5 @@
-define(['common', 'app/flipping', 'broader'], function(Common, Flipping, broader){  
-	var Round = Common.Backbone.Model.extend({
+define(['backbone', 'underscore', 'app/flipping', 'broader'], function(Backbone, _, Flipping, broader){  
+	var Round = Backbone.Model.extend({
 		initialize: function(cards, dealInterval, seats, roomNo){
 			this.cards = cards;		
 			this.state = Round.RoundState.READY;

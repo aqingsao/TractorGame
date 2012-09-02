@@ -1,5 +1,5 @@
-define(['common', 'app/cards'], function(Common, Cards){
-	var Player = Common.Backbone.Model.extend({
+define(['backbone', 'underscore', 'app/cards'], function(Backbone, _, Cards){
+	var Player = Backbone.Model.extend({
 		initialize: function(name){
 			this.set({name: name, cards: Cards.cards()});
 		},

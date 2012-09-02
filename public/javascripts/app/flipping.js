@@ -1,4 +1,4 @@
-define(['common', 'app/cards'], function(Common, Cards){
+define(['backbone', 'underscore', 'app/cards'], function(Backbone, _, Cards){
 	 var check = function(jokers, trumps, currentRank){
 	 	if(jokers.size() == 0 || jokers.size > 2 || trumps.size() > 2){
 	 		return -1;  
@@ -52,7 +52,7 @@ define(['common', 'app/cards'], function(Common, Cards){
 	 	}
 	 }; 
 	
-	var Flipping = Common.Backbone.Model.extend({
+	var Flipping = Backbone.Model.extend({
 		initialize: function(player, cards, currentRank){     
 		 	var jokers = Cards.cards(cards.filter(function(card){return card.isJoker();}));
 		 	var trumps = Cards.cards(cards.reject(function(card){return card.isJoker();})); 
