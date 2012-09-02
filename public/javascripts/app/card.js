@@ -1,12 +1,13 @@
 define(['backbone', 'underscore', 'app/rank', 'app/suit'], function(Backbone, _, Rank, Suit){ 
 	var Card = Backbone.Model.extend({
-		initialize: function(suit, rank){
-			if(!rank.matchSuit(suit)){
-				throw "Invalid card with suit " + suit +' and rank ' + rank;
-			}
-
-			this.set({suit: suit, rank: rank});
+		initialize: function(){
 		}, 
+		validate: function(attrs){  
+			console.log(attrs);
+			if(!attrs.rank.matchSuit(attrs.suit)){
+				throw "Invalid card with suit " + attrs.suit +' and rank ' + attrs.rank;
+			}
+		},
 		isJoker: function(){
 			return this.get('rank').isJoker();
 		}, 
@@ -33,39 +34,38 @@ define(['backbone', 'underscore', 'app/rank', 'app/suit'], function(Backbone, _,
 		}, 
 		jod: function(){ 
 			var ret = {};
-			var self = this;
 			for(var key in this.attributes){  
 				var val = this.attributes[key];
-				if(typeof(val.jod) == 'function'){
-					ret[key] = val.jod();
-				}
-				else{
-					ret[key] = val;
-				}
+				 ret[key] = typeof(val.jod) == 'function' ? val.jod() : val;
 			};   
 			return ret;
 		}
 	}, {
 		heart: function(rank){
-			return new Card(Suit.H, rank);
+			return new Card({suit: Suit.H, rank: rank});
 		}, 
 		club: function(rank){
-			return new Card(Suit.C, rank);
+			return new Card({suit: Suit.C, rank: rank});
 		},
 		diamond: function(rank){
-			return new Card(Suit.D, rank);
+			return new Card({suit: Suit.D, rank: rank});
 		},
 		spade: function(rank){
-			return new Card(Suit.S, rank);
+			return new Card({suit: Suit.S, rank: rank});
 		},
 		joker: function(rank){
-			return new Card(Suit.J, rank);
+			return new Card({suit: Suit.J, rank: rank});
 		}, 
 		smallJoker: function(){
 			return Cards.joker(Rank.SMALL_JOKER);
 		},
 		bigJoker: function(){
 			return Cards.joker(Rank.BIG_JOKER);
+		}, 
+		fjod: function(json){    
+			var card = new Card();
+			card.set(json);
+			return card;
 		}
 	});
 	return Card;

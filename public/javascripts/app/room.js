@@ -15,7 +15,7 @@ define(['backbone', 'underscore', 'app/cards', 'app/seats', 'app/round', 'app/ro
 				// event.ready 				
 				this.set({roomState: RoomState.PLAYING});
 				this.nextRound(); 
-				broader.onGameReady(this.get("id"));
+				// broader.onGameReady(this.get("id"));
 			}
 		},
 		start: function(){
@@ -45,11 +45,23 @@ define(['backbone', 'underscore', 'app/cards', 'app/seats', 'app/round', 'app/ro
 		}, 
 		canStart: function(){
 			return this.get('roomState') == RoomState.PLAYING && this.tractorRound != undefined && this.tractorRound.state == Round.RoundState.READY; 
+		}, 
+		equals: function(another){
+			for(var key in this.attributes){
+				var val = this.attributes[key];
+				if(typeof(val.equals) == 'function' && !val.equals(another.get(key))){
+					return false;
+				}                
+				else if(val != another.get(key)){
+					return false;
+				}
+			}
+			return true;
 		}
 	}, {
-		fromJSON: function(json){
-			var room = new Room();
-			room.set(json);
+		fjod: function(json){
+			var room = new Room(); 
+			room.set(json);			
 			return room;
 		}
 	});

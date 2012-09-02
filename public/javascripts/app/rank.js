@@ -1,30 +1,16 @@
 define(['backbone', 'underscore'], function(Backbone, _){ 
 	var Rank = Backbone.Model.extend({ 
-		initialize: function(name, value, point){
-			this.set({'name': name, 'value': value, 'point': point});
+		initialize: function(name, weight, point){
+			this.set({name: name, weight: weight, point: point});
 		},  
 		isJoker: function(){
-			 return this.get('value') >= 300;
+			 return this.get('name') == 'Small' || this.get('name') == 'Big';
 		},
 		equals: function(other){
-			return this.get('name') == other.get('name') && this.get('value') == other.get('value');
+			return this.get('name') == other.get('name') && this.get('weight') == other.get('weight');
 		},
 		matchSuit: function(suit){
 			return (suit.isJoker() && this.isJoker()) || (!suit.isJoker() && !this.isJoker());
-		}, 
-		jod: function(){ 
-			var ret = {};
-			var self = this;
-			for(var key in this.attributes){  
-				var val = this.attributes[key];
-				if(typeof(val.jod) == 'function'){
-					ret[key] = val.jod();
-				}
-				else{
-					ret[key] = val;
-				}
-			};   
-			return ret;
 		}
 	});
 	return {TWO: new Rank('2', 2, 0), THREE: new Rank('3', 3, 0), FOUR: new Rank('4', 4, 0), FIVE: new Rank('5', 5, 5), 
