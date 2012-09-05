@@ -1,13 +1,13 @@
 define(['backbone', 'underscore', 'app/flipping', 'broader'], function(Backbone, _, Flipping, broader){  
 	var Round = Backbone.Model.extend({
-		initialize: function(cards, dealInterval, seats, roomNo){
+		initialize: function(cards, dealInterval, seats, roomNo, currentRank){
 			this.cards = cards;		
 			this.state = Round.RoundState.READY;
 			this.dealInterval= dealInterval;
 			this.seats = seats;                                
 			this.roomNo = roomNo;
 			this.currentBanker = null;
-			this.currentRank = null;
+			this.currentRank = currentRank;
 		},
 		start: function(){
 			if(this.state != Round.RoundState.READY){
@@ -48,13 +48,8 @@ define(['backbone', 'underscore', 'app/flipping', 'broader'], function(Backbone,
 				throw "You cannot flip cards";
 			}
 			console.log("Player " + player.get('name') +" has cards: " + cards.toString());
-			var currentRank;
-			var defenders = this.seats.defenders();
-			if(defenders != undefined){
-				curentRank = defenders.rank();
-			};
-			console.log("current rank is: " + currentRank);
-			var flipping = new Flipping(player, cards, currentRank); 
+			var defender = this.seats.defender();
+			var flipping = new Flipping(player, cards, this.currentRank); 
 			if(!flipping.isValid()){
 				throw "You cannot flip cards";			
 			}
@@ -62,9 +57,8 @@ define(['backbone', 'underscore', 'app/flipping', 'broader'], function(Backbone,
 				throw "You cannot overturn cards";	
 			}
 			// event.flip
-			this.defenders = this.seats.getPair(player); 
 			this.flipping = flipping;
-			this.seats.setDefender(player);
+			this.seats.setDefender(player, this.currentRank);
 		}
 	}, {
 	   RoundState: {READY: {value: 1, name:'Ready'}, DEALING: {value: 2, name: 'Dealing'}, PLAYING: {value: 3, name: 'Playing'}, DONE: {value: 4, name: 'Done'}}

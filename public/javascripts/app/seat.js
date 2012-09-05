@@ -1,10 +1,13 @@
 define(['backbone', 'underscore', 'app/rank', 'app/pair'], function(Backbone, _, Rank, Pair){
 	var Seat = Backbone.Model.extend({
 		initialize: function(){
-			this.set({rank: Rank.TWO, defender: false, attacker: false});
+			this.set({rank: Rank.TWO, currentRank: Rank.TWO, defender: false, attacker: false});
 		},	                         
-		setDefender: function(isDefender){
-			this.set({defender: isDefender, attacker: !isDefender});
+		setDefender: function(currentRank){
+			this.set({defender: true, attacker: false, currentRank: currentRank});
+		}, 
+		setAttacker: function(currentRank){
+			this.set({defender: false, attacker: true, currentRank: currentRank});
 		}, 
 		join: function(player){
 			if(this.isTaken()){   
@@ -19,6 +22,12 @@ define(['backbone', 'underscore', 'app/rank', 'app/pair'], function(Backbone, _,
 		}, 
 		playerName: function(){   
 			return this.get('player') == undefined ? "" : this.get('player').get("name");
+		}, 
+		takenByPlayer: function(player){
+			return player.get('name') == this.playerName();
+		}, 
+		rank: function(){
+			return this.get('rank');
 		}
 	}); 
 	return Seat;

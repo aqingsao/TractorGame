@@ -11,6 +11,9 @@ define(['backbone', 'underscore'], function(Backbone, _){
 		},
 		matchSuit: function(suit){
 			return (suit.isJoker() && this.isJoker()) || (!suit.isJoker() && !this.isJoker());
+		},
+		toString: function(){
+			return this.get("name");
 		}
 	});
 	return {TWO: new Rank('2', 2, 0), THREE: new Rank('3', 3, 0), FOUR: new Rank('4', 4, 0), FIVE: new Rank('5', 5, 5), 

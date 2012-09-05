@@ -21,9 +21,17 @@ define(['backbone', 'underscore', 'app/rank', 'app/pair', 'app/seat'], function(
 		getPlayer: function(seatIndex){
 			return this.seats.at(seatIndex).player;
 		}, 
-		setDefender: function(player){
-			this.pairs.each(function(pair){
-				pair.setDefender(pair.hasPlayer(player));
+		setDefender: function(player, currentRank){  
+			var seat = this.getSeatOfPlayer(player);
+			var seatIndex = this.indexOf(seat);
+			var pairSeatIndex = (seatIndex + 2) % 4;
+			this.each(function(seat, index){
+				if(index == seatIndex || index == pairSeatIndex){
+					seat.setDefender(currentRank);
+				}                          
+				else{
+					seat.setAttacker(currentRank);
+				}
 			});
 		}, 
 		hasPlayer: function(player){
@@ -41,6 +49,11 @@ define(['backbone', 'underscore', 'app/rank', 'app/pair', 'app/seat'], function(
 				return player != undefined && player.canFlip();
 			});
 		}, 
+		getSeatOfPlayer: function(player){
+			return this.find(function(seat){
+				return seat.takenByPlayer(player);
+			});
+		},
 		getSeat: function(direction){ 
 			var seatIndex;
 			switch(direction){
@@ -60,6 +73,11 @@ define(['backbone', 'underscore', 'app/rank', 'app/pair', 'app/seat'], function(
 
 			var seat = this.at(seatIndex); 
 			return seat;
+		}, 
+		defender: function(){
+			return this.find(function(seat){
+				return seat.get('defender') == true;
+			});
 		}
 	}, {
 		prepareSeats: function(){

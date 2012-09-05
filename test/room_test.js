@@ -4,7 +4,7 @@ requirejs.config({
 	nodeRequire: require
 }); 
  
-requirejs(['app/room', 'app/player', 'app/roomState'], function(Room, Player, RoomState){  
+requirejs(['app/room', 'app/player', 'app/roomState', 'app/seats', 'app/pair', 'app/rank'], function(Room, Player, RoomState, Seats, Pair, Rank){  
 	exports['Room is new'] = function(test){
 		var room = new Room();
 		test.equals(room.get('roomState'), RoomState.WAITING);
@@ -75,14 +75,13 @@ requirejs(['app/room', 'app/player', 'app/roomState'], function(Room, Player, Ro
 		test.done();
 	};
     
-	exports["Room is divided into 2 pairs"] = function(test){
-		var room = new Room();
-		console.log(room.get('pair1'));
-		test.equals(room.get('pair1').rank(), Rank.TWO);
-		test.equals(room.get('pair2').rank(), Rank.TWO);
-
-		test.done();
-	};
+	// exports["Room is divided into 2 pairs"] = function(test){
+	// 	var room = new Room();
+	// 	test.equals(room.get('pairs').at(0).rank(), Rank.TWO);
+	// 	test.equals(room.get('pairs').at(1).rank(), Rank.TWO);
+	// 
+	// 	test.done();
+	// };
 
 	var jacky = new Player({name: 'Jacky'});
 	var nana = new Player({name: 'Nana'});

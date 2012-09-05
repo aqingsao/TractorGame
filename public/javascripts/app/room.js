@@ -1,11 +1,11 @@
-define(['backbone', 'underscore', 'app/cards', 'app/seats', 'app/round', 'app/roomState', 'app/pair'], function(Backbone, _, Cards, Seats, Round, RoomState, Pair){ 
+define(['backbone', 'underscore', 'app/cards', 'app/seats', 'app/round', 'app/roomState', 'app/pair', 'app/rank'], function(Backbone, _, Cards, Seats, Round, RoomState, Pair, Rank){ 
 	var Room = Backbone.Model.extend({
 		defaults: {
 			dealInterval: 1
 		},                 
 		initialize: function(){   
-			var seats = Seats.prepareSeats();
-			this.set({seats: seats, pair1: new Pair([seats.at(0), seats.at(2)]), pair2: new Pair([seats.at(1), seats.at(3)]),roomState: RoomState.WAITING, cards: Cards.decks(2)});
+			var seats = Seats.prepareSeats();   
+			this.set({seats: seats, roomState: RoomState.WAITING, cards: Cards.decks(2)});
 		},
 		join: function(player, seatId){
 			if(this.get('roomState') != RoomState.WAITING){
@@ -15,7 +15,7 @@ define(['backbone', 'underscore', 'app/cards', 'app/seats', 'app/round', 'app/ro
 			if(this.get('seats').full()){ 
 				// event.ready 				
 				this.set({roomState: RoomState.PLAYING});
-				this.nextRound(); 
+				this.nextRound(Rank.TWO); 
 				// broader.onGameReady(this.get("id"));
 			}
 		},
@@ -34,12 +34,12 @@ define(['backbone', 'underscore', 'app/cards', 'app/seats', 'app/round', 'app/ro
 		roundState: function(){
 			return this.tractorRound ? this.tractorRound.state: null;
 		}, 
-		nextRound: function(){
+		nextRound: function(currentRank){
 			if(this.tractorRound != null && this.tractorRound.state != Round.RoundState.DONE){
 				throw "Cannot play next round";
 			}
 	
-			this.tractorRound = new Round(this.get('cards'), this.get('dealInterval'), this.get('seats'), this.get("id"));
+			this.tractorRound = new Round(this.get('cards'), this.get('dealInterval'), this.get('seats'), this.get("id"), currentRank);
 		}, 
 		canFlip: function(){ 
 			return this.get('roomState') == RoomState.PLAYING && this.tractorRound != undefined && this.tractorRound.state == Round.RoundState.DEALING;

@@ -49,16 +49,14 @@ requirejs(["app/cards", "app/card", "app/player", "app/round", "app/rooms", "app
 		};	
 		tractorRound.start();
 
-		room.flip(jacky, Card.cards([smallJoker, heart2]));
+		room.flip(jacky, Cards.cards([smallJoker, heart2]));
 
 		var seats = room.get('seats');
-		test.equals(seats.pairs.at(0).rank(), Rank.TWO);
-		test.ok(seats.defenders() != undefined);
-		test.equals(seats.defenders().hasPlayer(jacky), true);
-		test.equals(seats.defenders().hasPlayer(kerry), true);
-		test.ok(seats.attackers() != undefined);
-		test.equals(seats.attackers().hasPlayer(nana), true);
-		test.equals(seats.attackers().hasPlayer(yao), true);
+		test.equals(seats.at(0).get('currentRank'), Rank.TWO);
+		test.equals(seats.getSeatOfPlayer(jacky).get('defender'), true);
+		test.equals(seats.getSeatOfPlayer(kerry).get('defender'), true);
+		test.equals(seats.getSeatOfPlayer(nana).get('attacker'), true);
+		test.equals(seats.getSeatOfPlayer(yao).get('attacker'), true);
 
 		tractorRound.deal = originalDeal;
 		test.done();
@@ -77,15 +75,15 @@ requirejs(["app/cards", "app/card", "app/player", "app/round", "app/rooms", "app
 		};	
 		tractorRound.start();
 
-		room.flip(jacky, Card.cards([smallJoker, heart2]));
+		room.flip(jacky, Cards.cards([smallJoker, heart2]));
 
 		var seats = room.get('seats');
-		test.equals(seats.defenders().hasPlayer(jacky), true);
-		test.equals(seats.attackers().hasPlayer(yao), true);
+		test.equals(seats.getSeatOfPlayer(jacky).get("defender"), true);
+		test.equals(seats.getSeatOfPlayer(yao).get("attacker"), true);
 
-		room.flip(yao, Card.cards([smallJoker, diamond1, diamond2]));
-		test.equals(seats.defenders().hasPlayer(yao), true);
-		test.equals(seats.attackers().hasPlayer(jacky), true);
+		room.flip(yao, Cards.cards([smallJoker, diamond1, diamond2]));
+		test.equals(seats.getSeatOfPlayer(yao).get("defender"), true);
+		test.equals(seats.getSeatOfPlayer(jacky).get("attacker"), true);
 
 		tractorRound.deal = originalDeal;
 		test.done();
@@ -102,15 +100,19 @@ requirejs(["app/cards", "app/card", "app/player", "app/round", "app/rooms", "app
 		};	
 		tractorRound.start();
 
-		room.flip(jacky, Card.cards([smallJoker, heart2]));
+		room.flip(jacky, Cards.cards([smallJoker, heart2]));
 
 		var seats = room.get('seats');
-		test.equals(seats.defenders().hasPlayer(jacky), true);
-		test.equals(seats.attackers().hasPlayer(yao), true);
-
+		test.equals(seats.getSeatOfPlayer(jacky).get('defender'), true);
+		test.equals(seats.getSeatOfPlayer(kerry).get('defender'), true);
+		test.equals(seats.getSeatOfPlayer(nana).get('attacker'), true);
+		test.equals(seats.getSeatOfPlayer(yao).get('attacker'), true);
+		
 		test.throws(function(){room.flip(yao, [smallJoker, diamond1])}, "");
-		test.equals(seats.defenders().hasPlayer(jacky), true);
-		test.equals(seats.attackers().hasPlayer(yao), true);
+		test.equals(seats.getSeatOfPlayer(jacky).get('defender'), true);
+		test.equals(seats.getSeatOfPlayer(kerry).get('defender'), true);
+		test.equals(seats.getSeatOfPlayer(nana).get('attacker'), true);
+		test.equals(seats.getSeatOfPlayer(yao).get('attacker'), true);
 
 		tractorRound.deal = originalDeal;
 		test.done();
@@ -147,10 +149,10 @@ requirejs(["app/cards", "app/card", "app/player", "app/round", "app/rooms", "app
 		room.flip(jacky, Cards.cards([smallJoker1, smallJoker2]));
 
 		var seats = room.get('seats');
-		test.equals(seats.defenders().hasPlayer(jacky), true);
-		// test.equals(seats.attackers().hasPlayer(yao), true);
-			// 
-		// tractorRound.deal = originalDeal;
+		test.equals(seats.getSeatOfPlayer(jacky).get('defender'), true);
+		test.equals(seats.getSeatOfPlayer(yao).get('attacker'), true);
+
+		tractorRound.deal = originalDeal;
 		test.done();
 	};
 

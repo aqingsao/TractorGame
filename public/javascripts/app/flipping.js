@@ -15,7 +15,7 @@ define(['backbone', 'underscore', 'app/cards'], function(Backbone, _, Cards){
 	 			else if(jokers.at(0).isBigJoker() && trumps.at(0).isRedSuit() ){
 	 				return -1;
 	 			}
-	 			else if(currentRank != undefined && !trumps.at(0).rank.equals(currentRank)){
+	 			else if(currentRank != undefined && !trumps.at(0).get("rank").equals(currentRank)){
 	 				return -1;
 	 			} 
   				return 1;
@@ -30,7 +30,7 @@ define(['backbone', 'underscore', 'app/cards'], function(Backbone, _, Cards){
 	 			else if(jokers.at(0).isBigJoker() && trumps.at(0).isRedSuit() ){
 	 				return -1;
 	 			} 
-	 			else if(currentRank != undefined && !trumps.at(0).rank.equals(currentRank)){
+	 			else if(currentRank != undefined && !trumps.at(0).get("rank").equals(currentRank)){
 	 				return -1;
 	 			} 
 	 			return 2;
