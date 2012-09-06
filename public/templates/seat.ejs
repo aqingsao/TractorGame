@@ -1,0 +1,12 @@
+<div class="player">
+	<span class="name"><%= seat.playerName()%></span>
+</div>
+<div class="join">
+	<div class="message hidden">无法加入该座位</div>
+	<div class="waiting hidden">等待其他人加入</div>
+	<form action="/tractor/<%= room.get("id")%>/join/<%= seat.get("id")%>" method="POST" onclick="return false;">
+		<input name='name' type="text" value='player<%= seat.get("id")%>' />
+		<input type='submit' value='我要加入'>点击加入</input>
+	</form>
+</div>
+<div class="cards"></div>

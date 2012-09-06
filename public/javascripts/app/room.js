@@ -62,7 +62,9 @@ define(['backbone', 'underscore', 'app/cards', 'app/seats', 'app/round', 'app/ro
 		availableSeats: function(){
 			var seats = this.get('seats');
 			var count = 0; 
-			seats.each(function(seat){
+			console.log(seats.length);
+			seats.each(function(seat, index){
+				console.log("Seat  is taken: "+  seat.isTaken());
 				if(!seat.isTaken()){count ++;}
 			});
 			return count;
@@ -84,7 +86,10 @@ define(['backbone', 'underscore', 'app/cards', 'app/seats', 'app/round', 'app/ro
 	}, {
 		fjod: function(json){
 			var room = new Room(); 
-			room.set(json);			
+			var cards = Cards.fjod();
+			var roomState = RoomState.WAITING;
+			var seats = Seats.fjod(json.seats);
+			room.set({id: json.id, seats: seats, cards: cards, roomState: roomState});
 			return room;
 		}
 	});

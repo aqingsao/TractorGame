@@ -1,8 +1,7 @@
-define(['jQuery', 'underscore', 'backbone', 'app/rooms', 'app/room'], function($, _, Backbone, Rooms, Room){	          
+define(['jQuery', 'underscore', 'backbone', 'ejs', 'app/rooms', 'app/room'], function($, _, Backbone, EJS, Rooms, Room){	
 	var RoomView = Backbone.View.extend({
 		tagName:  "div",           
 	  	className: 'room',
-	  	template: _.template("<span><a href='/rooms/<%= model.id%>'>room <%= model.id %></a></span><span class='description'><%=model.availableSeats() %> seats available</span><span class='status'><%= model.get('roomState').name%></span>"),
 		initialize: function(){
 			_.bindAll(this, 'render'); 
 		},
@@ -14,7 +13,7 @@ define(['jQuery', 'underscore', 'backbone', 'app/rooms', 'app/room'], function($
 		},
 	  	render: function() {                 
 		 	this.$el.attr("id", "room" + this.model.id);
-	    	this.$el.html(this.template({model: this.model}));
+	    	this.$el.html(new EJS({url: 'templates/room.ejs'}).render({room: this.model}));
 	    	return this;
 	  	}
 	}); 
@@ -60,17 +59,4 @@ define(['jQuery', 'underscore', 'backbone', 'app/rooms', 'app/room'], function($
 		}
 	}); 
 	return RoomsView;
-	
-	// $.get("/data/rooms", function(data){  
-	// 	var roomsView = new RoomsView({model: rooms});
-	// });
-	// $(".newRoom").click(function(){
-	// 	var form = $(this);                      
-	// 	$.post($(this).attr("action"), function(data){
-	// 		rooms.add(new Backbone.Model().mport(data));
-	// 	}).error(function(data){
-	// 		$(".message.error").removeClass("hidden");
-	// 	});	
-	// 	return false;
-	// });
 });

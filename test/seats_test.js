@@ -27,6 +27,17 @@ requirejs(['app/seats', 'app/rank', 'app/player'], function(Seats, Rank, Player)
 		test.equals(seats.full(), true);
 		test.done();
 	}; 
+	exports['could get seat by direction'] = function(test){
+		var seats = Seats.prepareSeats(); 
+		seats.join(jacky, 0);
+		seats.join(nana, 1);
+		seats.join(yao, 2);
+		seats.join(kerry, 3);
+		
+		test.ok(seats.getSeat('N') != undefined);
+		test.ok(seats.getSeat('north') != undefined);
+		test.done();
+	};
 	var jacky = new Player({name: 'Jacky'});
 	var nana = new Player({name: 'Nana'});
 	var kerry = new Player({name: 'Kerry'});

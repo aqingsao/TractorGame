@@ -1,14 +1,14 @@
-define(['jQuery', 'underscore', 'backbone', 'view/rooms'], function($, _, Backbone, RoomsView){
+define(['jQuery', 'underscore', 'backbone', 'view/roomsView', 'view/roomView'], function($, _, Backbone, RoomsView, RoomView){
 	var AppRouter = Backbone.Router.extend({
 		routes:{
 			'rooms': 'roomsIndex', 
-			'rooms/:roomId': 'showRoom'
+			'room/:roomId': 'roomShow'
 		},
 		roomsIndex: function(){
-			new RoomsView().render();
+			new RoomsView();
 		},                            
-		showRoom: function(roomId){
-			alert('show room ' + roomId);
+		roomShow: function(roomId){
+			new RoomView(roomId);
 		},
 		start: function(){
 			var result = Backbone.history.start({pushState: true, root: "/"}); 

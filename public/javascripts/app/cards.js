@@ -77,6 +77,9 @@ define(['backbone', 'underscore', 'app/rank', 'app/suit', 'app/card'], function(
 				cards.add(initialCards);	
 			}
 			return cards;
+		}, 
+		fjod: function(json){
+			return Cards.cards(json);
 		}
 	}); 
 	return Cards;

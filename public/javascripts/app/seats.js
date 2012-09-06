@@ -58,15 +58,19 @@ define(['backbone', 'underscore', 'app/rank', 'app/pair', 'app/seat'], function(
 			var seatIndex;
 			switch(direction){
 				case 'N':
+				case 'north':
 					seatIndex = 0;
 					break;
 				case 'W':
+				case 'west':
 					seatIndex = 1;
 					break;
 				case 'S':
+				case 'south':
 					seatIndex = 2;
 					break;
 				case 'E':
+				case 'east':
 					seatIndex = 3;
 				    break;
 			}  
@@ -82,6 +86,9 @@ define(['backbone', 'underscore', 'app/rank', 'app/pair', 'app/seat'], function(
 	}, {
 		prepareSeats: function(){
 			return new Seats([new Seat({id:0}), new Seat({id:1}), new Seat({id:2}), new Seat({id:3})]);			
+		}, 
+		fjod: function(json){
+			return new Seats(json);
 		}
 	});
 	return Seats;

@@ -39,6 +39,7 @@ requirejs(['express', 'socket.io', 'broader', 'routes/index.js'], function(expre
   	app.get('/data/rooms', routes.roomsIndexJson);
   	
   	app.get('/room/:id', routes.room);
+    app.get('/data/room/:id', routes.roomJson);
   	app.post('/room/:id/join/:seatId', routes.roomJoin);
   	
   	app.post('/room/:id/start', routes.roundStart);

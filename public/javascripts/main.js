@@ -3,7 +3,8 @@ require.config({
 	paths: {
 		jQuery: '/javascripts/lib/jquery-1.7.2.min', 
 		underscore: '/javascripts/lib/underscore',
-		backbone: '/javascripts/lib/backbone'
+		backbone: '/javascripts/lib/backbone', 
+		ejs: '/javascripts/lib/ejs'
 	}, 
 	shim: {
 		'underscore': {
@@ -20,10 +21,13 @@ require.config({
 		}, 
 		'jQuery': {
 			exports: '$'
+		}, 
+		'ejs': {
+			exports: 'EJS'
 		}
 	}
 }); 
-require(['jQuery', 'underscore', 'backbone', 'router'], function($, _, Backbone, router){  
+require(['jQuery', 'underscore', 'backbone', 'ejs', 'router'], function($, _, Backbone, EJS, router){  
 	var isLoaded = function(module){
 		if(typeof(module) == undefined){
 			console.log("Module " + module + " is not loaded.");
@@ -31,7 +35,7 @@ require(['jQuery', 'underscore', 'backbone', 'router'], function($, _, Backbone,
 		}                
 		return true;
 	};
-	if(isLoaded($) && isLoaded(_) && isLoaded(Backbone) && isLoaded(router)){
+	if(isLoaded($) && isLoaded(_) && isLoaded(Backbone) && isLoaded(router)&& isLoaded(EJS)){
 		console.log("all modules are loaded successfully.");
 	}
 	router.start();          
