@@ -52,7 +52,7 @@ requirejs(["app/cards", "app/card", "app/player", "app/round", "app/rooms", "app
 		room.flip(jacky, Cards.cards([smallJoker, heart2]));
 
 		var seats = room.get('seats');
-		test.equals(seats.at(0).get('currentRank'), Rank.TWO);
+		test.equals(seats.at(0).get('rank'), Rank.TWO);
 		test.equals(seats.getSeatOfPlayer(jacky).get('defender'), true);
 		test.equals(seats.getSeatOfPlayer(kerry).get('defender'), true);
 		test.equals(seats.getSeatOfPlayer(nana).get('attacker'), true);
@@ -182,10 +182,10 @@ requirejs(["app/cards", "app/card", "app/player", "app/round", "app/rooms", "app
 		test.done();
 	}
 
-	var jacky = new Player('Jacky');
-	var nana = new Player('Nana');
-	var kerry = new Player('Kerry');
-	var yao = new Player('Yao');
+	var jacky = new Player({name: 'Jacky'});
+  	var nana = new Player({name: 'Nana'});
+  	var kerry = new Player({name: 'Kerry'});
+  	var yao = new Player({name: 'Yao'});
 
 	function stubDeal(cardsForPlayer){
 		_.each(cardsForPlayer, function(obj){

@@ -1,12 +1,21 @@
 <div class="player">
 	<span class="name"><%= seat.playerName()%></span>
+
+	<span><% if(seat.get('defender')){%>我在台上<%}else{%>我在台下<%}%>，现在打<span><%= seat.get('rank').name%></span></span>
+	
+	<span class="flip classFlip"></span>
+	<form class="flip" action="/room/<%= room.id%>/flip" method="POST" onclick="return false;">
+		<input type="hidden" name="name" />
+		<input type="submit" value="我要亮主"/>
+	</form>
+
 </div>
 <div class="join">
-	<div class="message hidden">无法加入该座位</div>
+	<div class="message hidden">小庙难容大神，抱歉了！</div>
 	<div class="waiting hidden">等待其他人加入</div>
-	<form action="/tractor/<%= room.get("id")%>/join/<%= seat.get("id")%>" method="POST" onclick="return false;">
+	<form class="takeSeat" action="/room/<%= room.get("id")%>/join/<%= seat.id%>" method="POST" onclick="return false;">
 		<input name='name' type="text" value='player<%= seat.get("id")%>' />
-		<input type='submit' value='我要加入'>点击加入</input>
+		<input type='submit' value='大驾光临'/>
 	</form>
 </div>
 <div class="cards"></div>

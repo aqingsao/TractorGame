@@ -1,0 +1,56 @@
+.seat{
+	border: solid;
+	padding: 5px 10px;
+	margin: 10px 20px 20px 20px;  
+	height: 135px;
+}   
+/*start of seat not taken*/
+.seat.notTaken .trumps, .seat.notTaken .suits{
+	display: none;
+}                             
+.seat .join{
+	display: none;
+}
+.seat.notTaken .join{
+	display: block;
+}
+.seat.notTaken .error{
+	font-weight: bold;
+	font-style: italic;
+	background: red;
+}   
+/*-------end of seat not taken*/
+.seat.north, .seat.south{
+	width: 550px; 
+	margin-left: auto;
+	margin-right: auto;
+}
+.playarea{
+	float: left;
+}
+.seat.east, .seat.west{
+	width: 450px;  
+	height: 190px;
+}
+.seat.east{
+	float: left;
+}
+.seat.west{
+	float: left;
+}
+.player{
+	background-color: red;
+}
+.player .name{
+	margin: 5px 15px;
+}
+.player .banker{
+	margin: 5px 15px;	
+}
+
+form.takeSeat{
+	
+}
+form.flip{
+	display: inline;
+}

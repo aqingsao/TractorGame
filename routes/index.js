@@ -25,10 +25,7 @@ define(['util', 'app/cards', 'app/rooms', 'app/room', 'app/player', 'broader'], 
 			}        
 			var room = rooms.get(id);
 			if(room == undefined){
-				room = new Room({id: id, dealInterval: 100});
-				room.id = id;
-				rooms.add(room);
-				console.log("create new room " + id);
+				throw "Room " + id + " does not exist";
 			}    
 			res.render('room', {room: room, title: 'Room ' + id});
 		},

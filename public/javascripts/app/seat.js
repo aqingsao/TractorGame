@@ -1,13 +1,13 @@
-define(['backbone', 'underscore', 'app/rank', 'app/pair'], function(Backbone, _, Rank, Pair){
+define(['backbone', 'underscore', 'app/rank', 'app/pair', 'app/player'], function(Backbone, _, Rank, Pair, Player){
 	var Seat = Backbone.Model.extend({
 		initialize: function(){
-			this.set({rank: Rank.TWO, currentRank: Rank.TWO, defender: false, attacker: false});
+			this.set({rank: Rank.TWO, defender: false, attacker: false});
 		},	                         
 		setDefender: function(currentRank){
-			this.set({defender: true, attacker: false, currentRank: currentRank});
+			this.set({defender: true, attacker: false});
 		}, 
 		setAttacker: function(currentRank){
-			this.set({defender: false, attacker: true, currentRank: currentRank});
+			this.set({defender: false, attacker: true});
 		}, 
 		join: function(player){
 			if(this.isTaken()){   
@@ -25,9 +25,13 @@ define(['backbone', 'underscore', 'app/rank', 'app/pair'], function(Backbone, _,
 		}, 
 		takenByPlayer: function(player){
 			return player.get('name') == this.playerName();
-		}, 
-		rank: function(){
-			return this.get('rank');
+		}
+	}, {
+		fjod: function(json){
+			var seat = new Seat();
+			seat.id= json.id;
+			seat.set({id: json.id, rank: json.rank, defender: json.defender, attacker: json.attacker, player: Player.fjod(json.player)});
+			return seat;
 		}
 	}); 
 	return Seat;

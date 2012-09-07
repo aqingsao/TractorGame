@@ -106,8 +106,8 @@ requirejs(['underscore', "app/cards", "app/card", "app/flipping", "app/player", 
 		test.done();
 	};
 
-	var jacky = new Player('Jacky');
-	var nana = new Player('Nana');
-	var kerry = new Player('Kerry');
-	var yao = new Player('Yao');
+	var jacky = new Player({name: 'Jacky'});
+  	var nana = new Player({name: 'Nana'});
+  	var kerry = new Player({name: 'Kerry'});
+  	var yao = new Player({name: 'Yao'});
 });

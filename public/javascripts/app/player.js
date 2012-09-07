@@ -1,8 +1,5 @@
 define(['backbone', 'underscore', 'app/cards'], function(Backbone, _, Cards){
 	var Player = Backbone.Model.extend({
-		initialize: function(name){
-			this.set({name: name, cards: Cards.cards()});
-		},
 		hasCards: function(cards){ 
 			var that = this; 
 		    return  cards.all(function(card){
@@ -10,6 +7,9 @@ define(['backbone', 'underscore', 'app/cards'], function(Backbone, _, Cards){
 			});
 		}, 
 		deal: function(card){
+			if(this.get('cards') == undefined){
+				this.set({'cards': Cards.cards()})
+			}
 			this.get('cards').add(card);
 		}, 
 		equals: function(another){
@@ -22,6 +22,13 @@ define(['backbone', 'underscore', 'app/cards'], function(Backbone, _, Cards){
 			return this.get('cards').sortBy(function(card){
 				return card.get('rank').get('value');
 			});
+		}
+	}, {
+		fjod: function(json){
+			if(json == undefined){
+				return undefined;
+			}
+			return new Player({name: json.name, cards: json.cards});
 		}
 	});
 	return Player;

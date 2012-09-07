@@ -14,6 +14,7 @@ requirejs(['backbone', 'app/rooms', 'app/room'], function(Backbone, Rooms, Room)
 	exports['can get room by id'] = function(test){
 		var rooms = new Rooms();
 		var room = new Backbone.Model({id: 1});
+		room.id = 1;
 		test.equals(room.id, 1);
 		rooms.add(room);
 

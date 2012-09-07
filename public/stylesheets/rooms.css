@@ -2,8 +2,42 @@
 	margin: 20px 0;
 } 
 .rooms .room{
-	margin-top: 10px;
+	margin: 10px 20px;
+	border: 1px solid black;
+	width: 220px;
+	height: 160px;
+	position: relative;
+	float: left;
 }
 .rooms .room span{
 	margin-right: 20px;
+}
+.rooms .room .roomSeat{
+	border: 1px dotted red;
+	width: 68px;
+	position: absolute;
+}
+.topSeat .roomSeat{
+	left: 76px;
+}
+.bottomSeat .roomSeat{
+	left: 76px;
+	bottom: 0;
+}
+.leftSeat .roomSeat{
+	left: 0;
+	top: 50px;
+}
+.rightSeat .roomSeat{
+	right: 0;
+	top: 50px;
+}
+.rooms .central{
+	padding: 20px 75px;
+}
+form.join input{
+	display: block;
+}
+form.join input.name{
+	width: 60px;
 }

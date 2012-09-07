@@ -1,0 +1,11 @@
+<% if(seat.isTaken()){%>
+	<span class="name"><%= seat.playerName()%></span>
+<% } else{%>	
+	<span class="name hidden"></span>
+<% }%>
+
+<span class="message hidden">小庙难容大神，抱歉了！</span>
+<form class="join <% if(seat.isTaken()){%><%= 'hidden'%><% }%>" action="/room/<%= roomId%>/join/<%= seat.id%>" method="POST" onclick="return false;">
+	<input class='name' name='name' type="text" value='player<%= seat.get("id")%>' />
+	<input type='submit' value='大驾光临'/>
+</form>
