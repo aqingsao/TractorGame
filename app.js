@@ -13,13 +13,15 @@ if (typeof define !== 'function') {
 
 requirejs(['express', 'socket.io', 'broader', 'routes/index.js'], function(express, io, broader, routes){
    	var app = module.exports = express.createServer();
-	var io = io.listen(app);
+	  var io = io.listen(app);
   	
   	app.configure(function(){
   	  app.set('views', __dirname + '/views');
   	  app.set('view engine', 'jade');
   	  app.use(express.bodyParser());
   	  app.use(express.methodOverride());
+      app.use(express.cookieParser());
+      app.use(express.session({ secret: 'tractor game' }));
   	  app.use(app.router);
   	  app.use(express.static(__dirname + '/public'));
   	});

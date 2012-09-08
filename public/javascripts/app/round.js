@@ -1,11 +1,11 @@
 define(['backbone', 'underscore', 'app/flipping', 'broader'], function(Backbone, _, Flipping, broader){  
 	var Round = Backbone.Model.extend({
-		initialize: function(cards, dealInterval, seats, roomNo, currentRank){
+		initialize: function(cards, dealInterval, seats, roomId, currentRank){
 			this.cards = cards;		
 			this.state = Round.RoundState.READY;
 			this.dealInterval= dealInterval;
 			this.seats = seats;                                
-			this.roomNo = roomNo;
+			this.roomId = roomId;
 			this.currentBanker = null;
 			this.currentRank = currentRank;
 		},
@@ -27,7 +27,7 @@ define(['backbone', 'underscore', 'app/flipping', 'broader'], function(Backbone,
 					var card = cards.shift(); 
 					var seat = that.seats.at(i);  
 					seat.get('player').deal(card);
-					broader.onDeal(that.roomNo, card, seat, round);
+					broader.onDeal(that.roomId, card, seat, round);
 				}
 				//event.deal
 				if(round++ < 25){
@@ -38,7 +38,7 @@ define(['backbone', 'underscore', 'app/flipping', 'broader'], function(Backbone,
 				}
 			};
 			var dealFinish = function(){
-				 broader.onDealFinish(that.roomNo);
+				 broader.onDealFinish(that.roomId);
 			};
 			dealSlow();
 		}, 

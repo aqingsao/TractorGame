@@ -1,4 +1,18 @@
-define(['jQuery', 'underscore', 'backbone', 'ejs', 'app/rooms', 'app/room'], function($, _, Backbone, EJS, Rooms, Room){	
+define(['jQuery', 'underscore', 'backbone', 'ejs', 'app/rooms', 'app/room', 'io'], function($, _, Backbone, EJS, Rooms, Room, io){	
+	var othersTakeSeat = function(roomId, seatId, player){
+		console.log("Player " + player + " take seat " + seatId + " in room " + roomId);
+   		var seat = $("#room" + roomId +"seat" + seatId);
+		seat.addClass("others").removeClass("notTaken");  
+		takeSeat(seat, player);
+	};
+
+	var socket = io.connect("ws://" + window.location.host);
+  	socket.on("roomStateChanged", function(data){ 
+  		console.log(data);
+		
+	});
+
+
 	var SeatView = Backbone.View.extend({
 		tagName: 'div',
 		className: 'roomSeat',
@@ -16,26 +30,22 @@ define(['jQuery', 'underscore', 'backbone', 'ejs', 'app/rooms', 'app/room'], fun
 			$.post(form.attr("action"), form.serialize(), function(data){ 
 				var seatId = self.model.id;
 				var playerName = form.find(".name").val();  
-				self.iTakeSeat(seatId, playerName);
+				if(typeof(data.redirect) == 'string'){
+                    window.location = data.redirect
+				}
 			}).error(function(data){
 				self.$el.find(".message.error").removeClass("hidden");
 			});	
 			return false;
 		},
 		iTakeSeat: function(seatId, playerName){ 
-			console.log("I take seat " + seatId + " successfully.");
-			// var seat = $("#seat" + seatId);
-			// seat.find("form input[name='name']").val(player); 
-			// seat.addClass("my").removeClass("notTaken");
-			this.takeSeat(playerName);  
-			// disableSeats();
-		},
-		takeSeat: function(playerName){ 
+			console.log("I take seat " + seatId + " in room " + this.roomId);
 			this.$el.find("span.name").text(playerName).removeClass("hidden");
 			this.$el.find('.join').addClass("hidden");
-		},     
+		},
 		render: function(){
 	    	this.$el.html(new EJS({url: 'templates/rooms/seat.ejs'}).render({roomId: this.roomId, seat: this.model}));
+	    	this.$el.attr("id", "room"+this.roomId+"seat"+this.model.id);
 	    	return this;
 		}
 	});

@@ -4,7 +4,8 @@ require.config({
 		jQuery: '/javascripts/lib/jquery-1.7.2.min', 
 		underscore: '/javascripts/lib/underscore',
 		backbone: '/javascripts/lib/backbone', 
-		ejs: '/javascripts/lib/ejs'
+		ejs: '/javascripts/lib/ejs',
+		io: '/socket.io/socket.io'
 	}, 
 	shim: {
 		'underscore': {
@@ -24,19 +25,33 @@ require.config({
 		}, 
 		'ejs': {
 			exports: 'EJS'
+		},
+		'io': {
+			exports: 'io'
 		}
 	}
 }); 
-require(['jQuery', 'underscore', 'backbone', 'ejs', 'router'], function($, _, Backbone, EJS, router){  
+require(['jQuery', 'underscore', 'backbone', 'ejs', 'router', 'io'], function($, _, Backbone, EJS, router, io){  
 	var isLoaded = function(module){
-		if(typeof(module) == undefined){
-			console.log("Module " + module + " is not loaded.");
-			return false;
-		}                
-		return true;
+		if(module != undefined){
+			return true;
+		}              
+		console.log("At least one module is not loaded successfully");  
+		return false;
 	};
-	if(isLoaded($) && isLoaded(_) && isLoaded(Backbone) && isLoaded(router)&& isLoaded(EJS)){
+	if(isLoaded($) && isLoaded(_) && isLoaded(Backbone) && isLoaded(router)&& isLoaded(EJS) && isLoaded(io)){
 		console.log("all modules are loaded successfully.");
-	}
+	};
+	if(!("WebSocket" in window)){  
+	    alert("No web socket is supported!"); 
+		return;
+	} 
+	var socket = io.connect("ws://" + window.location.host);
+  	socket.on('connected', function (data) {
+		console.log("WebSocket has been connected with server");  
+  	});
+  	_.socket = socket; // Temporarily set socket to _, so that we could use it in other modules;
+
+
 	router.start();          
 });

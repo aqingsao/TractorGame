@@ -1,8 +1,16 @@
 define(['backbone', 'underscore'], function(Backbone, _){
 	var io;
+	var broadcastAll= function(event, data){
+		try{  
+			console.log("Broadcast event " + event +" to all sockets:");
+			io.sockets.emit(event, data);
+		}catch(error){
+			console.log("Failed to broadcast event " + event + " to socket " + socketId +": " + error);
+		}
+	};
 	var Connection = Backbone.Model.extend({
-		initialize: function(roomNo){
-			this.roomNo = roomNo;  
+		initialize: function(roomId){
+			this.roomId = roomId;  
 			this.socketIds = [];
 		},                        
 		addSocket: function(socketId){
@@ -29,33 +37,29 @@ define(['backbone', 'underscore'], function(Backbone, _){
 			var that = this;
 			io.sockets.on('connection', function (socket) {
 			  	socket.emit('connected', {});             
-				socket.on("onRoom", function(data){   
-					console.log("Socket " + socket.id + " is on room " + data.roomNo);
-					that.getConnection(data.roomNo).addSocket(socket.id);
-				});
 			}); 
 		}, 
-		onJoin: function(roomNo, seatId, player){
-			this.getConnection(roomNo).broadcast("onJoin", {roomNo: roomNo, seatId: seatId, player: player.get("name")});
-		}, 
-		onNewRoom: function(roomNo){
-			// this.connections.add(new Connection(roomNo));
-		}, 
-		onGameReady: function(roomNo){
-		   this.getConnection(roomNo).broadcast("onGameReady", {roomNo: roomNo});  
-		}, 
-		onDeal: function(roomNo, card, seat, round){
-		   this.getConnection(roomNo).broadcast("onDeal", {roomNo: roomNo, card: {suit: card.get('suit').get('name'), rank: card.get('rank').get('name')}, seat: seat.get("id"), round: round});    
+		roomStateChanged: function(roomId, roomState){
+			broadcastAll('roomStateChanged', {roomId: roomId, roomState: roomState});
 		},
-		onDealFinish: function(roomNo){
-		   this.getConnection(roomNo).broadcast("onDealFinish", {roomNo: roomNo});  
+		onJoin: function(roomId, seatId, player){
+			this.getConnection(roomId).broadcast("onJoin", {roomId: roomId, seatId: seatId, player: player.get("name")});
+		}, 
+		onNewRoom: function(roomId){
+			// this.connections.add(new Connection(roomId));
+		}, 
+		onDeal: function(roomId, card, seat, round){
+		   this.getConnection(roomId).broadcast("onDeal", {roomId: roomId, card: {suit: card.get('suit').get('name'), rank: card.get('rank').get('name')}, seat: seat.get("id"), round: round});    
 		},
-		getConnection: function(roomNo){
+		onDealFinish: function(roomId){
+		   this.getConnection(roomId).broadcast("onDealFinish", {roomId: roomId});  
+		},
+		getConnection: function(roomId){
 		   	var connection = this.connections.find(function(connection){
-				return connection.roomNo == roomNo;
+				return connection.roomId == roomId;
 			});
 			if(connection == undefined){
-				connection = new Connection(roomNo);
+				connection = new Connection(roomId);
 				this.connections.add(connection);
 			} 
 			return connection; 

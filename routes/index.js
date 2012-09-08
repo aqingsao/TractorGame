@@ -15,6 +15,10 @@ define(['util', 'app/cards', 'app/rooms', 'app/room', 'app/player', 'broader'], 
 			var id = rooms.length + 1;
 			var room = new Room({id: id, dealInterval: 100}); 
 			room.id = id;
+			room.on('change:roomState', function(e){
+				console.log("Room state changed to " + e.get('roomState'));
+				broader.roomStateChanged(e.id, e.get('roomState'));
+			});
 			rooms.add(room);
 			res.json(room.toJSON());
 		}, 
@@ -26,7 +30,11 @@ define(['util', 'app/cards', 'app/rooms', 'app/room', 'app/player', 'broader'], 
 			var room = rooms.get(id);
 			if(room == undefined){
 				throw "Room " + id + " does not exist";
+			}
+			if(req.session.roomId == id){
+				console.log("You are already in this room with seat " + req.session.seatId);
 			}    
+
 			res.render('room', {room: room, title: 'Room ' + id});
 		},
 		roomJson: function(req, res){
@@ -46,7 +54,10 @@ define(['util', 'app/cards', 'app/rooms', 'app/room', 'app/player', 'broader'], 
 				room.join(player, seatId); 
 				broader.onJoin(id, seatId, player);
 		
-				res.json(player.toJSON());
+				req.session.roomId = id;
+				req.session.seatId = seatId;
+				req.session.name = player.get('name');
+				res.send({redirect: '/room/' + room.id});
 			}catch(error){  
 				console.log("Player " + player.get("name") + " failed to join room " + id + " on seat " + seatId +": " + error);
 				res.json({error: error}, 400);
