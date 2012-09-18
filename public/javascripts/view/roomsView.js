@@ -13,7 +13,10 @@ define(['jQuery', 'underscore', 'backbone', 'ejs', 'app/rooms', 'app/room', 'io'
 	});
   	socket.on("seatChanged", function(data){ 
   		var room = rooms.get(data.roomId);
-  		var seat = room.get('seats').getSeat(seatId);
+  		if(room == undefined){
+  			return;
+  		}
+  		var seat = room.get('seats').getSeat(data.seatId);
   		seat.fjod(data.changed);
 	});
 
