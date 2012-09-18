@@ -25,6 +25,9 @@ define(['backbone', 'underscore', 'app/rank', 'app/pair', 'app/player'], functio
 		}, 
 		takenByPlayer: function(player){
 			return player.get('name') == this.playerName();
+		}, 
+		fjod: function(json){
+			seat.set({id: json.id, rank: json.rank, defender: json.defender, attacker: json.attacker, player: Player.fjod(json.player)});
 		}
 	}, {
 		fjod: function(json){

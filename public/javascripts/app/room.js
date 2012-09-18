@@ -82,6 +82,16 @@ define(['backbone', 'underscore', 'app/cards', 'app/seats', 'app/round', 'app/ro
 					return pair;
 				}
 			});
+		}, 
+		getSeat: function(seatId){
+			return this.get('seats').at(seatId % 4);
+		},
+		fjod: function(json){
+			var cards = Cards.fjod();
+			var roomState = RoomState.WAITING;
+			var seats = Seats.fjod(json.seats);
+			this.set({id: json.id, seats: seats, cards: cards, roomState: roomState});
+			return this;
 		}
 	}, {
 		fjod: function(json){

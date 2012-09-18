@@ -1,42 +1,46 @@
+.room{
+	position: relative;
+	height: 600px;
+	width: 898px;
+}
 .seat{
 	border: solid;
 	padding: 5px 10px;
-	margin: 10px 20px 20px 20px;  
-	height: 135px;
+	position: absolute;
 }   
-/*start of seat not taken*/
-.seat.notTaken .trumps, .seat.notTaken .suits{
-	display: none;
-}                             
-.seat .join{
-	display: none;
-}
-.seat.notTaken .join{
-	display: block;
-}
-.seat.notTaken .error{
-	font-weight: bold;
-	font-style: italic;
-	background: red;
-}   
-/*-------end of seat not taken*/
 .seat.north, .seat.south{
-	width: 550px; 
-	margin-left: auto;
-	margin-right: auto;
+	width: 550px;
+	height: 135px; 
+	left: 161px;
 }
-.playarea{
-	float: left;
+.seat.north{
+	top:0;
+} 
+.seat.south{
+	bottom: 0;
 }
 .seat.east, .seat.west{
-	width: 450px;  
-	height: 190px;
+	width: 135px;  
+	height: 550px;
+	top: 20px;
 }
 .seat.east{
-	float: left;
+	left; 0;
 }
 .seat.west{
-	float: left;
+	right: 0;
+}
+
+
+.playarea{
+	position: absolute;
+	height: 200px;
+	width: 200px;
+	border: 1px solid red;
+	top: 50%;
+	margin-top: -100px;
+	left: 50%;
+	margin-left: -100px;
 }
 .player{
 	background-color: red;

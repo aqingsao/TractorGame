@@ -7,11 +7,15 @@ define(['jQuery', 'underscore', 'backbone', 'ejs', 'app/rooms', 'app/room', 'io'
 	};
 
 	var socket = io.connect("ws://" + window.location.host);
-  	socket.on("roomStateChanged", function(data){ 
+  	socket.on("roomChanged", function(data){ 
   		console.log(data);
 		
 	});
-
+  	socket.on("seatChanged", function(data){ 
+  		var room = rooms.get(data.roomId);
+  		var seat = room.get('seats').getSeat(seatId);
+  		seat.fjod(data.changed);
+	});
 
 	var SeatView = Backbone.View.extend({
 		tagName: 'div',
@@ -72,16 +76,16 @@ define(['jQuery', 'underscore', 'backbone', 'ejs', 'app/rooms', 'app/room', 'io'
 	    	return this;
 	  	}
 	}); 
+	var rooms = new Rooms();
 	var RoomsView = Backbone.View.extend({
 	  	el: $("#main"),  
 		
 	  	initialize: function() {  
 			_.bindAll(this, 'render', 'roomAdded'); 
 
-			this.model = new Rooms();
-			this.model.bind("add", this.roomAdded) ;
 			var self = this;
 			$.get("/data/rooms", function(data){
+				console.log(data);
 				for(var i = 0; i < data.length; i++){					 
 					var room = Room.fjod(data[i]);
 					self.model.add(room);
@@ -109,6 +113,10 @@ define(['jQuery', 'underscore', 'backbone', 'ejs', 'app/rooms', 'app/room', 'io'
 			this.$(".count").text(this.model.length);
 		}, 
 		render: function(){
+		}, 
+		init: function(){
+			this.model = rooms;
+			this.model.bind("add", this.roomAdded);
 		}
 	}); 
 	return RoomsView;

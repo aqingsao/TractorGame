@@ -17,7 +17,6 @@ define(['backbone', 'underscore'], function(Backbone, _){
 			this.socketIds.push(socketId);
 		}, 
 		broadcast: function(event, data){
-			// console.log("Broadcast event " + event +" to " + this.socketIds.length + " sockets: " + util.inspect(data));
 			 _.each(this.socketIds, function(socketId){   
 				try{  
 					console.log("Broadcast event " + event +" to " + socketId);
@@ -39,12 +38,13 @@ define(['backbone', 'underscore'], function(Backbone, _){
 			  	socket.emit('connected', {});             
 			}); 
 		}, 
-		roomStateChanged: function(roomId, roomState){
-			broadcastAll('roomStateChanged', {roomId: roomId, roomState: roomState});
+		roomChanged: function(roomId, changed){
+			broadcastAll('roomChanged', {roomId: roomId, changed: changed});
 		},
-		onJoin: function(roomId, seatId, player){
-			this.getConnection(roomId).broadcast("onJoin", {roomId: roomId, seatId: seatId, player: player.get("name")});
-		}, 
+		seatChanged: function(roomId, seatId, changed){
+			broadcastAll('seatChanged', {roomId: roomId, seatId: seatId, changed: changed});
+		},
+
 		onNewRoom: function(roomId){
 			// this.connections.add(new Connection(roomId));
 		}, 

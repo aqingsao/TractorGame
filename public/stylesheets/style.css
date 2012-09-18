@@ -7,6 +7,9 @@ a {
   color: #00B7FF;
 }
 
+#main{
+	margin: 0 auto;
+}
 .cf{
 	clear: both;
 }  

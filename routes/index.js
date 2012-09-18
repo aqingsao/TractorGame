@@ -17,8 +17,15 @@ define(['util', 'app/cards', 'app/rooms', 'app/room', 'app/player', 'broader'], 
 			room.id = id;
 			room.on('change:roomState', function(e){
 				console.log("Room state changed to " + e.get('roomState'));
-				broader.roomStateChanged(e.id, e.get('roomState'));
+				broader.roomChanged(e.id, e.get('roomState'));
 			});
+			room.get('seats').each(function(seat){
+				seat.on('change:player', function(e){
+					console.log("Seat " + e.get('id') +"'s player has been changed to " + e.playerName());
+					console.log(e);
+					broader.seatChanged(room.id, e.get('id'), e.changed);
+				});
+			})
 			rooms.add(room);
 			res.json(room.toJSON());
 		}, 
@@ -39,7 +46,7 @@ define(['util', 'app/cards', 'app/rooms', 'app/room', 'app/player', 'broader'], 
 		},
 		roomJson: function(req, res){
 			var room = rooms.get(req.params.id);
-			res.json(room == undefined? {} : room.toJSON());
+			res.json({room: room == undefined? {} : room.toJSON(), mySeat: req.session.seatId});
 		},
 		roomJoin: function(req, res){
 			var id = req.params.id;
@@ -52,7 +59,6 @@ define(['util', 'app/cards', 'app/rooms', 'app/room', 'app/player', 'broader'], 
 			try{
 				console.log("Player " + player.get("name") + "  is joining room " + id + " on seat " + seatId);
 				room.join(player, seatId); 
-				broader.onJoin(id, seatId, player);
 		
 				req.session.roomId = id;
 				req.session.seatId = seatId;

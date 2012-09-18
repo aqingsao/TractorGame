@@ -1,0 +1,17 @@
+<div class="player">
+	<% if(seat.isTaken()){%>
+		<span class="name"><%= seat.playerName()%></span>
+		<span><% if(seat.get('defender')){%>我在台上<%}else{%>我在台下<%}%>，现在打<span><%= seat.get('rank').name%></span></span>
+	<% }else{ %>
+		<span.waiting>等待其他人加入</span>
+	<% }%>	
+
+	<% if(mySeat){%>
+		<span class="flip classFlip"></span>
+		<form class="flip" action="/room/<%= roomId%>/flip" method="POST" onclick="return false;">
+			<input type="hidden" name="name" />
+			<input type="submit" value="我要亮主"/>
+		</form>
+	<% }%>
+</div>
+<div class="cards"></div>
