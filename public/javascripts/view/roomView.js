@@ -28,7 +28,7 @@ define(['jQuery', 'underscore', 'backbone', 'ejs', 'app/rooms', 'app/room', 'app
 		el: $(".seat.north")
 	});
 	var SouthSeatView = SeatView.extend({
-	el: $(".seat.south"),
+		el: $(".seat.south"),
 		mySeat: true
 	});
 	var EastSeatView = SeatView.extend({
@@ -47,19 +47,23 @@ define(['jQuery', 'underscore', 'backbone', 'ejs', 'app/rooms', 'app/room', 'app
 			_.bindAll(this, 'render'); 
 			var self = this;
 			$.get("/data/room/" + roomId, function(data){
-				console.log("I am on seat " + data.mySeat +" in room:");
+				console.log("I am on seat " + data.mySeat +" in room " + data.room.id);
 				self.model = room.fjod(data.room);
-				self.mySeat = data.mySeat;
+				self.mySeat = new Number(data.mySeat);
+
 				self.render();
 			});
 		},
 	  	render: function() {                
 		 	this.$el.attr("id", "room" + this.model.id);
-
+		 	
 		 	new NorthSeatView(this.model.id, this.model.getSeat(this.mySeat + 2)).render();
 		 	new WestSeatView(this.model.id, this.model.getSeat(this.mySeat + 3)).render();
 		 	new EastSeatView(this.model.id, this.model.getSeat(this.mySeat + 1)).render();
-		 	new SouthSeatView(this.model.id, this.model.getSeat(this.mySeat)).render();
+		 	console.log(this.mySeat);
+		 	console.log(this.model.get('seats'));
+		 	console.log(this.model.getSeat(this.mySeat + 0));
+		 	new SouthSeatView(this.model.id, this.model.getSeat(this.mySeat + 0)).render();
 	    	return this;
 	  	}, 
 	  	init: function(){
