@@ -84,17 +84,16 @@ define(['backbone', 'underscore', 'app/cards', 'app/seats', 'app/round', 'app/ro
 			});
 		}, 
 		getSeat: function(seatId){
-
 			return this.get('seats').find(function(seat){
 				return seat.id == seatId % 4;
 			});
-		},
+		}, 
 		fjod: function(json){
-			var cards = Cards.fjod();
-			var roomState = RoomState.WAITING;
-			var seats = Seats.fjod(json.seats);
-			this.set({id: json.id, seats: seats, cards: cards, roomState: roomState});
-			return this;
+			var attributes = {};
+			if(json.roomState != undefined){
+				attributes[roomState] = json.roomState;
+			}
+			this.set(attributes);
 		}
 	}, {
 		fjod: function(json){

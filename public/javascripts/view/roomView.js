@@ -1,7 +1,7 @@
 define(['jQuery', 'underscore', 'backbone', 'ejs', 'app/rooms', 'app/room', 'app/player', 'io'], function($, _, Backbone, EJS, Rooms, Room, Player, io){	          	
 	var socket = io.connect("ws://" + window.location.host);
   	socket.on("seatChanged", function(data){ 
-  		console.log("seat changed");
+  		console.log("seat changed todo...");
   		console.log(data);
 	});
 
@@ -40,7 +40,7 @@ define(['jQuery', 'underscore', 'backbone', 'ejs', 'app/rooms', 'app/room', 'app
 	var getSeat = function(seatId){
 		return seatId % 4;
 	}
-	var room = new Room();
+	var room;
 	var RoomView = Backbone.View.extend({
 		el: $(".room"),
 	  	initialize: function(roomId){
@@ -48,7 +48,8 @@ define(['jQuery', 'underscore', 'backbone', 'ejs', 'app/rooms', 'app/room', 'app
 			var self = this;
 			$.get("/data/room/" + roomId, function(data){
 				console.log("I am on seat " + data.mySeat +" in room " + data.room.id);
-				self.model = room.fjod(data.room);
+				room = Room.fjod(data.room);
+				self.model = room;
 				self.mySeat = new Number(data.mySeat);
 
 				self.render();
@@ -60,9 +61,6 @@ define(['jQuery', 'underscore', 'backbone', 'ejs', 'app/rooms', 'app/room', 'app
 		 	new NorthSeatView(this.model.id, this.model.getSeat(this.mySeat + 2)).render();
 		 	new WestSeatView(this.model.id, this.model.getSeat(this.mySeat + 3)).render();
 		 	new EastSeatView(this.model.id, this.model.getSeat(this.mySeat + 1)).render();
-		 	console.log(this.mySeat);
-		 	console.log(this.model.get('seats'));
-		 	console.log(this.model.getSeat(this.mySeat + 0));
 		 	new SouthSeatView(this.model.id, this.model.getSeat(this.mySeat + 0)).render();
 	    	return this;
 	  	}, 

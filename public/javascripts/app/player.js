@@ -22,6 +22,13 @@ define(['backbone', 'underscore', 'app/cards'], function(Backbone, _, Cards){
 			return this.get('cards').sortBy(function(card){
 				return card.get('rank').get('value');
 			});
+		}, 
+		fjod: function(json){
+			var attributes = {};
+			if(json.name != undefined){
+				attributes[name] = json.name;
+			}
+			this.set(attributes);
 		}
 	}, {
 		fjod: function(json){

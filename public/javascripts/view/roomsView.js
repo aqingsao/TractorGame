@@ -8,6 +8,7 @@ define(['jQuery', 'underscore', 'backbone', 'ejs', 'app/rooms', 'app/room', 'io'
 
 	var socket = io.connect("ws://" + window.location.host);
   	socket.on("roomChanged", function(data){ 
+  		console.log("room changed todo...");
   		console.log(data);
 		
 	});
@@ -16,7 +17,10 @@ define(['jQuery', 'underscore', 'backbone', 'ejs', 'app/rooms', 'app/room', 'io'
   		if(room == undefined){
   			return;
   		}
-  		var seat = room.get('seats').getSeat(data.seatId);
+  		var seat = room.getSeat(data.seatId);
+  		if(seat == undefined){
+  			return;
+  		}
   		seat.fjod(data.changed);
 	});
 
@@ -26,6 +30,8 @@ define(['jQuery', 'underscore', 'backbone', 'ejs', 'app/rooms', 'app/room', 'io'
 		initialize: function(roomId, seat){
 			this.roomId =roomId;
 			this.model = seat;
+			var self = this;
+			this.model.on("change", function(){self.render()});
 			_.bindAll(this, 'render'); 
 		},
 		events: {
@@ -51,6 +57,7 @@ define(['jQuery', 'underscore', 'backbone', 'ejs', 'app/rooms', 'app/room', 'io'
 			this.$el.find('.join').addClass("hidden");
 		},
 		render: function(){
+			console.log("render seatView " + this.model.id);
 	    	this.$el.html(new EJS({url: 'templates/rooms/seat.ejs'}).render({roomId: this.roomId, seat: this.model}));
 	    	this.$el.attr("id", "room"+this.roomId+"seat"+this.model.id);
 	    	return this;
@@ -85,13 +92,12 @@ define(['jQuery', 'underscore', 'backbone', 'ejs', 'app/rooms', 'app/room', 'io'
 		
 	  	initialize: function() {  
 			_.bindAll(this, 'render', 'roomAdded'); 
-
+			this.model = rooms;
 			var self = this;
 			$.get("/data/rooms", function(data){
-				console.log(data);
+				console.log("Initially there are " + data.length +" rooms.");
 				for(var i = 0; i < data.length; i++){					 
-					var room = Room.fjod(data[i]);
-					self.model.add(room);
+					rooms.add(Room.fjod(data[i]));
 				}
 			});
 			self.render();

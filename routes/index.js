@@ -17,13 +17,11 @@ define(['util', 'app/cards', 'app/rooms', 'app/room', 'app/player', 'broader'], 
 			room.id = id;
 			room.on('change:roomState', function(e){
 				console.log("Room state changed to " + e.get('roomState'));
-				broader.roomChanged(e.id, e.get('roomState'));
+				broader.roomChanged(e.id, {'roomState': e.get('roomState')});
 			});
 			room.get('seats').each(function(seat){
 				seat.on('change:player', function(e){
-					console.log("Seat " + e.get('id') +"'s player has been changed to " + e.playerName());
-					console.log(e);
-					broader.seatChanged(room.id, e.get('id'), e.changed);
+					broader.seatChanged(room.id, e.get('id'), {'player': e.get('player').toJSON()});
 				});
 			})
 			rooms.add(room);

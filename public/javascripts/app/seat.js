@@ -27,7 +27,11 @@ define(['backbone', 'underscore', 'app/rank', 'app/pair', 'app/player'], functio
 			return player.get('name') == this.playerName();
 		}, 
 		fjod: function(json){
-			seat.set({id: json.id, rank: json.rank, defender: json.defender, attacker: json.attacker, player: Player.fjod(json.player)});
+			var attributes = {};
+			if(json.player != undefined){
+				attributes['player'] = this.get('player') == undefined? Player.fjod(json.player) : this.get('player').fjod(json.player);
+			}
+			this.set(attributes);
 		}
 	}, {
 		fjod: function(json){
