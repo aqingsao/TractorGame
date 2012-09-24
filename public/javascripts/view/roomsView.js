@@ -9,19 +9,17 @@ define(['jQuery', 'underscore', 'backbone', 'ejs', 'app/rooms', 'app/room', 'io'
 	var socket = io.connect("ws://" + window.location.host);
   	socket.on("roomChanged", function(data){ 
   		console.log("room changed todo...");
-  		console.log(data);
-		
+  		var room = rooms.get(data.roomId);
+  		if(room != undefined){
+			room.fjod(data.changed);		
+  		}
 	});
   	socket.on("seatChanged", function(data){ 
+  		console.log("seat changed ...");
   		var room = rooms.get(data.roomId);
-  		if(room == undefined){
-  			return;
+  		if(room != undefined && room.getSeat(data.seatId) != undefined){
+			room.getSeat(data.seatId).fjod(data.changed);
   		}
-  		var seat = room.getSeat(data.seatId);
-  		if(seat == undefined){
-  			return;
-  		}
-  		seat.fjod(data.changed);
 	});
 
 	var SeatView = Backbone.View.extend({
@@ -31,7 +29,7 @@ define(['jQuery', 'underscore', 'backbone', 'ejs', 'app/rooms', 'app/room', 'io'
 			this.roomId =roomId;
 			this.model = seat;
 			var self = this;
-			this.model.on("change", function(){self.render()});
+			this.model.on("change", function(){self.render();});
 			_.bindAll(this, 'render'); 
 		},
 		events: {
@@ -67,6 +65,8 @@ define(['jQuery', 'underscore', 'backbone', 'ejs', 'app/rooms', 'app/room', 'io'
 		tagName:  "div",           
 	  	className: 'room',
 		initialize: function(){
+			var self = this;
+			this.model.on('change', function(){self.render();});
 			_.bindAll(this, 'render'); 
 		},
 		events: {

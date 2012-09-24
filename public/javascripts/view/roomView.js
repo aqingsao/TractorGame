@@ -1,8 +1,6 @@
 define(['jQuery', 'underscore', 'backbone', 'ejs', 'app/rooms', 'app/room', 'app/player', 'io'], function($, _, Backbone, EJS, Rooms, Room, Player, io){	          	
 	var socket = io.connect("ws://" + window.location.host);
   	socket.on("seatChanged", function(data){ 
-  		console.log("seat changed todo...");
-  		console.log(data);
 	});
 
 	var SeatView = Backbone.View.extend({

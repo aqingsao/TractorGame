@@ -91,7 +91,18 @@ define(['backbone', 'underscore', 'app/cards', 'app/seats', 'app/round', 'app/ro
 		fjod: function(json){
 			var attributes = {};
 			if(json.roomState != undefined){
-				attributes[roomState] = json.roomState;
+				var state = json.roomState.name;
+				switch(json.roomState.name){
+					case 'Done':
+						attributes['roomState'] = RoomState.DONE;
+						break;
+					case 'Playing':
+						attributes['roomState'] = RoomState.PLAYING;
+						break;
+					default:
+						attributes['roomState'] = RoomState.WAITING;
+						break;
+				}
 			}
 			this.set(attributes);
 		}
