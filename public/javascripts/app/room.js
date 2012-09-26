@@ -25,11 +25,11 @@ define(['backbone', 'underscore', 'app/cards', 'app/seats', 'app/round', 'app/ro
 			}
 			this.tractorRound.start();
 		},
-		flip: function(player, cards){
+		flip: function(seat, cards){
 			if(!this.canFlip()){
 				throw "You cannot flip cards";
 			}
-			this.tractorRound.flip(player, cards);
+			this.tractorRound.flip(seat, cards);
 		}, 
 		roundState: function(){
 			return this.tractorRound ? this.tractorRound.state: null;
@@ -88,6 +88,12 @@ define(['backbone', 'underscore', 'app/cards', 'app/seats', 'app/round', 'app/ro
 				return seat.id == seatId % 4;
 			});
 		}, 
+		getSeatOfPlayer: function(player){
+			return this.get('seats').find(function(seat){
+				return seat.takenByPlayer(player);
+			});
+		}, 
+
 		fjod: function(json){
 			var attributes = {};
 			if(json.roomState != undefined){

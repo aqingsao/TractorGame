@@ -1,7 +1,7 @@
-define(['backbone', 'underscore', 'app/rank', 'app/pair', 'app/player'], function(Backbone, _, Rank, Pair, Player){
+define(['backbone', 'underscore', 'app/rank', 'app/pair', 'app/player', 'app/card', 'app/cards'], function(Backbone, _, Rank, Pair, Player, Card, Cards){
 	var Seat = Backbone.Model.extend({
 		initialize: function(){
-			this.set({rank: Rank.TWO, defender: false, attacker: false});
+			this.set({rank: Rank.TWO, defender: false, attacker: false, cards: Cards.cards()});
 		},	                         
 		setDefender: function(currentRank){
 			this.set({defender: true, attacker: false});
@@ -26,6 +26,27 @@ define(['backbone', 'underscore', 'app/rank', 'app/pair', 'app/player'], functio
 		takenByPlayer: function(player){
 			return player.get('name') == this.playerName();
 		}, 
+		hasCards: function(cards){ 
+			var that = this; 
+		    return  cards.all(function(card){
+				return that.get('cards').contains(card);
+			});
+		}, 
+		deal: function(card){
+			if(this.get('cards') == undefined){
+				this.set({'cards': Cards.cards()})
+			}
+			this.get('cards').add(card);
+		}, 
+		canFlip: function(){
+			return this.get('cards').canFlip();
+		}, 
+		sortedCards: function(){
+			return this.get('cards').sortBy(function(card){
+				return card.get('rank').get('value');
+			});
+		}, 
+
 		fjod: function(json){
 			var attributes = {};
 			if(json.player != undefined){
@@ -37,7 +58,8 @@ define(['backbone', 'underscore', 'app/rank', 'app/pair', 'app/player'], functio
 		fjod: function(json){
 			var seat = new Seat();
 			seat.id= json.id;
-			seat.set({id: json.id, rank: json.rank, defender: json.defender, attacker: json.attacker, player: Player.fjod(json.player)});
+
+			seat.set({id: json.id, rank: json.rank, defender: json.defender, attacker: json.attacker, cards: json.cards, player: Player.fjod(json.player)});
 			return seat;
 		}
 	}); 

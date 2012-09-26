@@ -65,23 +65,32 @@ requirejs(['app/room', 'app/player', 'app/roomState', 'app/seats', 'app/pair', '
 		test.done();
 	};  
 	
-	exports['room can be generated from json'] = function(test){
-		var room = new Room({id: 1});
-		room.set({roomState: RoomState.PLAYING});
-		var another = Room.fjod(room.toJSON());  
-		test.ok(another.equals(room)); 
-		test.equals(another.get("id"), 1);
+	// exports['room can be generated from json'] = function(test){
+	// 	var room = new Room({id: 1});
+	// 	room.set({roomState: RoomState.PLAYING});
+	// 	var another = Room.fjod(room.toJSON());  
+	// 	test.ok(another.equals(room)); 
+	// 	test.equals(another.get("id"), 1);
 		
-		test.done();
-	};
-    
-	// exports["Room is divided into 2 pairs"] = function(test){
-	// 	var room = new Room();
-	// 	test.equals(room.get('pairs').at(0).rank(), Rank.TWO);
-	// 	test.equals(room.get('pairs').at(1).rank(), Rank.TWO);
-	// 
 	// 	test.done();
 	// };
+
+    exports['Can get seat by player'] = function(test){
+		var room = new Room();
+		room.join(jacky, 0);
+		var seat = room.getSeatOfPlayer(jacky);
+		test.equals(seat.get("id"), 0);
+
+		test.done();
+	};
+    exports['Should return undefined when player is not in room'] = function(test){
+		var room = new Room();
+		var seat = room.getSeatOfPlayer(jacky);
+		test.equals(seat, undefined);
+
+		test.done();
+	};
+
 
 	var jacky = new Player({name: 'Jacky'});
 	var nana = new Player({name: 'Nana'});

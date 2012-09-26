@@ -4,7 +4,7 @@ requirejs.config({
 	nodeRequire: require
 }); 
  
-requirejs(['app/seat', 'app/rank', 'app/player'], function(Seat, Rank, Player){  
+requirejs(['app/seat', 'app/rank', 'app/player', 'app/card', 'app/cards'], function(Seat, Rank, Player, Card, Cards){  
 	exports['Seat start from rank 2'] = function(test){
 		var seat = new Seat();
 	
@@ -37,6 +37,44 @@ requirejs(['app/seat', 'app/rank', 'app/player'], function(Seat, Rank, Player){
 		seat.join(new Player());	                   
 		
 		test.ok(seat.isTaken());
+		test.done();
+	};
+	exports['Seat has 1 card'] = function(test){ 
+		var heart2 = Card.heart(Rank.TWO); 
+		var seat = new Seat();  
+		seat.deal(heart2);
+		
+		test.ok(seat.hasCards(Cards.cards(heart2)));
+
+		test.done();
+	};
+	exports['Seat has no 1 card'] = function(test){ 
+		var heart2 = Card.heart(Rank.TWO); 
+		var seat = new Seat();  
+		
+		test.ok(!seat.hasCards(Cards.cards(heart2)));
+
+		test.done();
+	};
+	exports['Seat has 2 cards'] = function(test){ 
+		var heart2 = Card.heart(Rank.TWO); 
+		var club3 = Card.club(Rank.THREE); 
+		var seat = new Seat();  
+		seat.deal(heart2);
+		seat.deal(club3);
+				
+		test.ok(seat.hasCards(Cards.cards([heart2, club3])));
+
+		test.done();
+	};
+	exports['Seat has no 2 cards'] = function(test){ 
+		var heart2 = Card.heart(Rank.TWO); 
+		var club3 = Card.club(Rank.THREE); 
+		var seat = new Seat();  
+		seat.deal(heart2);
+				
+		test.ok(!seat.hasCards(Cards.cards([heart2, club3])));
+
 		test.done();
 	};
 });

@@ -11,5 +11,9 @@
 	<input type='submit' value='大驾光临'/>
 </form>
 <%} else{%>
-	<a href="/room/<%= roomId%>">开战了</a>
+	<% if()%>
+		<a href="/room/<%= roomId%>">开战了</a>
+	<% } else{%>
+		<a href="/room/<%= roomId%>">观战</a>
+	<% }%>
 <% }%>

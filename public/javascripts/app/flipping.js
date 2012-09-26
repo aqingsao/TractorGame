@@ -53,11 +53,11 @@ define(['backbone', 'underscore', 'app/cards'], function(Backbone, _, Cards){
 	 }; 
 	
 	var Flipping = Backbone.Model.extend({
-		initialize: function(player, cards, currentRank){     
+		initialize: function(seat, cards, currentRank){     
 		 	var jokers = Cards.cards(cards.filter(function(card){return card.isJoker();}));
 		 	var trumps = Cards.cards(cards.reject(function(card){return card.isJoker();})); 
 		
-		 	this.set({jokers: jokers, trumps: trumps, banker: player, currentRank: currentRank}); 
+		 	this.set({jokers: jokers, trumps: trumps, banker: seat, currentRank: currentRank}); 
 			this.level = check(this.get('jokers'), this.get('trumps'), this.get('currentRank'));
 		 }, 
 		 isValid: function(){ 

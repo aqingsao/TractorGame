@@ -21,8 +21,7 @@ define(['backbone', 'underscore', 'app/rank', 'app/pair', 'app/seat'], function(
 		getPlayer: function(seatIndex){
 			return this.seats.at(seatIndex).player;
 		}, 
-		setDefender: function(player, currentRank){  
-			var seat = this.getSeatOfPlayer(player);
+		setDefender: function(seat, currentRank){  
 			var seatIndex = this.indexOf(seat);
 			var pairSeatIndex = (seatIndex + 2) % 4;
 			this.each(function(seat, index){

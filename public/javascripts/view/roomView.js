@@ -46,6 +46,9 @@ define(['jQuery', 'underscore', 'backbone', 'ejs', 'app/rooms', 'app/room', 'app
 			var self = this;
 			$.get("/data/room/" + roomId, function(data){
 				console.log("I am on seat " + data.mySeat +" in room " + data.room.id);
+				if(data.mySeat == undefined){
+					data.mySeat = 0;
+				}
 				room = Room.fjod(data.room);
 				self.model = room;
 				self.mySeat = new Number(data.mySeat);
