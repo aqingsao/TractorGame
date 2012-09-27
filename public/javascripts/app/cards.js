@@ -48,12 +48,12 @@ define(['backbone', 'underscore', 'app/rank', 'app/suit', 'app/card'], function(
 			
 			while(count-- > 0){
 				_.each(Rank, function(rank){ 
-					if(rank.isJoker()){
+					if(rank.isJoker != undefined && rank.isJoker()){
 						cards.add(Card.joker(rank));
 					}
 				});
 				_.each(Rank, function(rank){
-					if(!rank.isJoker()){
+					if(rank.isJoker != undefined && !rank.isJoker()){
 						cards.add(Card.heart(rank));
 						cards.add(Card.spade(rank));
 						cards.add(Card.diamond(rank));

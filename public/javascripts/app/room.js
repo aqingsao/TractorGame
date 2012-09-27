@@ -55,8 +55,8 @@ define(['backbone', 'underscore', 'app/cards', 'app/seats', 'app/roomState', 'ap
 			if(!seat.hasCards(cards)){
 				throw "You cannot flip cards";
 			}
-			var flipping = new Flipping(seat, cards, this.get('currentRank')); 
-			if(!flipping.isValid()){
+			var flipping = new Flipping({defender: seat, currentRank: this.get('currentRank')}); 
+			if(!flipping.flip(cards)){
 				throw "You cannot flip cards";			
 			}
 			if(this.flipping != undefined && !flipping.canOverturn(this.flipping)){
@@ -114,10 +114,10 @@ define(['backbone', 'underscore', 'app/cards', 'app/seats', 'app/roomState', 'ap
 		fjod: function(json){
 			var room = new Room(); 
 			var cards = Cards.fjod();
-			var roomState = RoomState.from(json.roomState);
+			var roomState = RoomState.fjod(json.roomState);
 			var seats = Seats.fjod(json.seats);
-			var round = Round.fjod(json.round);
-			room.set({id: json.id, seats: seats, cards: cards, roomState: roomState, round: round});
+			var flipping = Flipping.fjod(json.flipping);
+			room.set({id: json.id, seats: seats, cards: cards, roomState: roomState, flipping: flipping});
 			return room;
 		}
 	});
