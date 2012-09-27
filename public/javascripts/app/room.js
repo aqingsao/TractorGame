@@ -1,4 +1,4 @@
-define(['backbone', 'underscore', 'app/cards', 'app/seats', 'app/round', 'app/roomState', 'app/pair', 'app/rank'], function(Backbone, _, Cards, Seats, Round, RoomState, Pair, Rank){ 
+define(['backbone', 'underscore', 'app/cards', 'app/seats', 'app/roomState', 'app/pair', 'app/rank', 'app/flipping'], function(Backbone, _, Cards, Seats, RoomState, Pair, Rank, Flipping){ 
 	var Room = Backbone.Model.extend({
 		defaults: {
 			dealInterval: 1
@@ -13,39 +13,61 @@ define(['backbone', 'underscore', 'app/cards', 'app/seats', 'app/round', 'app/ro
 			}         
 			this.get('seats').join(player, seatId);
 			if(this.get('seats').full()){ 
-				// event.ready 				
-				this.set({roomState: RoomState.PLAYING});
-				this.nextRound(Rank.TWO); 
-				// broader.onGameReady(this.get("id"));
+				this.set({roomState: RoomState.READY, currentRank: Rank.TWO});
 			}
 		},
 		start: function(){
-			if(this.get('roomState') != RoomState.PLAYING){
+			if(this.get('roomState') != RoomState.READY){
 				throw "Game cannot be started";
 			}
-			this.tractorRound.start();
+			this.set({roomState: RoomState.DEALING});
+			this.deal();
 		},
+		deal: function(){
+			var round = 1;
+			var self = this;
+			var cards = this.get('cards');
+			var dealSlow = function(){ 
+				var i = 0;
+				for(i = 0; i < 4; i++){
+					var card = cards.shift(); 
+					var seat = self.get('seats').at(i);  
+					seat.deal(card);
+				}
+				//event.deal
+				if(round++ < 25){
+					setTimeout(dealSlow, self.get('dealInterval'));
+				}else{
+					// event.dealdone
+					dealFinish();
+				}
+			};
+			var dealFinish = function(){
+				self.set({roomState: RoomState.FLIPPING});
+			};
+			dealSlow();
+		}, 
 		flip: function(seat, cards){
 			if(!this.canFlip()){
 				throw "You cannot flip cards";
 			}
-			this.tractorRound.flip(seat, cards);
-		}, 
-		roundState: function(){
-			return this.tractorRound ? this.tractorRound.state: null;
-		}, 
-		nextRound: function(currentRank){
-			if(this.tractorRound != null && this.tractorRound.state != Round.RoundState.DONE){
-				throw "Cannot play next round";
+			console.log("Player " + seat.playerName() +" is fliping: " + cards.toString());
+			if(!seat.hasCards(cards)){
+				throw "You cannot flip cards";
 			}
-	
-			this.tractorRound = new Round(this.get('cards'), this.get('dealInterval'), this.get('seats'), this.get("id"), currentRank);
+			var flipping = new Flipping(seat, cards, this.get('currentRank')); 
+			if(!flipping.isValid()){
+				throw "You cannot flip cards";			
+			}
+			if(this.flipping != undefined && !flipping.canOverturn(this.flipping)){
+				throw "You cannot overturn cards";	
+			}
+			// event.flip
+			this.set({flipping: flipping});
+			this.get('seats').setDefender(seat, this.get('currentRank'));
 		}, 
 		canFlip: function(){ 
-			return this.get('roomState') == RoomState.PLAYING && this.tractorRound != undefined && this.tractorRound.state == Round.RoundState.DEALING;
-		}, 
-		canStart: function(){
-			return this.get('roomState') == RoomState.PLAYING && this.tractorRound != undefined && this.tractorRound.state == Round.RoundState.READY; 
+			return this.get('roomState') == RoomState.FLIPPING || this.get('roomState') == RoomState.DEALING;
 		}, 
 		equals: function(another){
 			for(var key in this.attributes){
@@ -62,26 +84,10 @@ define(['backbone', 'underscore', 'app/cards', 'app/seats', 'app/round', 'app/ro
 		availableSeats: function(){
 			var seats = this.get('seats');
 			var count = 0; 
-			console.log(seats.length);
 			seats.each(function(seat, index){
-				console.log("Seat  is taken: "+  seat.isTaken());
 				if(!seat.isTaken()){count ++;}
 			});
 			return count;
-		}, 
-		defenders: function(){
-			return this.get('pairs').find(function(pair){
-				if(pair.isDefender()){
-					return pair;
-				}
-			});
-		}, 
-		attackers: function(){
-			return this.get('pairs').find(function(pair){
-				if(pair.isAttacker()){
-					return pair;
-				}
-			});
 		}, 
 		getSeat: function(seatId){
 			return this.get('seats').find(function(seat){
@@ -93,32 +99,25 @@ define(['backbone', 'underscore', 'app/cards', 'app/seats', 'app/round', 'app/ro
 				return seat.takenByPlayer(player);
 			});
 		}, 
-
 		fjod: function(json){
 			var attributes = {};
 			if(json.roomState != undefined){
-				var state = json.roomState.name;
-				switch(json.roomState.name){
-					case 'Done':
-						attributes['roomState'] = RoomState.DONE;
-						break;
-					case 'Playing':
-						attributes['roomState'] = RoomState.PLAYING;
-						break;
-					default:
-						attributes['roomState'] = RoomState.WAITING;
-						break;
-				}
+				attributes['roomState'] = RoomState.fjod(json.roomState);
 			}
+			if(json.round != undefined){
+				attributes['round'] = Round.fjod(json.roomState);
+			}
+
 			this.set(attributes);
 		}
 	}, {
 		fjod: function(json){
 			var room = new Room(); 
 			var cards = Cards.fjod();
-			var roomState = RoomState.WAITING;
+			var roomState = RoomState.from(json.roomState);
 			var seats = Seats.fjod(json.seats);
-			room.set({id: json.id, seats: seats, cards: cards, roomState: roomState});
+			var round = Round.fjod(json.round);
+			room.set({id: json.id, seats: seats, cards: cards, roomState: roomState, round: round});
 			return room;
 		}
 	});

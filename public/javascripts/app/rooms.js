@@ -1,4 +1,4 @@
-define(['backbone', 'underscore', 'app/cards', 'app/seats', 'app/round', 'app/room'], function(Backbone, _, Cards, Seats, Round, Room){     
+define(['backbone', 'underscore', 'app/cards', 'app/seats', 'app/room'], function(Backbone, _, Cards, Seats, Room){     
 	var Rooms = Backbone.Collection.extend({ 
 		initialize: function(){
 			this.dealInterval = 100;

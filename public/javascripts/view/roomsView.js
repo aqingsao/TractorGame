@@ -8,14 +8,14 @@ define(['jQuery', 'underscore', 'backbone', 'ejs', 'app/rooms', 'app/room', 'io'
 
 	var socket = io.connect("ws://" + window.location.host);
   	socket.on("roomChanged", function(data){ 
-  		console.log("room changed todo...");
+  		console.log("room " + data.roomId + " changed ...");
   		var room = rooms.get(data.roomId);
   		if(room != undefined){
 			room.fjod(data.changed);		
   		}
 	});
   	socket.on("seatChanged", function(data){ 
-  		console.log("seat changed ...");
+  		console.log("room " + data.roomId + " seat " + data.seatId + " changed ...");
   		var room = rooms.get(data.roomId);
   		if(room != undefined && room.getSeat(data.seatId) != undefined){
 			room.getSeat(data.seatId).fjod(data.changed);
@@ -55,7 +55,6 @@ define(['jQuery', 'underscore', 'backbone', 'ejs', 'app/rooms', 'app/room', 'io'
 			this.$el.find('.join').addClass("hidden");
 		},
 		render: function(){
-			console.log("render seatView " + this.model.id);
 	    	this.$el.html(new EJS({url: 'templates/rooms/seat.ejs'}).render({roomId: this.roomId, seat: this.model}));
 	    	this.$el.attr("id", "room"+this.roomId+"seat"+this.model.id);
 	    	return this;
@@ -96,8 +95,10 @@ define(['jQuery', 'underscore', 'backbone', 'ejs', 'app/rooms', 'app/room', 'io'
 			var self = this;
 			$.get("/data/rooms", function(data){
 				console.log("Initially there are " + data.length +" rooms.");
-				for(var i = 0; i < data.length; i++){					 
-					rooms.add(Room.fjod(data[i]));
+				for(var i = 0; i < data.length; i++){	
+					var room = Room.fjod(data[i]);
+					console.log(room);
+					rooms.add(room);
 				}
 			});
 			self.render();

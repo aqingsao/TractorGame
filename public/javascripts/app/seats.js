@@ -35,12 +35,12 @@ define(['backbone', 'underscore', 'app/rank', 'app/pair', 'app/seat'], function(
 		}, 
 		hasPlayer: function(player){
 			return this.any(function(seat){
-				return seat.player != undefined && seat.player.equals(player);
+				return seat.get('player') != undefined && seat.get('player').equals(player);
 			});
 		}, 
 		players: function(){
 			return this.map(function(seat){
-				return seat.player;
+				return seat.get('player');
 			});
 		},
 		playersCanFlip: function(){

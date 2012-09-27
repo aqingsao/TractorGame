@@ -1,13 +1,27 @@
 define(['jQuery', 'underscore', 'backbone', 'ejs', 'app/rooms', 'app/room', 'app/player', 'io'], function($, _, Backbone, EJS, Rooms, Room, Player, io){	          	
 	var socket = io.connect("ws://" + window.location.host);
   	socket.on("seatChanged", function(data){ 
+  		if(room != undefined && room.id == data.roomId && room.getSeat(data.seatId) != undefined){
+	  		console.log("room " + data.roomId +" seat " + data.seatId + " changed ...");
+			room.getSeat(data.seatId).fjod(data.changed);
+  		}
 	});
+	socket.on("roomChanged", function(data){ 
+  		if(room != undefined & room.id == data.roomId){
+  			console.log("my room changed ...");
+  			console.log(data);
+			room.fjod(data.changed);		
+  		}
+	});
+
 
 	var SeatView = Backbone.View.extend({
 		mySeat: false,
 		initialize: function(roomId, seat){
 			this.roomId = roomId;
 			this.model = seat;
+			var self = this;
+			this.model.on('change', function(){self.render();})
 			_.bindAll(this, 'render'); 
 		},
 		render: function(){
@@ -40,7 +54,7 @@ define(['jQuery', 'underscore', 'backbone', 'ejs', 'app/rooms', 'app/room', 'app
 	}
 	var room;
 	var RoomView = Backbone.View.extend({
-		el: $(".room"),
+		el: $(".playarea"),
 	  	initialize: function(roomId){
 			_.bindAll(this, 'render'); 
 			var self = this;
@@ -51,18 +65,20 @@ define(['jQuery', 'underscore', 'backbone', 'ejs', 'app/rooms', 'app/room', 'app
 				}
 				room = Room.fjod(data.room);
 				self.model = room;
+				self.model.on("change", function(){self.render();});
 				self.mySeat = new Number(data.mySeat);
 
 				self.render();
+				new NorthSeatView(self.model.id, self.model.getSeat(self.mySeat + 2)).render();
+		 		new WestSeatView(self.model.id, self.model.getSeat(self.mySeat + 3)).render();
+		 		new EastSeatView(self.model.id, self.model.getSeat(self.mySeat + 1)).render();
+		 		new SouthSeatView(self.model.id, self.model.getSeat(self.mySeat + 0)).render();
 			});
 		},
 	  	render: function() {                
-		 	this.$el.attr("id", "room" + this.model.id);
-		 	
-		 	new NorthSeatView(this.model.id, this.model.getSeat(this.mySeat + 2)).render();
-		 	new WestSeatView(this.model.id, this.model.getSeat(this.mySeat + 3)).render();
-		 	new EastSeatView(this.model.id, this.model.getSeat(this.mySeat + 1)).render();
-		 	new SouthSeatView(this.model.id, this.model.getSeat(this.mySeat + 0)).render();
+		 	var result = new EJS({url: '/templates/room/playarea.ejs'}).render({room: this.model});
+		 	this.$el.html(result);
+		 	console.log(this.model);
 	    	return this;
 	  	}, 
 	  	init: function(){

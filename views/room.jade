@@ -4,18 +4,6 @@ div#main
 		div.seat.north
 		div.seat.west
 		div.playarea
-			div.nodefenders
-				span= '台上:'
-				span= '当前没有人在台上'   
-			div.attackers
-				span= '得分:'
-				span= '0'   
-			div.currentStatus
-				span.description= '' 
-				-var canStart =  room.canStart() ? '' : 'hidden'				
-				form(class=canStart, action='/tractor/' + room.get("id")+"/start", method="POST")
-					input(value='点击开始游戏', type='submit')
-
 		div.seat.east
 		div.seat.south
 div#footer                                                                                                            

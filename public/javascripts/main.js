@@ -31,7 +31,8 @@ require.config({
 		}
 	}
 }); 
-require(['jQuery', 'underscore', 'backbone', 'ejs', 'router', 'io'], function($, _, Backbone, EJS, router, io){  
+try{
+	require(['jQuery', 'underscore', 'backbone', 'ejs', 'router', 'io'], function($, _, Backbone, EJS, router, io){  
 	var isLoaded = function(module){
 		if(module != undefined){
 			return true;
@@ -54,4 +55,8 @@ require(['jQuery', 'underscore', 'backbone', 'ejs', 'router', 'io'], function($,
 
 
 	router.start();          
-});
+	});
+}catch(e){
+	console.log("failed to load javascripts: ");
+	console.log(e);
+}
