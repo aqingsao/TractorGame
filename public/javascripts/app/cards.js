@@ -41,7 +41,36 @@ define(['backbone', 'underscore', 'app/rank', 'app/suit', 'app/card'], function(
 			});         
 			str += ']';
 			return str;
+		}, 
+		comparator: function(card){
+			return 0-card.get('rank').get('weight');
+		}, 		
+		jokers: function(){
+			return Cards.cards(this.filter(function(card){
+				return card.isJoker();
+			}));
+		}, 
+		spades: function(){
+			return Cards.cards(this.filter(function(card){
+				return card.isSpade();
+			}));
+		},
+		clubs: function(){
+			return Cards.cards(this.filter(function(card){
+				return card.isClub();
+			}));
+		},
+		hearts: function(){
+			return Cards.cards(this.filter(function(card){
+				return card.isHeart();
+			}));
+		},
+		diamonds: function(){
+			return Cards.cards(this.filter(function(card){
+				return card.isDiamond();
+			}));
 		}
+
 	}, {
 		decks: function(count){
 			var cards = new Cards();
@@ -76,7 +105,11 @@ define(['backbone', 'underscore', 'app/rank', 'app/suit', 'app/card'], function(
 			return cards;
 		}, 
 		fjod: function(json){
-			return Cards.cards(json);
+			var cards = Cards.cards();
+			_.each(json, function(cardJson){
+				cards.add(Card.fjod(cardJson), {silent: true});
+			});
+			return cards;
 		}
 	}); 
 	return Cards;

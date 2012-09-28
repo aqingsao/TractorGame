@@ -8,5 +8,23 @@ define(['backbone', 'underscore', ], function(Backbone, _){
 		}
 	});
 	return {H: new Suit({name: 'HEART'}), S: new Suit({name: "SPADE"}), D: new Suit({name: "DIAMOND"}), 
-	C: new Suit({name: "CLUB"}), SJ: new Suit({name: "SmallJoker"}), BJ: new Suit({name: 'BigJoker'})}
+	C: new Suit({name: "CLUB"}), SJ: new Suit({name: "SmallJoker"}), BJ: new Suit({name: 'BigJoker'}), 
+	fjod: function(json){
+		switch(json.name){
+			case 'HEART':
+			return this.H;
+			case 'SPADE':
+			return this.S;
+			case 'DIAMOND':
+			return this.D;
+			case 'CLUB':
+			return this.C;
+			case 'SmallJoker':
+			return this.SJ;
+			case 'BigJoker':
+			return this.BJ;
+			default:
+			throw 'illegal suit name ' + json.name;
+		}
+	}}
 });

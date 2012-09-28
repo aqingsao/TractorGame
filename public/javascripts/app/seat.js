@@ -40,10 +40,9 @@ define(['backbone', 'underscore', 'app/rank', 'app/pair', 'app/player', 'app/car
 		}, 
 		sortedCards: function(){
 			return this.get('cards').sortBy(function(card){
-				return card.get('rank').get('value');
+				return card.isJoker();
 			});
 		}, 
-
 		fjod: function(json){
 			var attributes = {};
 			if(json.player != undefined){

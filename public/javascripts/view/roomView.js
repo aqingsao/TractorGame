@@ -8,13 +8,14 @@ define(['jQuery', 'underscore', 'backbone', 'ejs', 'app/rooms', 'app/room', 'app
 	});
   	socket.on("dealCard", function(data){ 
   		if(room != undefined && room.id == data.roomId && room.getSeat(data.seatId) != undefined){
-			room.getSeat(data.seatId).deal(Card.fjod(data.changed));
+  			var card = Card.fjod(data.changed);
+  			console.log(card);
+			room.getSeat(data.seatId).deal(card);
   		}
 	});
 	socket.on("roomChanged", function(data){ 
   		if(room != undefined & room.id == data.roomId){
   			console.log("my room changed ...");
-  			console.log(data);
 			room.fjod(data.changed);		
   		}
 	});
@@ -28,7 +29,7 @@ define(['jQuery', 'underscore', 'backbone', 'ejs', 'app/rooms', 'app/room', 'app
 			var self = this;
 			this.model.on('change', function(){self.render();})
 			this.model.get("cards").bind('add', function(){self.render();})
-			console.log(this.model.get('cards'));
+			console.log(this.model.get('cards').length);
 			_.bindAll(this, 'render'); 
 		},
 		render: function(){
@@ -71,6 +72,7 @@ define(['jQuery', 'underscore', 'backbone', 'ejs', 'app/rooms', 'app/room', 'app
 					data.mySeat = 0;
 				}
 				room = Room.fjod(data.room);
+				console.log(room);
 				self.model = room;
 				self.model.on("change", function(){self.render();});
 				self.mySeat = new Number(data.mySeat);
@@ -99,7 +101,6 @@ define(['jQuery', 'underscore', 'backbone', 'ejs', 'app/rooms', 'app/room', 'app
 	  	render: function() {                
 		 	var result = new EJS({url: '/templates/room/playarea.ejs'}).render({room: this.model});
 		 	this.$el.html(result);
-		 	console.log(this.model);
 	    	return this;
 	  	}, 
 	  	init: function(){

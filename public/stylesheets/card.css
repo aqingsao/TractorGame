@@ -6,6 +6,7 @@
 	display: inline-block;   
 	background-repeat: no-repeat;
 	background-size: 50%;
+	margin-right: -5px;
 }
 .HEART{
 	background-image: url('/images/heart.png'); 
@@ -28,9 +29,9 @@
 .JOKER{
 	background-size: contain;
 }
-.JOKER.BIG{
+.BigJoker{
 	background-image: url('/images/big_joker.png');
 }
-.JOKER.SMALL{
+.SmallJoker{
 	background-image: url('/images/small_joker.png');
 }

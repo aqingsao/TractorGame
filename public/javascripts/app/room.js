@@ -26,7 +26,7 @@ define(['backbone', 'underscore', 'app/cards', 'app/seats', 'app/roomState', 'ap
 		deal: function(){
 			var round = 1;
 			var self = this;
-			var cards = this.get('cards');
+			var cards = this.get('cards').shuffle();
 			var dealSlow = function(){ 
 				var i = 0;
 				for(i = 0; i < 4; i++){
@@ -116,10 +116,10 @@ define(['backbone', 'underscore', 'app/cards', 'app/seats', 'app/roomState', 'ap
 	}, {
 		fjod: function(json){
 			var room = new Room(); 
-			var cards = Cards.fjod();
 			var roomState = RoomState.fjod(json.roomState);
 			var seats = Seats.fjod(json.seats);
 			var flipping = Flipping.fjod(json.flipping);
+			var cards = Cards.fjod(json.cards);
 			room.set({id: json.id, seats: seats, cards: cards, roomState: roomState, flipping: flipping});
 			return room;
 		}

@@ -11,10 +11,22 @@ define(['backbone', 'underscore', 'app/rank', 'app/suit'], function(Backbone, _,
 			return this.isSmallJoker() || this.isBigJoker();
 		}, 
 		isBlackSuit: function(){
-			return this.get('suit')== Suit.C || this.get('suit') == Suit.S;
+			return this.isSpade() || this.isClub();
 		},
 		isRedSuit: function(){
-			return this.get('suit')== Suit.H || this.get('suit') == Suit.D;
+			return this.isHeart() || this.isDiamond();
+		}, 
+		isSpade: function(){
+			return this.get('suit')== Suit.S;
+		},
+		isClub: function(){
+			return this.get('suit')== Suit.C;
+		},
+		isHeart: function(){
+			return this.get('suit')== Suit.H;
+		}, 
+		isDiamond: function(){
+			return this.get('suit')== Suit.D;
 		}, 
 		isSmallJoker: function(){
 			return this.get('suit') == Suit.SJ;
@@ -52,7 +64,7 @@ define(['backbone', 'underscore', 'app/rank', 'app/suit'], function(Backbone, _,
 		}, 
 		fjod: function(json){    
 			var card = new Card();
-			card.set(json);
+			card.set({rank: Rank.fjod(json.rank), suit: Suit.fjod(json.suit)});
 			return card;
 		}
 	});

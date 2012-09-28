@@ -20,7 +20,20 @@
 	<% }%>
 </div>
 <div class="cards">
-	<% seat.get('cards').each(function(card){%>
-		<div class="card <%= card.get('suit').name%>"><%= card.get('rank').name%></div>
+	<% seat.get('cards').jokers().each(function(card){%>
+		<div class="card <%= card.get('suit').get('name')%>"><%= card.get('rank').get('name')%></div>
 	<% })%>
+	<% seat.get('cards').spades().each(function(card){%>
+		<div class="card <%= card.get('suit').get('name')%>"><%= card.get('rank').get('name')%></div>
+	<% })%>
+	<% seat.get('cards').diamonds().each(function(card){%>
+		<div class="card <%= card.get('suit').get('name')%>"><%= card.get('rank').get('name')%></div>
+	<% })%>
+	<% seat.get('cards').clubs().each(function(card){%>
+		<div class="card <%= card.get('suit').get('name')%>"><%= card.get('rank').get('name')%></div>
+	<% })%>
+	<% seat.get('cards').hearts().each(function(card){%>
+		<div class="card <%= card.get('suit').get('name')%>"><%= card.get('rank').get('name')%></div>
+	<% })%>
+
 </div>

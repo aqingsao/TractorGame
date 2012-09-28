@@ -90,4 +90,11 @@ requirejs(['backbone', "app/cards", "app/rank", "app/card"], function(Backbone, 
 		test.equals(cards.canFlip(), true);
 		test.done();
 	};
+	exports['filter jokers'] = function(test){
+		var cards = Cards.cards([Card.smallJoker(), Card.heart(Rank.TWO)]);
+		var jokers = cards.jokers();
+		test.equals(jokers.length, 1);
+
+		test.done();
+	};
 });

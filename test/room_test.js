@@ -248,21 +248,6 @@ requirejs(['app/room', 'app/player', 'app/roomState', 'app/seats', 'app/pair', '
 		test.done();
 	};
 
-	exports["Player could sort card by suit"] = function(test){  
-		var seat = new Seat();
-	    seat.deal(Card.smallJoker());
-		seat.deal(Card.heart(Rank.TWO));
-		var cards = seat.sortedCards();
-		test.equals(cards.length, 2);  
-		test.ok(cards[1].equals(Card.smallJoker()));
-		test.ok(cards[0].equals(Card.heart(Rank.TWO)));
-		test.done();
-	}
-
-
-
-
-
 	var jacky = new Player({name: 'Jacky'});
 	var nana = new Player({name: 'Nana'});
 	var kerry = new Player({name: 'Kerry'});
