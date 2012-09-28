@@ -19,4 +19,8 @@
 		</form>
 	<% }%>
 </div>
-<div class="cards"></div>
+<div class="cards">
+	<% seat.get('cards').each(function(card){%>
+		<div class="card <%= card.get('suit').name%>"><%= card.get('rank').name%></div>
+	<% })%>
+</div>

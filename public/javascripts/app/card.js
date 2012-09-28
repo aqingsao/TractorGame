@@ -8,7 +8,7 @@ define(['backbone', 'underscore', 'app/rank', 'app/suit'], function(Backbone, _,
 		// 	}
 		// },
 		isJoker: function(){
-			return this.get('rank').isJoker();
+			return this.isSmallJoker() || this.isBigJoker();
 		}, 
 		isBlackSuit: function(){
 			return this.get('suit')== Suit.C || this.get('suit') == Suit.S;
@@ -17,10 +17,10 @@ define(['backbone', 'underscore', 'app/rank', 'app/suit'], function(Backbone, _,
 			return this.get('suit')== Suit.H || this.get('suit') == Suit.D;
 		}, 
 		isSmallJoker: function(){
-			return this.get('rank') == Rank.SMALL_JOKER;
+			return this.get('suit') == Suit.SJ;
 		},
 		isBigJoker: function(){
-			return this.get('rank') == Rank.BIG_JOKER;
+			return this.get('suit') == Suit.BJ;
 		}, 
 		sameSuit: function(another){
 			return this.get('suit') == another.suit;
@@ -30,14 +30,6 @@ define(['backbone', 'underscore', 'app/rank', 'app/suit'], function(Backbone, _,
 		},
 		toString: function(){
 			return this.get('suit').get('name') + ' ' + this.get('rank').get('name');
-		}, 
-		jod: function(){ 
-			var ret = {};
-			for(var key in this.attributes){  
-				var val = this.attributes[key];
-				 ret[key] = typeof(val.jod) == 'function' ? val.jod() : val;
-			};   
-			return ret;
 		}
 	}, {
 		heart: function(rank){
@@ -52,14 +44,11 @@ define(['backbone', 'underscore', 'app/rank', 'app/suit'], function(Backbone, _,
 		spade: function(rank){
 			return new Card({suit: Suit.S, rank: rank});
 		},
-		joker: function(rank){
-			return new Card({suit: Suit.J, rank: rank});
-		}, 
 		smallJoker: function(){
-			return Card.joker(Rank.SMALL_JOKER);
+			return new Card({suit: Suit.SJ, rank: Rank.SMALL_JOKER});
 		},
 		bigJoker: function(){
-			return Card.joker(Rank.BIG_JOKER);
+			return new Card({suit: Suit.BJ, rank: Rank.BIG_JOKER});
 		}, 
 		fjod: function(json){    
 			var card = new Card();

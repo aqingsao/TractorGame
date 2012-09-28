@@ -7,16 +7,16 @@
 	background-repeat: no-repeat;
 	background-size: 50%;
 }
-.heart{
+.HEART{
 	background-image: url('/images/heart.png'); 
 }
-.club{
+.CLUB{
 	background-image: url('/images/club.png');
 }
-.spade{
+.SPADE{
 	background-image: url('/images/spade.png');	
 }
-.diamond{
+.DIAMOND{
 	background-image: url('/images/diamond.png');
 }
 .card.unknown{
@@ -25,12 +25,12 @@
 .card.selected{
 	border-color: red;
 }
-.joker{
+.JOKER{
 	background-size: contain;
 }
-.joker.big{
+.JOKER.BIG{
 	background-image: url('/images/big_joker.png');
 }
-.joker.small{
+.JOKER.SMALL{
 	background-image: url('/images/small_joker.png');
 }

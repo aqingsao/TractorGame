@@ -7,5 +7,6 @@ define(['backbone', 'underscore', ], function(Backbone, _){
 			return "Joker" == this.get('name');
 		}
 	});
-	return {H: new Suit({name: 'HEART'}), S: new Suit({name: "SPADE"}), D: new Suit({name: "DIAMOND"}), C: new Suit({name: "CLUB"}), J: new Suit({name: "Joker"})}
+	return {H: new Suit({name: 'HEART'}), S: new Suit({name: "SPADE"}), D: new Suit({name: "DIAMOND"}), 
+	C: new Suit({name: "CLUB"}), SJ: new Suit({name: "SmallJoker"}), BJ: new Suit({name: 'BigJoker'})}
 });

@@ -16,12 +16,16 @@ define(['util', 'app/cards', 'app/rooms', 'app/room', 'app/player', 'broader'], 
 			var room = new Room({id: id, dealInterval: 100}); 
 			room.id = id;
 			room.on('change:roomState', function(e){
-				console.log("Room state changed to " + e.get('roomState'));
+				console.log("Room " + e.id + " state changed to " + e.get('roomState'));
 				broader.roomChanged(e.id, {'roomState': e.get('roomState')});
 			});
 			room.get('seats').each(function(seat){
-				seat.on('change:player', function(e){
+				seat.on('change', function(e){
+					console.log("Seat " + e.get('id') +" of room " + room.id +" changed...");
 					broader.seatChanged(room.id, e.get('id'), {'player': e.get('player').toJSON()});
+				});
+				seat.get("cards").bind("add", function(e){
+					broader.dealCard(room.id, seat.get('id'), e.toJSON());
 				});
 			})
 			rooms.add(room);
@@ -67,7 +71,7 @@ define(['util', 'app/cards', 'app/rooms', 'app/room', 'app/player', 'broader'], 
 				res.json({error: error}, 400);
 			}
 		}, 
-		roundStart: function(req, res){
+		roomStart: function(req, res){
 			var id = req.params.id;
 			var room = rooms.get(id);
 			try{
@@ -78,8 +82,8 @@ define(['util', 'app/cards', 'app/rooms', 'app/room', 'app/player', 'broader'], 
 				console.log("Start game in room " + id);
 				res.json({});
 			}catch(error){  
-				console.log("Failed to start next round in room " + id + ": " + error);
-				res.json({error: error, tractorGame: room.toJSON()}, 400);
+				console.log("Failed to start in room " + id + ": " + error);
+				res.json({error: error, room: room.toJSON()}, 400);
 			}
 		},
 		tractorFlip: function(req, res){

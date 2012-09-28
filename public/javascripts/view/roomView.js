@@ -1,9 +1,14 @@
-define(['jQuery', 'underscore', 'backbone', 'ejs', 'app/rooms', 'app/room', 'app/player', 'io'], function($, _, Backbone, EJS, Rooms, Room, Player, io){	          	
+define(['jQuery', 'underscore', 'backbone', 'ejs', 'app/rooms', 'app/room', 'app/player', 'io', 'app/card'], function($, _, Backbone, EJS, Rooms, Room, Player, io, Card){	          	
 	var socket = io.connect("ws://" + window.location.host);
   	socket.on("seatChanged", function(data){ 
   		if(room != undefined && room.id == data.roomId && room.getSeat(data.seatId) != undefined){
 	  		console.log("room " + data.roomId +" seat " + data.seatId + " changed ...");
 			room.getSeat(data.seatId).fjod(data.changed);
+  		}
+	});
+  	socket.on("dealCard", function(data){ 
+  		if(room != undefined && room.id == data.roomId && room.getSeat(data.seatId) != undefined){
+			room.getSeat(data.seatId).deal(Card.fjod(data.changed));
   		}
 	});
 	socket.on("roomChanged", function(data){ 
@@ -22,6 +27,8 @@ define(['jQuery', 'underscore', 'backbone', 'ejs', 'app/rooms', 'app/room', 'app
 			this.model = seat;
 			var self = this;
 			this.model.on('change', function(){self.render();})
+			this.model.get("cards").bind('add', function(){self.render();})
+			console.log(this.model.get('cards'));
 			_.bindAll(this, 'render'); 
 		},
 		render: function(){
@@ -56,7 +63,7 @@ define(['jQuery', 'underscore', 'backbone', 'ejs', 'app/rooms', 'app/room', 'app
 	var RoomView = Backbone.View.extend({
 		el: $(".playarea"),
 	  	initialize: function(roomId){
-			_.bindAll(this, 'render'); 
+			_.bindAll(this, 'render', 'startGame'); 
 			var self = this;
 			$.get("/data/room/" + roomId, function(data){
 				console.log("I am on seat " + data.mySeat +" in room " + data.room.id);
@@ -75,6 +82,20 @@ define(['jQuery', 'underscore', 'backbone', 'ejs', 'app/rooms', 'app/room', 'app
 		 		new SouthSeatView(self.model.id, self.model.getSeat(self.mySeat + 0)).render();
 			});
 		},
+		events: {
+			"click form.start": "startGame"
+		},
+		startGame: function(){
+			var self = this;
+			var form = $("form.start");                      
+			$.post(form.attr("action"), form.serialize(), function(data){ 
+	   			console.log("game started.") 
+			}).error(function(data){
+				console.log("game failed to start.");
+		    	self.render();
+			});	
+			return false;
+		},
 	  	render: function() {                
 		 	var result = new EJS({url: '/templates/room/playarea.ejs'}).render({room: this.model});
 		 	this.$el.html(result);
@@ -84,7 +105,6 @@ define(['jQuery', 'underscore', 'backbone', 'ejs', 'app/rooms', 'app/room', 'app
 	  	init: function(){
 	  		this.model = room;
 	  	}
-
 	}); 
 	return RoomView;
 });

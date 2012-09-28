@@ -17,7 +17,7 @@ define(['backbone', 'underscore', 'app/cards', 'app/seats', 'app/roomState', 'ap
 			}
 		},
 		start: function(){
-			if(this.get('roomState') != RoomState.READY){
+			if(!this.canStart()){
 				throw "Game cannot be started";
 			}
 			this.set({roomState: RoomState.DEALING});
@@ -68,6 +68,9 @@ define(['backbone', 'underscore', 'app/cards', 'app/seats', 'app/roomState', 'ap
 		}, 
 		canFlip: function(){ 
 			return this.get('roomState') == RoomState.FLIPPING || this.get('roomState') == RoomState.DEALING;
+		}, 
+		canStart: function(){ 
+			return this.get('roomState') == RoomState.READY;
 		}, 
 		equals: function(another){
 			for(var key in this.attributes){

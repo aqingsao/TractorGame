@@ -33,9 +33,6 @@ define(['backbone', 'underscore', 'app/rank', 'app/pair', 'app/player', 'app/car
 			});
 		}, 
 		deal: function(card){
-			if(this.get('cards') == undefined){
-				this.set({'cards': Cards.cards()})
-			}
 			this.get('cards').add(card);
 		}, 
 		canFlip: function(){
@@ -59,7 +56,7 @@ define(['backbone', 'underscore', 'app/rank', 'app/pair', 'app/player', 'app/car
 			var seat = new Seat();
 			seat.id= json.id;
 
-			seat.set({id: json.id, rank: json.rank, defender: json.defender, attacker: json.attacker, cards: json.cards, player: Player.fjod(json.player)});
+			seat.set({id: json.id, rank: json.rank, defender: json.defender, attacker: json.attacker, cards: Cards.fjod(json.cards), player: Player.fjod(json.player)});
 			return seat;
 		}
 	}); 

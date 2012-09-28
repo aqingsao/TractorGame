@@ -47,11 +47,8 @@ define(['backbone', 'underscore', 'app/rank', 'app/suit', 'app/card'], function(
 			var cards = new Cards();
 			
 			while(count-- > 0){
-				_.each(Rank, function(rank){ 
-					if(rank.isJoker != undefined && rank.isJoker()){
-						cards.add(Card.joker(rank));
-					}
-				});
+				cards.add(Card.smallJoker());
+				cards.add(Card.bigJoker());
 				_.each(Rank, function(rank){
 					if(rank.isJoker != undefined && !rank.isJoker()){
 						cards.add(Card.heart(rank));

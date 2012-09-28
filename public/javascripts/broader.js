@@ -44,16 +44,13 @@ define(['backbone', 'underscore'], function(Backbone, _){
 		seatChanged: function(roomId, seatId, changed){
 			broadcastAll('seatChanged', {roomId: roomId, seatId: seatId, changed: changed});
 		},
+		dealCard: function(roomId, seatId, card){
+			broadcastAll('dealCard', {roomId: roomId, seatId: seatId, changed: card});
+		},
 
 		onNewRoom: function(roomId){
 			// this.connections.add(new Connection(roomId));
 		}, 
-		onDeal: function(roomId, card, seat, round){
-		   this.getConnection(roomId).broadcast("onDeal", {roomId: roomId, card: {suit: card.get('suit').get('name'), rank: card.get('rank').get('name')}, seat: seat.get("id"), round: round});    
-		},
-		onDealFinish: function(roomId){
-		   this.getConnection(roomId).broadcast("onDealFinish", {roomId: roomId});  
-		},
 		getConnection: function(roomId){
 		   	var connection = this.connections.find(function(connection){
 				return connection.roomId == roomId;

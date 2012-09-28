@@ -44,7 +44,7 @@ requirejs(['express', 'socket.io', 'broader', 'routes/index.js'], function(expre
     app.get('/data/room/:id', routes.roomJson);
   	app.post('/room/:id/join/:seatId', routes.roomJoin);
   	
-  	app.post('/room/:id/start', routes.roundStart);
+  	app.post('/room/:id/start', routes.roomStart);
   	app.post('/room/:id/flip', routes.tractorFlip);
   	               	
   	app.listen(3000, function(){
