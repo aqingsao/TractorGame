@@ -25,6 +25,8 @@
 }
 .card.selected{
 	border-color: red;
+	position: relative;
+	top: -5px;
 }
 .JOKER{
 	background-size: contain;

@@ -8,9 +8,7 @@ define(['jQuery', 'underscore', 'backbone', 'ejs', 'app/rooms', 'app/room', 'app
 	});
   	socket.on("dealCard", function(data){ 
   		if(room != undefined && room.id == data.roomId && room.getSeat(data.seatId) != undefined){
-  			var card = Card.fjod(data.changed);
-  			console.log(card);
-			room.getSeat(data.seatId).deal(card);
+			room.getSeat(data.seatId).deal(Card.fjod(data.changed));
   		}
 	});
 	socket.on("roomChanged", function(data){ 
@@ -29,8 +27,13 @@ define(['jQuery', 'underscore', 'backbone', 'ejs', 'app/rooms', 'app/room', 'app
 			var self = this;
 			this.model.on('change', function(){self.render();})
 			this.model.get("cards").bind('add', function(){self.render();})
-			console.log(this.model.get('cards').length);
 			_.bindAll(this, 'render'); 
+		},
+		events:{
+			"click .card": 'toggleCard'
+		},
+		toggleCard: function(e){
+			console.log($(e.target).toggleClass('selected'));
 		},
 		render: function(){
 		 	var result = new EJS({url: '/templates/room/seat.ejs'}).render({seat: this.model, roomId: this.roomId, mySeat: this.mySeat});
@@ -72,7 +75,6 @@ define(['jQuery', 'underscore', 'backbone', 'ejs', 'app/rooms', 'app/room', 'app
 					data.mySeat = 0;
 				}
 				room = Room.fjod(data.room);
-				console.log(room);
 				self.model = room;
 				self.model.on("change", function(){self.render();});
 				self.mySeat = new Number(data.mySeat);
