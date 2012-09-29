@@ -8,7 +8,7 @@
 <% if(!seat.isTaken()){%>
 <form class="join" action="/room/<%= roomId%>/join/<%= seat.id%>" method="POST" onclick="return false;">
 	<input class='name' name='name' type="text" value='player<%= seat.get("id")%>' />
-	<input type='submit' value='大驾光临'/>
+	<input type='submit' value='上位'/>
 </form>
 <%} else{%>
 	<% if(true){%>

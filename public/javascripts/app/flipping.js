@@ -1,5 +1,12 @@
 define(['backbone', 'underscore', 'app/cards'], function(Backbone, _, Cards){
 	 var check = function(jokers, trumps, currentRank){
+	 	if(jokers.any(function(card){
+	 		return !card.isJoker();
+	 	}) || trumps.any(function(card){
+	 		return card.isJoker();
+	 	})){
+	 		return -1;
+	 	}
 	 	if(jokers.size() == 0 || jokers.size > 2 || trumps.size() > 2){
 	 		return -1;  
 	 	}
@@ -53,17 +60,10 @@ define(['backbone', 'underscore', 'app/cards'], function(Backbone, _, Cards){
 	 }; 
 	
 	var Flipping = Backbone.Model.extend({
-		 isValid: function(){ 
-		 	return this.level > 0;
-		 }, 
 		 canOverturn: function(flipping){
 		 	return this.level > flipping.level;
 		 }, 
-		 flip: function(cards){
-		 	var jokers = Cards.cards(cards.filter(function(card){return card.isJoker();}));
-		 	var trumps = Cards.cards(cards.reject(function(card){return card.isJoker();})); 
-		
-		 	this.set({jokers: jokers, trumps: trumps}); 
+		 valid: function(){		
 			this.level = check(this.get('jokers'), this.get('trumps'), this.get('currentRank'));
 			return this.level > 0;
 		 }
@@ -72,8 +72,7 @@ define(['backbone', 'underscore', 'app/cards'], function(Backbone, _, Cards){
 	 		if(json == undefined){
 	 			return undefined;
 	 		}
-	 		var cards = Cards.fjod(json.jokers.cancat(json.trumps))
-	 		return new Flipping({banker: Seat.fjod(json.seat), currentRank: RANK.fjod(json.rank)}).flip(cards);
+	 		return new Flipping({banker: Seat.fjod(json.seat), currentRank: RANK.fjod(json.rank), jokers: Cards.fjod(json.jokers), trumps: Cards.fjod(json.trump)});
 	 	}
 	 });
 	return Flipping;

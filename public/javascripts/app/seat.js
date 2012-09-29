@@ -1,4 +1,4 @@
-define(['backbone', 'underscore', 'app/rank', 'app/pair', 'app/player', 'app/card', 'app/cards'], function(Backbone, _, Rank, Pair, Player, Card, Cards){
+define(['backbone', 'underscore', 'app/rank', 'app/pair', 'app/player', 'app/card', 'app/cards', 'app/flipping'], function(Backbone, _, Rank, Pair, Player, Card, Cards, Flipping){
 	var Seat = Backbone.Model.extend({
 		initialize: function(){
 			this.set({rank: Rank.TWO, defender: false, attacker: false, cards: Cards.cards()});
@@ -35,8 +35,9 @@ define(['backbone', 'underscore', 'app/rank', 'app/pair', 'app/player', 'app/car
 		deal: function(card){
 			this.get('cards').add(card);
 		}, 
-		canFlip: function(){
-			return this.get('cards').canFlip();
+		canFlip: function(cids, rank){
+			var cards = this.get('cards').getCardsByCid(cids);
+			return new Flipping({currentRank: rank, jokers: cards.jokers(), trumps: cards.trumps()}).valid();
 		}, 
 		sortedCards: function(){
 			return this.get('cards').sortBy(function(card){

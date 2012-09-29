@@ -33,7 +33,16 @@ define(['jQuery', 'underscore', 'backbone', 'ejs', 'app/rooms', 'app/room', 'app
 			"click .card": 'toggleCard'
 		},
 		toggleCard: function(e){
-			console.log($(e.target).toggleClass('selected'));
+			$(e.target).toggleClass('selected');
+			if(this.canFlip()){
+				$(".flip").removeClass('hidden');
+			}
+			else{
+				$(".flip").addClass('hidden');	
+			}
+		},
+		canFlip: function(){
+			return this.model.canFlip($(".card.selected").map(function(index, c){return $(c).attr('cid')}));
 		},
 		render: function(){
 		 	var result = new EJS({url: '/templates/room/seat.ejs'}).render({seat: this.model, roomId: this.roomId, mySeat: this.mySeat});

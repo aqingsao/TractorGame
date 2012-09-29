@@ -55,6 +55,9 @@
 form.takeSeat{
 	
 }
-form.flip{
+.flip.hidden{
+	display: none;
+}
+.flip{
 	display: inline;
 }

@@ -1,4 +1,4 @@
-define(['backbone', 'underscore', 'app/rank', 'app/suit', 'app/card'], function(Backbone, _, Rank, Suit, Card){ 
+define(['backbone', 'underscore', 'app/rank', 'app/suit', 'app/card', 'app/flipping'], function(Backbone, _, Rank, Suit, Card, Flipping){ 
 	var Cards = Backbone.Collection.extend({
 		model: Card, 
 		contains: function(card){  
@@ -30,9 +30,6 @@ define(['backbone', 'underscore', 'app/rank', 'app/suit', 'app/card'], function(
 				return c.get('suit') == suit;
 			});
 		}, 
-		canFlip: function(){
-			return true;
-		}, 
 		toString: function(){
 			var str = "[";
 			this.each(function(card){
@@ -50,6 +47,12 @@ define(['backbone', 'underscore', 'app/rank', 'app/suit', 'app/card'], function(
 				return card.isJoker();
 			}));
 		}, 
+		trumps: function(){
+			return Cards.cards(this.reject(function(card){
+				return card.isJoker();
+			}));
+		}, 
+
 		spades: function(){
 			return Cards.cards(this.filter(function(card){
 				return card.isSpade();
@@ -68,6 +71,11 @@ define(['backbone', 'underscore', 'app/rank', 'app/suit', 'app/card'], function(
 		diamonds: function(){
 			return Cards.cards(this.filter(function(card){
 				return card.isDiamond();
+			}));
+		},
+		getCardsByCid: function(cids){
+			return Cards.cards(this.filter(function(card){
+				return cids.indexOf(card.cid) >= 0;
 			}));
 		}
 

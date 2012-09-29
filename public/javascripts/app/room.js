@@ -5,7 +5,7 @@ define(['backbone', 'underscore', 'app/cards', 'app/seats', 'app/roomState', 'ap
 		},                 
 		initialize: function(){   
 			var seats = Seats.prepareSeats();   
-			this.set({seats: seats, roomState: RoomState.WAITING, cards: Cards.decks(2)});
+			this.set({seats: seats, roomState: RoomState.WAITING, cards: Cards.decks(2), currentRank: Rank.TWO});
 		},
 		join: function(player, seatId){
 			if(this.get('roomState') != RoomState.WAITING){
@@ -13,7 +13,7 @@ define(['backbone', 'underscore', 'app/cards', 'app/seats', 'app/roomState', 'ap
 			}         
 			this.get('seats').join(player, seatId);
 			if(this.get('seats').full()){ 
-				this.set({roomState: RoomState.READY, currentRank: Rank.TWO});
+				this.set({roomState: RoomState.READY});
 			}
 		},
 		start: function(){
@@ -55,8 +55,11 @@ define(['backbone', 'underscore', 'app/cards', 'app/seats', 'app/roomState', 'ap
 			if(!seat.hasCards(cards)){
 				throw "You cannot flip cards";
 			}
-			var flipping = new Flipping({defender: seat, currentRank: this.get('currentRank')}); 
-			if(!flipping.flip(cards)){
+			var jokers = Cards.cards(cards.filter(function(card){return card.isJoker();}));
+		 	var trumps = Cards.cards(cards.reject(function(card){return card.isJoker();})); 
+
+			var flipping = new Flipping({defender: seat, currentRank: this.get('currentRank'), jokers: jokers, trumps: trumps}); 
+			if(!flipping.valid()){
 				throw "You cannot flip cards";			
 			}
 			if(this.flipping != undefined && !flipping.canOverturn(this.flipping)){

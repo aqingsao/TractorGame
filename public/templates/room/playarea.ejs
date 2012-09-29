@@ -9,6 +9,6 @@
 	<div class="currentStatus">
 		<span class="description"><%= room.get('roomState').get('name')%></span> 
 		<form class="start<% if(!room.canStart()){%> hidden<%}%>" action="/room/<%= room.get('id') %>/start" method="POST">
-			<input type="submit" value="点击开始游戏"></input>
+			<input type="submit" value="开始游戏"></input>
 		</form>			
 	</div>

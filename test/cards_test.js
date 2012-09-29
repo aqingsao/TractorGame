@@ -74,26 +74,28 @@ requirejs(['backbone', "app/cards", "app/rank", "app/card"], function(Backbone, 
 		test.done();
 	};
 
-	exports["Can flip when having 2 big jokers"] = function(test){
-		var cards = Cards.cards([Card.bigJoker(), Card.bigJoker()]);
-		test.equals(cards.canFlip(), true);
-		test.done();
-	};
-
-	exports["Can flip when having 2 small jokers"] = function(test){
-		var cards = Cards.cards([Card.smallJoker(), Card.smallJoker()]);
-		test.equals(cards.canFlip(), true);
-		test.done();
-	};
-	exports["Can flip when having 1 small joker and 1 heart"] = function(test){
-		var cards = Cards.cards([Card.smallJoker(), Card.heart(Rank.TWO)]);
-		test.equals(cards.canFlip(), true);
-		test.done();
-	};
 	exports['filter jokers'] = function(test){
 		var cards = Cards.cards([Card.smallJoker(), Card.heart(Rank.TWO)]);
 		var jokers = cards.jokers();
 		test.equals(jokers.length, 1);
+
+		test.done();
+	};
+	exports['get card from cards collection'] = function(test){
+		var smallJoker = Card.smallJoker();
+		var heart2 = Card.heart(Rank.TWO);
+		var cards = Cards.cards([smallJoker, heart2]);
+		test.equals(cards.getByCid(smallJoker.cid), smallJoker);
+
+		test.done();
+	};
+	exports['get cards from cards collection by cid'] = function(test){
+		var smallJoker = Card.smallJoker();
+		var heart2 = Card.heart(Rank.TWO);
+		var cards = Cards.cards([smallJoker, heart2]);
+
+		var actual = cards.getCardsByCid([smallJoker.cid, heart2.cid]); 
+		test.equals(actual.length, 2);
 
 		test.done();
 	};

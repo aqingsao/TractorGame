@@ -6,8 +6,8 @@ div#main
 			span.count= 0
 			个房间 ，您可以加入已有的房间，也可以创建自己的房间
 			form.newRoom(action="/rooms", method="POST", onclick="return false;")
-				input(value='创建新房间', type='submit')= '点击加入'
-			span.message.error.hidden= '无法创建新房间'
+				input(value='开房', type='submit')= '点击加入'
+			span.message.error.hidden= '开放失败'
 	div.rooms
 		
 div#footer 
