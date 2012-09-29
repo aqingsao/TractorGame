@@ -86,20 +86,27 @@ define(['util', 'app/cards', 'app/rooms', 'app/room', 'app/player', 'broader'], 
 				res.json({error: error, room: room.toJSON()}, 400);
 			}
 		},
-		tractorFlip: function(req, res){
+		roomFlip: function(req, res){
 			var id = req.params.id; 
-			var playerName = req.body.name;
+			var seatId = req.params.seatId;
+			var cards = req.body.cards;
 			var room = rooms.get(id);
 			try{
 				if(room == undefined){
 					throw "Invalid room id " + id;
 				}
-				room.flip();
-				console.log("Fliping in room " + id);
+				var seat = room.getSeat(seatId);
+				if(seat == undefined){
+					console.log(room.get('seats').map(function(seat){return seat.get('id')}));
+					throw "Invalid seat id " + seatId + " for room " + id;
+				}
+				console.log("Seat " + seatId + " is fliping in room " + id);
+
+				room.flip(seat, seat.getCards(cards));
 				res.json({});
 			}catch(error){  
 				console.log("Failed to flip in room " + id + ": " + error);
-				res.json({error: error, tractorGame: room.toJSON()}, 400);
+				res.json({error: error, room: room.toJSON()}, 400);
 			}
 		}
 	}	

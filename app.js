@@ -45,7 +45,7 @@ requirejs(['express', 'socket.io', 'broader', 'routes/index.js'], function(expre
   	app.post('/room/:id/join/:seatId', routes.roomJoin);
   	
   	app.post('/room/:id/start', routes.roomStart);
-  	app.post('/room/:id/flip', routes.tractorFlip);
+  	app.post('/room/:id/flip/:seatId', routes.roomFlip);
   	               	
   	app.listen(3000, function(){
   	  console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);

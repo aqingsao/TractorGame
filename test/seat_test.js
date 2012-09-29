@@ -113,6 +113,18 @@ requirejs(['app/seat', 'app/rank', 'app/player', 'app/card', 'app/cards', 'under
 
 		test.done();
 	};
+	exports['return cards when given rank and suit'] = function(test){
+		var bigJoker = Card.bigJoker();
+		var smallJoker = Card.smallJoker();
+		var heart2 = Card.heart(Rank.TWO);
+		var heart3 = Card.heart(Rank.THREE);
+		var seat = seatWithCards([bigJoker, heart2, heart3]);
+
+		var cards = seat.getCards([{rank: bigJoker.rank, suit: bigJoker.suit}, {rank: heart2.rank, suit: heart2.suit}]);
+		test.equals(cards.length, 2);
+
+		test.done();
+	};
 
 	var seatWithCards = function(cards){
 		var seat = new Seat();

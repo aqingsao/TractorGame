@@ -18,7 +18,6 @@ define(['jQuery', 'underscore', 'backbone', 'ejs', 'app/rooms', 'app/room', 'app
   		}
 	});
 
-
 	var SeatView = Backbone.View.extend({
 		mySeat: false,
 		initialize: function(roomId, seat){
@@ -27,10 +26,11 @@ define(['jQuery', 'underscore', 'backbone', 'ejs', 'app/rooms', 'app/room', 'app
 			var self = this;
 			this.model.on('change', function(){self.render();})
 			this.model.get("cards").bind('add', function(){self.render();})
-			_.bindAll(this, 'render'); 
+			_.bindAll(this, 'render', 'flip'); 
 		},
 		events:{
-			"click .card": 'toggleCard'
+			"click .card": 'toggleCard', 
+			"click .flip": 'flip'
 		},
 		toggleCard: function(e){
 			$(e.target).toggleClass('selected');
@@ -44,6 +44,19 @@ define(['jQuery', 'underscore', 'backbone', 'ejs', 'app/rooms', 'app/room', 'app
 		canFlip: function(){
 			return this.model.canFlip(this.$(".card.selected").map(function(index, c){return $(c).attr('cid')}));
 		},
+		flip: function(){
+			var self = this;
+
+			var form = this.$("form.flip");  
+			var data = this.$(".card.selected").map(function(index, c){return {suit: $(c).attr('suit'), rank: $(c).attr('rank')}});
+			$.post(form.attr("action"), JSON.stringify({cards: data}), function(data){ 
+	   			console.log("Flip successfully.") 
+			}).error(function(data){
+				console.log("Failed to flip: ");
+		    	self.render();
+			});	
+			return false;
+		}, 
 		render: function(){
 		 	var result = new EJS({url: '/templates/room/seat.ejs'}).render({seat: this.model, roomId: this.roomId, mySeat: this.mySeat});
 			this.$el.attr("id", "seat" + this.model.id);

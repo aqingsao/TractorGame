@@ -55,6 +55,17 @@ requirejs(['app/card', 'app/rank'], function(Card, Rank){
 		test.equals(Card.diamond(Rank.TWO).isClub(), false);
 
 		test.done();
-	}
+	};
+	exports["return true when card match"] = function(test){
+		var heart2 = Card.heart(Rank.TWO);
+		test.equals(heart2.match({rank: Rank.TWO, suit: heart2.get('suit').get('name')}), true);
+		test.done();
+	};	
+	exports["return false when card not match"] = function(test){
+		var heart2 = Card.heart(Rank.TWO);
+		test.equals(heart2.match({rank: Rank.THREE, suit: heart2.get('suit').get('name')}), false);
+		test.done();
+	};	
+
 
 });

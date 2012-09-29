@@ -2,6 +2,9 @@ define(['backbone', 'underscore', 'app/rank', 'app/pair', 'app/player', 'app/car
 	var Seat = Backbone.Model.extend({
 		initialize: function(){
 			this.set({rank: Rank.TWO, defender: false, attacker: false, cards: Cards.cards()});
+			if(this.get('id') != undefined){
+				this.id = this.get('id');
+			}
 		},	                         
 		setDefender: function(currentRank){
 			this.set({defender: true, attacker: false});
@@ -44,6 +47,12 @@ define(['backbone', 'underscore', 'app/rank', 'app/pair', 'app/player', 'app/car
 				return card.isJoker();
 			});
 		}, 
+		getCards: function(jsons){
+			var cards = this.get("cards");
+			return _.map(jsons, function(cardJson){
+				return cards.getCardByJson(cardJson);
+			});
+		},
 		fjod: function(json){
 			var attributes = {};
 			if(json.player != undefined){

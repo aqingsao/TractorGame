@@ -70,7 +70,7 @@ define(['backbone', 'underscore', 'app/cards', 'app/seats', 'app/roomState', 'ap
 			this.get('seats').setDefender(seat, this.get('currentRank'));
 		}, 
 		canFlip: function(){ 
-			return this.get('roomState') == RoomState.FLIPPING || this.get('roomState') == RoomState.DEALING;
+			return this.get('roomState') == RoomState.DEALING || this.get('roomState') == RoomState.FLIPPING;
 		}, 
 		canStart: function(){ 
 			return this.get('roomState') == RoomState.READY;

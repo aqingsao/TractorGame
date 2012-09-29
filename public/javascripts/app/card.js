@@ -40,6 +40,9 @@ define(['backbone', 'underscore', 'app/rank', 'app/suit'], function(Backbone, _,
 		equals: function(other){
 			return this.get('suit').equals(other.get('suit')) && this.get('rank').equals(other.get('rank'));
 		},
+		match: function(json){
+			return this.get('suit').get('name') == json.suit && this.get('rank').get('name') == json.rank;
+		}, 
 		toString: function(){
 			return this.get('suit').get('name') + ' ' + this.get('rank').get('name');
 		}
