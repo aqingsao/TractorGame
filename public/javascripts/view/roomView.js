@@ -35,14 +35,14 @@ define(['jQuery', 'underscore', 'backbone', 'ejs', 'app/rooms', 'app/room', 'app
 		toggleCard: function(e){
 			$(e.target).toggleClass('selected');
 			if(this.canFlip()){
-				$(".flip").removeClass('hidden');
+				this.$(".flip").removeClass('hidden');
 			}
 			else{
-				$(".flip").addClass('hidden');	
+				this.$(".flip").addClass('hidden');	
 			}
 		},
 		canFlip: function(){
-			return this.model.canFlip($(".card.selected").map(function(index, c){return $(c).attr('cid')}));
+			return this.model.canFlip(this.$(".card.selected").map(function(index, c){return $(c).attr('cid')}));
 		},
 		render: function(){
 		 	var result = new EJS({url: '/templates/room/seat.ejs'}).render({seat: this.model, roomId: this.roomId, mySeat: this.mySeat});

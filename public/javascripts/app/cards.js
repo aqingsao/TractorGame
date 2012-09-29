@@ -75,7 +75,7 @@ define(['backbone', 'underscore', 'app/rank', 'app/suit', 'app/card', 'app/flipp
 		},
 		getCardsByCid: function(cids){
 			return Cards.cards(this.filter(function(card){
-				return cids.indexOf(card.cid) >= 0;
+				return _.indexOf(cids, card.cid) >= 0;
 			}));
 		}
 
