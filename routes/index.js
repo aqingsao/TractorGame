@@ -15,10 +15,15 @@ define(['util', 'app/cards', 'app/rooms', 'app/room', 'app/player', 'broader'], 
 			var id = rooms.length + 1;
 			var room = new Room({id: id, dealInterval: 100}); 
 			room.id = id;
-			room.on('change:roomState', function(e){
-				console.log("Room " + e.id + " state changed to " + e.get('roomState'));
-				broader.roomChanged(e.id, {'roomState': e.get('roomState')});
+			// room.on('change:roomState', function(e){
+			// 	console.log("Room " + e.id + " state changed to " + e.get('roomState'));
+			// 	broader.roomChanged(e.id, {'roomState': e.get('roomState')});
+			// });
+			room.on('change', function(e){
+				console.log(e.changed);
+				broader.roomChanged(e.id, e.changed);
 			});
+
 			room.get('seats').each(function(seat){
 				seat.on('change', function(e){
 					console.log("Seat " + e.get('id') +" of room " + room.id +" changed...");
@@ -48,6 +53,7 @@ define(['util', 'app/cards', 'app/rooms', 'app/room', 'app/player', 'broader'], 
 		},
 		roomJson: function(req, res){
 			var room = rooms.get(req.params.id);
+			console.log(room);
 			res.json({room: room == undefined? {} : room.toJSON(), mySeat: req.session.seatId});
 		},
 		roomJoin: function(req, res){
@@ -89,7 +95,7 @@ define(['util', 'app/cards', 'app/rooms', 'app/room', 'app/player', 'broader'], 
 		roomFlip: function(req, res){
 			var id = req.params.id; 
 			var seatId = req.params.seatId;
-			var cards = req.body.cards;
+			var cardIds = req.body.cards;
 			var room = rooms.get(id);
 			try{
 				if(room == undefined){
@@ -100,9 +106,11 @@ define(['util', 'app/cards', 'app/rooms', 'app/room', 'app/player', 'broader'], 
 					console.log(room.get('seats').map(function(seat){return seat.get('id')}));
 					throw "Invalid seat id " + seatId + " for room " + id;
 				}
-				console.log("Seat " + seatId + " is fliping in room " + id);
+				console.log("Seat " + seatId + " is fliping in room " + id +" with cards " + cardIds);
+				console.log(seat.get("cards").map(function(card){return card.id}));
+				console.log(seat.getCards(cardIds).length);
 
-				room.flip(seat, seat.getCards(cards));
+				room.flip(seat, seat.getCards(cardIds));
 				res.json({});
 			}catch(error){  
 				console.log("Failed to flip in room " + id + ": " + error);

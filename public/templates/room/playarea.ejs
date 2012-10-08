@@ -1,6 +1,19 @@
 	<div class="defenders">
 		<span>台上:</span>
-		<span>当前没有人在台上</span>   
+		<% if(!room.has('flipping')){%>
+			<span>当前没有人在台上</span>
+		<% }else{%>
+		 	<span><%= room.get('banker').playerName()%> </span>
+		 	<span>
+		 		<% room.get("flipping").get("jokers").each(function(card){%>
+		 			<span class="card <%= card.get('suit').get('name')%>" id="<%= card.id%>"><%= card.get('rank').get('name')%></span>
+		 		<% })%>
+		 		<% room.get("flipping").get("trumps").each(function(card){%>
+		 			<span class="card <%= card.get('suit').get('name')%>" id="<%= card.id%>"><%= card.get('rank').get('name')%></span>
+		 		<% })%>
+
+		 	</span>
+		 <% }%>
 	</div>
 	<div class="attackers">
 		<span>得分:</span>

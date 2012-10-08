@@ -14,7 +14,7 @@ define(['jQuery', 'underscore', 'backbone', 'ejs', 'app/rooms', 'app/room', 'app
 	socket.on("roomChanged", function(data){ 
   		if(room != undefined & room.id == data.roomId){
   			console.log("my room changed ...");
-			room.fjod(data.changed);		
+			room.fjod(data.changed);
   		}
 	});
 
@@ -42,14 +42,17 @@ define(['jQuery', 'underscore', 'backbone', 'ejs', 'app/rooms', 'app/room', 'app
 			}
 		},
 		canFlip: function(){
-			return this.model.canFlip(this.$(".card.selected").map(function(index, c){return $(c).attr('cid')}));
+			return this.model.canFlip(this.$(".card.selected").map(function(index, c){return $(c).attr('id')}));
 		},
 		flip: function(){
 			var self = this;
 
 			var form = this.$("form.flip");  
-			var data = this.$(".card.selected").map(function(index, c){return {suit: $(c).attr('suit'), rank: $(c).attr('rank')}});
-			$.post(form.attr("action"), JSON.stringify({cards: data}), function(data){ 
+			var data = [];
+			this.$(".card.selected").each(function(index, c){
+				data.push($(c).attr('id'));
+			});
+			$.post(form.attr("action"), {'cards': data}, function(data){ 
 	   			console.log("Flip successfully.") 
 			}).error(function(data){
 				console.log("Failed to flip: ");
@@ -93,6 +96,7 @@ define(['jQuery', 'underscore', 'backbone', 'ejs', 'app/rooms', 'app/room', 'app
 			var self = this;
 			$.get("/data/room/" + roomId, function(data){
 				console.log("I am on seat " + data.mySeat +" in room " + data.room.id);
+				console.log(data);
 				if(data.mySeat == undefined){
 					data.mySeat = 0;
 				}
@@ -123,6 +127,7 @@ define(['jQuery', 'underscore', 'backbone', 'ejs', 'app/rooms', 'app/room', 'app
 			return false;
 		},
 	  	render: function() {                
+	  		console.log(this.model);
 		 	var result = new EJS({url: '/templates/room/playarea.ejs'}).render({room: this.model});
 		 	this.$el.html(result);
 	    	return this;

@@ -38,8 +38,8 @@ define(['backbone', 'underscore', 'app/rank', 'app/pair', 'app/player', 'app/car
 		deal: function(card){
 			this.get('cards').add(card);
 		}, 
-		canFlip: function(cids, rank){
-			var cards = this.get('cards').getCardsByCid(cids);
+		canFlip: function(cardIds, rank){
+			var cards = this.getCards(cardIds);
 			return new Flipping({currentRank: rank, jokers: cards.jokers(), trumps: cards.trumps()}).valid();
 		}, 
 		sortedCards: function(){
@@ -47,11 +47,16 @@ define(['backbone', 'underscore', 'app/rank', 'app/pair', 'app/player', 'app/car
 				return card.isJoker();
 			});
 		}, 
-		getCards: function(jsons){
+		getCards: function(cardIds){
 			var cards = this.get("cards");
-			return _.map(jsons, function(cardJson){
-				return cards.getCardByJson(cardJson);
-			});
+			var self = this;
+			return Cards.cards(_.map(cardIds, function(cardId){
+				var card = cards.get(cardId);
+				if(card == undefined){
+					throw "cannot find card " + cardId +" for seat " + self.id;
+				}
+				return card;
+			}));
 		},
 		fjod: function(json){
 			var attributes = {};
@@ -62,6 +67,9 @@ define(['backbone', 'underscore', 'app/rank', 'app/pair', 'app/player', 'app/car
 		}
 	}, {
 		fjod: function(json){
+			if(json == undefined){
+				return undefined;
+			}
 			var seat = new Seat();
 			seat.id= json.id;
 

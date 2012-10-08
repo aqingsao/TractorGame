@@ -1,4 +1,4 @@
-define(['backbone', 'underscore', 'app/cards', 'app/seats', 'app/roomState', 'app/pair', 'app/rank', 'app/flipping'], function(Backbone, _, Cards, Seats, RoomState, Pair, Rank, Flipping){ 
+define(['backbone', 'underscore', 'app/cards', 'app/seats', 'app/roomState', 'app/pair', 'app/rank', 'app/flipping', 'app/seat'], function(Backbone, _, Cards, Seats, RoomState, Pair, Rank, Flipping, Seat){ 
 	var Room = Backbone.Model.extend({
 		defaults: {
 			dealInterval: 1
@@ -52,13 +52,10 @@ define(['backbone', 'underscore', 'app/cards', 'app/seats', 'app/roomState', 'ap
 				throw "You cannot flip cards";
 			}
 			console.log("Player " + seat.playerName() +" is fliping: " + cards.toString());
-			if(!seat.hasCards(cards)){
-				throw "You cannot flip cards";
-			}
 			var jokers = Cards.cards(cards.filter(function(card){return card.isJoker();}));
 		 	var trumps = Cards.cards(cards.reject(function(card){return card.isJoker();})); 
 
-			var flipping = new Flipping({defender: seat, currentRank: this.get('currentRank'), jokers: jokers, trumps: trumps}); 
+			var flipping = new Flipping({currentRank: this.get('currentRank'), jokers: jokers, trumps: trumps}); 
 			if(!flipping.valid()){
 				throw "You cannot flip cards";			
 			}
@@ -66,7 +63,7 @@ define(['backbone', 'underscore', 'app/cards', 'app/seats', 'app/roomState', 'ap
 				throw "You cannot overturn cards";	
 			}
 			// event.flip
-			this.set({flipping: flipping});
+			this.set({banker: seat, flipping: flipping});
 			this.get('seats').setDefender(seat, this.get('currentRank'));
 		}, 
 		canFlip: function(){ 
@@ -113,17 +110,24 @@ define(['backbone', 'underscore', 'app/cards', 'app/seats', 'app/roomState', 'ap
 			if(json.round != undefined){
 				attributes['round'] = Round.fjod(json.roomState);
 			}
+			if(json.flipping != undefined){
+				attributes['flipping'] = Flipping.fjod(json.flipping);
+			}
+			if(json.banker != undefined){
+				attributes['banker'] = Seat.fjod(json.banker);
+			}
 
 			this.set(attributes);
 		}
 	}, {
 		fjod: function(json){
-			var room = new Room(); 
+		var room = new Room(); 
 			var roomState = RoomState.fjod(json.roomState);
 			var seats = Seats.fjod(json.seats);
+			var banker = Seat.fjod(json.banker);
 			var flipping = Flipping.fjod(json.flipping);
 			var cards = Cards.fjod(json.cards);
-			room.set({id: json.id, seats: seats, cards: cards, roomState: roomState, flipping: flipping});
+			room.set({id: json.id, seats: seats, cards: cards, roomState: roomState, flipping: flipping, banker: banker});
 			return room;
 		}
 	});

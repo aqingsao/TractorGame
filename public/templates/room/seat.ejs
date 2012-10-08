@@ -20,19 +20,19 @@
 </div>
 <div class="cards">
 	<% seat.get('cards').jokers().each(function(card){%>
-		<div class="card <%= card.get('suit').get('name')%>" cid="<%= card.cid%>" suit="<%= card.get('suit').get('name')%>" rank="<%= card.get('rank').get('name')%>"><%= card.get('rank').get('name')%></div>
+		<div class="card <%= card.get('suit').get('name')%>" id="<%= card.id%>"><%= card.get('rank').get('name')%></div>
 	<% })%>
 	<% seat.get('cards').spades().each(function(card){%>
-		<div class="card <%= card.get('suit').get('name')%>" cid="<%= card.cid%>" suit="<%= card.get('suit').get('name')%>" rank="<%= card.get('rank').get('name')%>"><%= card.get('rank').get('name')%></div>
+		<div class="card <%= card.get('suit').get('name')%>" id="<%= card.id%>"><%= card.get('rank').get('name')%></div>
 	<% })%>
 	<% seat.get('cards').diamonds().each(function(card){%>
-		<div class="card <%= card.get('suit').get('name')%>" cid="<%= card.cid%>" suit="<%= card.get('suit').get('name')%>" rank="<%= card.get('rank').get('name')%>"><%= card.get('rank').get('name')%></div>
+		<div class="card <%= card.get('suit').get('name')%>" id="<%= card.id%>"><%= card.get('rank').get('name')%></div>
 	<% })%>
 	<% seat.get('cards').clubs().each(function(card){%>
-		<div class="card <%= card.get('suit').get('name')%>" cid="<%= card.cid%>" suit="<%= card.get('suit').get('name')%>" rank="<%= card.get('rank').get('name')%>"><%= card.get('rank').get('name')%></div>
+		<div class="card <%= card.get('suit').get('name')%>" id="<%= card.id%>"><%= card.get('rank').get('name')%></div>
 	<% })%>
 	<% seat.get('cards').hearts().each(function(card){%>
-		<div class="card <%= card.get('suit').get('name')%>" cid="<%= card.cid%>" suit="<%= card.get('suit').get('name')%>" rank="<%= card.get('rank').get('name')%>"><%= card.get('rank').get('name')%></div>
+		<div class="card <%= card.get('suit').get('name')%>" id="<%= card.id%>"><%= card.get('rank').get('name')%></div>
 	<% })%>
 
 </div>

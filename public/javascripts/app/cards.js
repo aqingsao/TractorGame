@@ -1,4 +1,4 @@
-define(['backbone', 'underscore', 'app/rank', 'app/suit', 'app/card', 'app/flipping'], function(Backbone, _, Rank, Suit, Card, Flipping){ 
+define(['backbone', 'underscore', 'app/rank', 'app/suit', 'app/card'], function(Backbone, _, Rank, Suit, Card){ 
 	var Cards = Backbone.Collection.extend({
 		model: Card, 
 		contains: function(card){  
@@ -72,16 +72,6 @@ define(['backbone', 'underscore', 'app/rank', 'app/suit', 'app/card', 'app/flipp
 			return Cards.cards(this.filter(function(card){
 				return card.isDiamond();
 			}));
-		},
-		getCardsByCid: function(cids){
-			return Cards.cards(this.filter(function(card){
-				return _.indexOf(cids, card.cid) >= 0;
-			}));
-		}, 
-		getCardByJson: function(json){
-			return this.find(function(card){
-				return card.match(json);
-			})
 		}
 	}, {
 		decks: function(count){

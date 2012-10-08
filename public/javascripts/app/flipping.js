@@ -1,4 +1,4 @@
-define(['backbone', 'underscore', 'app/cards'], function(Backbone, _, Cards){
+define(['backbone', 'underscore', 'app/cards', 'app/rank'], function(Backbone, _, Cards, Rank){
 	 var check = function(jokers, trumps, currentRank){
 	 	if(jokers.any(function(card){
 	 		return !card.isJoker();
@@ -72,7 +72,7 @@ define(['backbone', 'underscore', 'app/cards'], function(Backbone, _, Cards){
 	 		if(json == undefined){
 	 			return undefined;
 	 		}
-	 		return new Flipping({banker: Seat.fjod(json.seat), currentRank: RANK.fjod(json.rank), jokers: Cards.fjod(json.jokers), trumps: Cards.fjod(json.trump)});
+	 		return new Flipping({currentRank: Rank.fjod(json.currentRank), jokers: Cards.fjod(json.jokers), trumps: Cards.fjod(json.trumps)});
 	 	}
 	 });
 	return Flipping;

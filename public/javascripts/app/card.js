@@ -1,6 +1,10 @@
 define(['backbone', 'underscore', 'app/rank', 'app/suit'], function(Backbone, _, Rank, Suit){ 
+	var count = 0;
 	var Card = Backbone.Model.extend({
 		initialize: function(){
+			if(this.get("id") != undefined){
+				this.id = this.get("id");
+			}
 		}, 
 		// validate: function(attrs){  
 		// 	if(!attrs.rank.matchSuit(attrs.suit)){
@@ -48,26 +52,26 @@ define(['backbone', 'underscore', 'app/rank', 'app/suit'], function(Backbone, _,
 		}
 	}, {
 		heart: function(rank){
-			return new Card({suit: Suit.H, rank: rank});
+			return new Card({suit: Suit.H, rank: rank, id: count++});
 		}, 
 		club: function(rank){
-			return new Card({suit: Suit.C, rank: rank});
+			return new Card({suit: Suit.C, rank: rank, id: count++});
 		},
 		diamond: function(rank){
-			return new Card({suit: Suit.D, rank: rank});
+			return new Card({suit: Suit.D, rank: rank, id: count++});
 		},
 		spade: function(rank){
-			return new Card({suit: Suit.S, rank: rank});
+			return new Card({suit: Suit.S, rank: rank, id: count++});
 		},
 		smallJoker: function(){
-			return new Card({suit: Suit.SJ, rank: Rank.SMALL_JOKER});
+			return new Card({suit: Suit.SJ, rank: Rank.SMALL_JOKER, id: count++});
 		},
 		bigJoker: function(){
-			return new Card({suit: Suit.BJ, rank: Rank.BIG_JOKER});
+			return new Card({suit: Suit.BJ, rank: Rank.BIG_JOKER, id: count++});
 		}, 
 		fjod: function(json){    
 			var card = new Card();
-			card.set({rank: Rank.fjod(json.rank), suit: Suit.fjod(json.suit)});
+			card.set({rank: Rank.fjod(json.rank), suit: Suit.fjod(json.suit), id: json.id});
 			return card;
 		}
 	});
