@@ -82,7 +82,7 @@ requirejs(['app/seat', 'app/rank', 'app/player', 'app/card', 'app/cards', 'under
 		var bigJoker1 = Card.bigJoker();
 		var bigJoker2 = Card.bigJoker();
 		var seat = seatWithCards([bigJoker1, bigJoker2]);
-		test.equals(seat.canFlip([bigJoker1.cid, bigJoker2.cid], Rank.TWO), true);
+		test.equals(seat.canFlip([bigJoker1.id, bigJoker2.id], Rank.TWO), true);
 		test.done();
 	};
 	exports["Can flip when having 1 small joker and 1 heart"] = function(test){
@@ -90,7 +90,7 @@ requirejs(['app/seat', 'app/rank', 'app/player', 'app/card', 'app/cards', 'under
 		var heart2 = Card.heart(Rank.TWO);
 		var seat = seatWithCards([smallJoker, heart2]);
 
-		test.equals(seat.canFlip([smallJoker.cid, heart2.cid], Rank.TWO), true);
+		test.equals(seat.canFlip([smallJoker.id, heart2.id], Rank.TWO), true);
 
 		test.done();
 	};
@@ -99,7 +99,7 @@ requirejs(['app/seat', 'app/rank', 'app/player', 'app/card', 'app/cards', 'under
 		var heart2 = Card.heart(Rank.TWO);
 		var seat = seatWithCards([smallJoker, heart2]);
 
-		test.equals(seat.canFlip([smallJoker.cid, heart2.cid], Rank.THREE), false);
+		test.equals(seat.canFlip([smallJoker.id, heart2.id], Rank.THREE), false);
 
 		test.done();
 	};
@@ -109,18 +109,17 @@ requirejs(['app/seat', 'app/rank', 'app/player', 'app/card', 'app/cards', 'under
 		var heart2 = Card.heart(Rank.TWO);
 		var seat = seatWithCards([bigJoker, heart2]);
 
-		test.equals(seat.canFlip([smallJoker.cid, heart2.cid], Rank.TWO), false);
+		test.equals(seat.canFlip([smallJoker.id, heart2.id], Rank.TWO), false);
 
 		test.done();
 	};
-	exports['return cards when given rank and suit'] = function(test){
+	exports['return cards when given cards id'] = function(test){
 		var bigJoker = Card.bigJoker();
-		var smallJoker = Card.smallJoker();
 		var heart2 = Card.heart(Rank.TWO);
 		var heart3 = Card.heart(Rank.THREE);
 		var seat = seatWithCards([bigJoker, heart2, heart3]);
 
-		var cards = seat.getCards([{rank: bigJoker.rank, suit: bigJoker.suit}, {rank: heart2.rank, suit: heart2.suit}]);
+		var cards = seat.getCards([bigJoker.id, heart2.id]);
 		test.equals(cards.length, 2);
 
 		test.done();

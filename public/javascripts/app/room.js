@@ -26,11 +26,11 @@ define(['backbone', 'underscore', 'app/cards', 'app/seats', 'app/roomState', 'ap
 		deal: function(){
 			var round = 1;
 			var self = this;
-			var cards = this.get('cards').shuffle();
+			this.cards = this.get('cards').shuffle();
 			var dealSlow = function(){ 
 				var i = 0;
 				for(i = 0; i < 4; i++){
-					var card = cards.shift(); 
+					var card = self.cards.shift(); 
 					var seat = self.get('seats').at(i);  
 					seat.deal(card);
 				}
@@ -62,12 +62,24 @@ define(['backbone', 'underscore', 'app/cards', 'app/seats', 'app/roomState', 'ap
 			if(this.flipping != undefined && !flipping.canOverturn(this.flipping)){
 				throw "You cannot overturn cards";	
 			}
-			// event.flip
-			this.set({banker: seat, flipping: flipping});
-			this.get('seats').setDefender(seat, this.get('currentRank'));
+			this.set({banker: seat.id, flipper: seat.id, flipping: flipping});
+
+			var self = this;
+			setTimeout(function(){
+				self.dealRestToBanker(self.cards, seat);
+				self.set({roomState: RoomState.BURYING});
+			}, 5000);
 		}, 
+		dealRestToBanker: function(cards, seat){
+			cards.each(function(card){
+				seat.deal(card);
+			});
+		},
 		canFlip: function(){ 
 			return this.get('roomState') == RoomState.DEALING || this.get('roomState') == RoomState.FLIPPING;
+		}, 
+		canBury: function(){ 
+			return this.get('roomState') == RoomState.BURYING;
 		}, 
 		canStart: function(){ 
 			return this.get('roomState') == RoomState.READY;
@@ -102,6 +114,27 @@ define(['backbone', 'underscore', 'app/cards', 'app/seats', 'app/roomState', 'ap
 				return seat.takenByPlayer(player);
 			});
 		}, 
+		banker: function(){
+			return this.getSeat(this.get('banker'));
+		}, 
+		flipper: function(){
+			return this.getSeat(this.get('flipper'));
+		}, 
+		isBanker: function(seatId){
+			return seatId == this.getSeat(this.get('banker')).id;
+		},
+		bury: function(seat, cards){
+			if(!this.canBury()){
+				throw "Cannot bury cards when room is " + this.get("roomState").get("name");
+			}
+			console.log("Player " + seat.playerName() +" is burying: " + cards.toString());
+
+			if(cards.length != 8){
+				throw 'cannot bury cards as there are ' + cards.length +" cards";
+			}
+			this.buryCards = seat.buryCards(cards);
+			this.set({roomState: RoomState.PLAYING});
+		}, 
 		fjod: function(json){
 			var attributes = {};
 			if(json.roomState != undefined){
@@ -114,20 +147,22 @@ define(['backbone', 'underscore', 'app/cards', 'app/seats', 'app/roomState', 'ap
 				attributes['flipping'] = Flipping.fjod(json.flipping);
 			}
 			if(json.banker != undefined){
-				attributes['banker'] = Seat.fjod(json.banker);
+				attributes['banker'] = json.banker;
 			}
-
+			if(json.flipper != undefined){
+				attributes['flipper'] = json.flipper;
+			}
+			
 			this.set(attributes);
 		}
 	}, {
 		fjod: function(json){
-		var room = new Room(); 
+			var room = new Room(); 
 			var roomState = RoomState.fjod(json.roomState);
 			var seats = Seats.fjod(json.seats);
-			var banker = Seat.fjod(json.banker);
 			var flipping = Flipping.fjod(json.flipping);
 			var cards = Cards.fjod(json.cards);
-			room.set({id: json.id, seats: seats, cards: cards, roomState: roomState, flipping: flipping, banker: banker});
+			room.set({id: json.id, seats: seats, cards: cards, roomState: roomState, flipping: flipping, banker: json.banker, flipper: json.flipper});
 			return room;
 		}
 	});

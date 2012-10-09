@@ -11,6 +11,11 @@ define(['jQuery', 'underscore', 'backbone', 'ejs', 'app/rooms', 'app/room', 'app
 			room.getSeat(data.seatId).deal(Card.fjod(data.changed));
   		}
 	});
+  	socket.on("buryCard", function(data){ 
+  		if(room != undefined && room.id == data.roomId && room.getSeat(data.seatId) != undefined){
+			room.getSeat(data.seatId).playCard(data.changed.id);
+  		}
+	});
 	socket.on("roomChanged", function(data){ 
   		if(room != undefined & room.id == data.roomId){
   			console.log("my room changed ...");
@@ -20,30 +25,45 @@ define(['jQuery', 'underscore', 'backbone', 'ejs', 'app/rooms', 'app/room', 'app
 
 	var SeatView = Backbone.View.extend({
 		mySeat: false,
-		initialize: function(roomId, seat){
-			this.roomId = roomId;
+		initialize: function(room, seat){
+			this.room = room;
 			this.model = seat;
 			var self = this;
 			this.model.on('change', function(){self.render();})
 			this.model.get("cards").bind('add', function(){self.render();})
+			this.model.get("cards").bind('remove', function(){self.render();})
 			_.bindAll(this, 'render', 'flip'); 
 		},
 		events:{
 			"click .card": 'toggleCard', 
-			"click .flip": 'flip'
+			"click .flip": 'flip',
+			"click .bury": 'bury'
 		},
 		toggleCard: function(e){
 			$(e.target).toggleClass('selected');
-			if(this.canFlip()){
-				this.$(".flip").removeClass('hidden');
+			if(this.room.canFlip()){
+				if(this.canFlip()){
+					this.$(".flip").removeClass('hidden');
+				}
+				else{
+					this.$(".flip").addClass('hidden');	
+				}
 			}
-			else{
-				this.$(".flip").addClass('hidden');	
+			if(this.room.canBury()){
+				if(this.canBury()){
+					this.$(".bury").removeClass('hidden');
+				}
+				else{
+					this.$(".bury").addClass('hidden');	
+				}
 			}
 		},
 		canFlip: function(){
 			return this.model.canFlip(this.$(".card.selected").map(function(index, c){return $(c).attr('id')}));
 		},
+		canBury: function(){
+			return this.$(".card.selected").length == 8;
+		}, 
 		flip: function(){
 			var self = this;
 
@@ -55,13 +75,29 @@ define(['jQuery', 'underscore', 'backbone', 'ejs', 'app/rooms', 'app/room', 'app
 			$.post(form.attr("action"), {'cards': data}, function(data){ 
 	   			console.log("Flip successfully.") 
 			}).error(function(data){
-				console.log("Failed to flip: ");
+				console.log("Failed to flip: " + data);
 		    	self.render();
 			});	
 			return false;
 		}, 
+		bury: function(){
+			var self = this;
+
+			var form = this.$("form.bury");  
+			var data = [];
+			this.$(".card.selected").each(function(index, c){
+				data.push($(c).attr('id'));
+			});
+			$.post(form.attr("action"), {'cards': data}, function(data){ 
+	   			console.log("Bury successfully.") 
+			}).error(function(data){
+				console.log("Failed to bury: " + data);
+		    	self.render();
+			});
+			return false;
+		}, 
 		render: function(){
-		 	var result = new EJS({url: '/templates/room/seat.ejs'}).render({seat: this.model, roomId: this.roomId, mySeat: this.mySeat});
+		 	var result = new EJS({url: '/templates/room/seat.ejs'}).render({seat: this.model, roomId: this.room.id, mySeat: this.mySeat});
 			this.$el.attr("id", "seat" + this.model.id);
 		 	if(!this.model.isTaken()){
 		 		this.$el.addClass('notTaken');
@@ -106,10 +142,10 @@ define(['jQuery', 'underscore', 'backbone', 'ejs', 'app/rooms', 'app/room', 'app
 				self.mySeat = new Number(data.mySeat);
 
 				self.render();
-				new NorthSeatView(self.model.id, self.model.getSeat(self.mySeat + 2)).render();
-		 		new WestSeatView(self.model.id, self.model.getSeat(self.mySeat + 3)).render();
-		 		new EastSeatView(self.model.id, self.model.getSeat(self.mySeat + 1)).render();
-		 		new SouthSeatView(self.model.id, self.model.getSeat(self.mySeat + 0)).render();
+				new NorthSeatView(self.model, self.model.getSeat(self.mySeat + 2)).render();
+		 		new WestSeatView(self.model, self.model.getSeat(self.mySeat + 3)).render();
+		 		new EastSeatView(self.model, self.model.getSeat(self.mySeat + 1)).render();
+		 		new SouthSeatView(self.model, self.model.getSeat(self.mySeat + 0)).render();
 			});
 		},
 		events: {

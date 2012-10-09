@@ -47,6 +47,9 @@ define(['backbone', 'underscore'], function(Backbone, _){
 		dealCard: function(roomId, seatId, card){
 			broadcastAll('dealCard', {roomId: roomId, seatId: seatId, changed: card});
 		},
+		buryCard: function(roomId, seatId, card){
+			broadcastAll('buryCard', {roomId: roomId, seatId: seatId, changed: card});
+		},
 
 		onNewRoom: function(roomId){
 			// this.connections.add(new Connection(roomId));

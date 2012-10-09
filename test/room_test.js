@@ -125,12 +125,13 @@ requirejs(['app/room', 'app/player', 'app/roomState', 'app/seats', 'app/pair', '
 
 	exports["Player can flip when having available jokers and trumps."] = function(test){
 		var room = readyGame();
-		var originalDeal = room.deal;
+		var originalDeal = room.deal, originalDealRestToBanker = room.dealRestToBanker;
 		var smallJoker = Card.smallJoker();
 		var heart2 = Card.heart(Rank.TWO);
 		room.deal = function(){
 			stubDeal([{seat: room.getSeatOfPlayer(jacky), cards: [smallJoker, heart2]}]);
 		};	
+		room.dealRestToBanker = function(){};
 		room.start();
 
 		room.flip(room.getSeatOfPlayer(jacky), Cards.cards([smallJoker, heart2]));
@@ -143,6 +144,8 @@ requirejs(['app/room', 'app/player', 'app/roomState', 'app/seats', 'app/pair', '
 		test.equals(room.getSeatOfPlayer(yao).get('attacker'), true);
 
 		room.deal = originalDeal;
+		room.dealRestToBanker = originalDealRestToBanker;
+
 		test.done();
 	};
 
@@ -156,6 +159,7 @@ requirejs(['app/room', 'app/player', 'app/roomState', 'app/seats', 'app/pair', '
 		room.deal = function(){
 			stubDeal([{seat: room.getSeatOfPlayer(jacky), cards: [smallJoker, heart2]}, {seat: room.getSeatOfPlayer(yao), cards: [smallJoker, diamond1, diamond2]}]);
 		};	
+		room.dealRestToBanker = function(){};
 		room.start();
 
 		room.flip(room.getSeatOfPlayer(jacky), Cards.cards([smallJoker, heart2]));
@@ -222,6 +226,7 @@ requirejs(['app/room', 'app/player', 'app/roomState', 'app/seats', 'app/pair', '
 		room.deal = function(){
 			stubDeal([{seat: room.getSeatOfPlayer(jacky), cards: [smallJoker1, smallJoker2]}]);
 		};	
+		room.dealRestToBanker = function(){};
 		room.start();
 
 		room.flip(room.getSeatOfPlayer(jacky), Cards.cards([smallJoker1, smallJoker2]));
@@ -240,6 +245,7 @@ requirejs(['app/room', 'app/player', 'app/roomState', 'app/seats', 'app/pair', '
 		room.deal = function(){
 			stubDeal([]);
 		};	
+		room.dealRestToBanker = function(){};
 		room.start();
 
 		test.throws(function(){room.flip(room.getSeatOfPlayer(jacky), [smallJoker, heart3])}, "Cannot flip cards");
@@ -247,6 +253,32 @@ requirejs(['app/room', 'app/player', 'app/roomState', 'app/seats', 'app/pair', '
 		room.deal = originalDeal;
 		test.done();
 	};
+
+	exports["can get banker and flipper after flipping"] = function(test){
+		var room = readyGame();
+		var originalDeal = room.deal;
+		var smallJoker1 = Card.smallJoker();
+		var smallJoker2 = Card.smallJoker();
+		var seat = room.getSeatOfPlayer(jacky);
+		room.deal = function(){
+			stubDeal([{seat: seat, cards: [smallJoker1, smallJoker2]}]);
+		};	
+		room.dealRestToBanker = function(){};
+
+		room.start();
+
+		room.flip(seat, Cards.cards([smallJoker1, smallJoker2]));
+
+		var seats = room.get('seats');
+		test.equals(room.banker(), seat);
+		test.equals(room.flipper(), seat);
+		test.equals(room.isBanker(seat.id), true);
+		test.equals(room.isBanker(room.getSeatOfPlayer(nana).id), false);
+
+		room.deal = originalDeal;
+		test.done();
+	};
+
 
 	var jacky = new Player({name: 'Jacky'});
 	var nana = new Player({name: 'Nana'});

@@ -15,11 +15,8 @@ define(['util', 'app/cards', 'app/rooms', 'app/room', 'app/player', 'broader'], 
 			var id = rooms.length + 1;
 			var room = new Room({id: id, dealInterval: 100}); 
 			room.id = id;
-			// room.on('change:roomState', function(e){
-			// 	console.log("Room " + e.id + " state changed to " + e.get('roomState'));
-			// 	broader.roomChanged(e.id, {'roomState': e.get('roomState')});
-			// });
 			room.on('change', function(e){
+				console.log("Room changed...");
 				console.log(e.changed);
 				broader.roomChanged(e.id, e.changed);
 			});
@@ -31,6 +28,9 @@ define(['util', 'app/cards', 'app/rooms', 'app/room', 'app/player', 'broader'], 
 				});
 				seat.get("cards").bind("add", function(e){
 					broader.dealCard(room.id, seat.get('id'), e.toJSON());
+				});
+				seat.get("cards").bind("remove", function(e){
+					broader.buryCard(room.id, seat.get('id'), e.toJSON());
 				});
 			})
 			rooms.add(room);
@@ -107,8 +107,6 @@ define(['util', 'app/cards', 'app/rooms', 'app/room', 'app/player', 'broader'], 
 					throw "Invalid seat id " + seatId + " for room " + id;
 				}
 				console.log("Seat " + seatId + " is fliping in room " + id +" with cards " + cardIds);
-				console.log(seat.get("cards").map(function(card){return card.id}));
-				console.log(seat.getCards(cardIds).length);
 
 				room.flip(seat, seat.getCards(cardIds));
 				res.json({});
@@ -116,7 +114,31 @@ define(['util', 'app/cards', 'app/rooms', 'app/room', 'app/player', 'broader'], 
 				console.log("Failed to flip in room " + id + ": " + error);
 				res.json({error: error, room: room.toJSON()}, 400);
 			}
+		},
+		roomBury: function(req, res){
+			var id = req.params.id; 
+			var seatId = req.params.seatId;
+			var cardIds = req.body.cards;
+			var room = rooms.get(id);
+			try{
+				if(room == undefined){
+					throw "Invalid room id " + id;
+				}
+				var seat = room.getSeat(seatId);
+				if(seat == undefined){
+					console.log(room.get('seats').map(function(seat){return seat.get('id')}));
+					throw "Invalid seat id " + seatId + " for room " + id;
+				}
+				console.log("Seat " + seatId + " is burying in room " + id +" with cards " + cardIds);
+
+				room.bury(seat, seat.getCards(cardIds));
+				res.json({});
+			}catch(error){  
+				console.log("Failed to bury in room " + id + ": " + error);
+				res.json({error: error, room: room.toJSON()}, 400);
+			}
 		}
+
 	}	
 		
 });

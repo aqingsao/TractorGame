@@ -13,8 +13,10 @@
 
 	<% if(seat.isTaken() & mySeat){%>
 		<form class="flip hidden" action="/room/<%= roomId%>/flip/<%= seat.get('id')%>" method="POST" onclick="return false;">
-			<input type="hidden" name="name" />
 			<input type="submit" value="我要亮主"/>
+		</form>
+		<form class="bury hidden" action="/room/<%= roomId%>/bury/<%= seat.get('id')%>" method="POST" onclick="return false;">
+			<input type="submit" value="扣牌"/>
 		</form>
 	<% }%>
 </div>

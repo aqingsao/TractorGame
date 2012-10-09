@@ -35,7 +35,7 @@
 .playarea{
 	position: absolute;
 	height: 200px;
-	width: 200px;
+	width: 215px;
 	border: 1px solid red;
 	top: 50%;
 	margin-top: -100px;
@@ -55,10 +55,10 @@
 form.takeSeat{
 	
 }
-.flip.hidden{
+.flip.hidden, .bury.hidden{
 	display: none;
 }
-.flip{
+.flip, .bury{
 	display: inline;
 }
 .flip input{

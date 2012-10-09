@@ -89,14 +89,4 @@ requirejs(['backbone', "app/cards", "app/rank", "app/card"], function(Backbone, 
 
 		test.done();
 	};
-	exports['get cards from cards collection by cid'] = function(test){
-		var smallJoker = Card.smallJoker();
-		var heart2 = Card.heart(Rank.TWO);
-		var cards = Cards.cards([smallJoker, heart2]);
-
-		var actual = cards.getCardsByCid([smallJoker.cid, heart2.cid]); 
-		test.equals(actual.length, 2);
-
-		test.done();
-	};
 });

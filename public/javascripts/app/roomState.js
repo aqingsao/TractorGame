@@ -5,7 +5,7 @@ define(['backbone', 'underscore', 'app/cards', 'app/seats'], function(Backbone, 
 		}
 	});
     
-    return {WAITING: new RoomState('Waiting'), READY: new RoomState('Ready'), DEALING: new RoomState('Dealing'), FLIPPING: new RoomState('Flipping'), PLAYING: new RoomState('Playing'),DONE: new RoomState('Done'), fjod: function(json){
+    return {WAITING: new RoomState('Waiting'), READY: new RoomState('Ready'), DEALING: new RoomState('Dealing'), FLIPPING: new RoomState('Flipping'), BURYING: new RoomState('Burying'), PLAYING: new RoomState('Playing'),DONE: new RoomState('Done'), fjod: function(json){
 				switch(json.name){
 					case 'Done':
 						return this.DONE;
@@ -15,6 +15,8 @@ define(['backbone', 'underscore', 'app/cards', 'app/seats'], function(Backbone, 
 						return this.DEALING;
 					case 'Flipping':
 						return this.FLIPPING;
+					case 'Burying':
+						return this.BURYING;
 					case 'Playing':
 						return this.PLAYING;
 					case 'Waiting':

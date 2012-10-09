@@ -39,8 +39,12 @@ define(['backbone', 'underscore', 'app/rank', 'app/pair', 'app/player', 'app/car
 			this.get('cards').add(card);
 		}, 
 		canFlip: function(cardIds, rank){
-			var cards = this.getCards(cardIds);
-			return new Flipping({currentRank: rank, jokers: cards.jokers(), trumps: cards.trumps()}).valid();
+			try{
+				var cards = this.getCards(cardIds);
+				return new Flipping({currentRank: rank, jokers: cards.jokers(), trumps: cards.trumps()}).valid();
+			}catch(e){
+				return false;
+			}
 		}, 
 		sortedCards: function(){
 			return this.get('cards').sortBy(function(card){
@@ -58,11 +62,28 @@ define(['backbone', 'underscore', 'app/rank', 'app/pair', 'app/player', 'app/car
 				return card;
 			}));
 		},
+		buryCards: function(cards){
+			var self = this;
+			cards.each(function(card){
+				self.get("cards").remove(card);
+			});
+			return cards;
+		},
+		playCard: function(cardId){
+			this.get("cards").remove(this.get("cards").get(cardId));
+		},
 		fjod: function(json){
 			var attributes = {};
 			if(json.player != undefined){
 				attributes['player'] = this.get('player') == undefined? Player.fjod(json.player) : this.get('player').fjod(json.player);
 			}
+			if(json.defender != undefined){
+				attributes['defender'] = json.defender;
+			}
+			if(json.attacker != undefined){
+				attributes['attacker'] = json.attacker;
+			}
+
 			this.set(attributes);
 		}
 	}, {
