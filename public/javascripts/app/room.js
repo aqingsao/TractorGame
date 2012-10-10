@@ -1,11 +1,11 @@
-define(['backbone', 'underscore', 'app/cards', 'app/seats', 'app/roomState', 'app/pair', 'app/rank', 'app/flipping', 'app/seat'], function(Backbone, _, Cards, Seats, RoomState, Pair, Rank, Flipping, Seat){ 
+define(['backbone', 'underscore', 'app/cards', 'app/seats', 'app/roomState', 'app/pair', 'app/rank', 'app/flipping', 'app/seat', 'app/cycle', 'app/cycles'], function(Backbone, _, Cards, Seats, RoomState, Pair, Rank, Flipping, Seat, Cycle, Cycles){ 
 	var Room = Backbone.Model.extend({
 		defaults: {
 			dealInterval: 1
 		},                 
 		initialize: function(){   
 			var seats = Seats.prepareSeats();   
-			this.set({seats: seats, roomState: RoomState.WAITING, cards: Cards.decks(2), currentRank: Rank.TWO});
+			this.set({seats: seats, roomState: RoomState.WAITING, cards: Cards.decks(2), currentRank: Rank.TWO, cycles: new Cycles()});
 		},
 		join: function(player, seatId){
 			if(this.get('roomState') != RoomState.WAITING){
@@ -127,6 +127,9 @@ define(['backbone', 'underscore', 'app/cards', 'app/seats', 'app/roomState', 'ap
 			if(!this.canBury()){
 				throw "Cannot bury cards when room is " + this.get("roomState").get("name");
 			}
+			if(seat.id != this.get("banker")){
+				throw "Cannot bury cards because you are not banker";
+			}
 			console.log("Player " + seat.playerName() +" is burying: " + cards.toString());
 
 			if(cards.length != 8){
@@ -134,6 +137,20 @@ define(['backbone', 'underscore', 'app/cards', 'app/seats', 'app/roomState', 'ap
 			}
 			this.buryCards = seat.buryCards(cards);
 			this.set({roomState: RoomState.PLAYING});
+			this.play();
+		}, 
+		play: function(){
+			var cycle = cycles.nextCycle(this.get("banker"));
+		}, 
+		playCard: function(seatId, cycleId, cards){
+			var currentCycle = this.get("cycles").currentCycle();
+			if(cycleId != currentCycle.id){
+				throw "Cannot play card as cycle " + cycleId +" is not current cycle";
+			}
+			if(!currentCycle.canPlay(seatId)){
+				throw "Cannot play card as it's not seat " + seatId +"'s turn";
+			}
+			
 		}, 
 		fjod: function(json){
 			var attributes = {};
