@@ -1,0 +1,13 @@
+<div class="player">
+	<% if(seat.isTaken()){%>
+		<span class="name"><%= seat.playerName()%></span>
+		<span><% if(seat.get('defender')){%>台上<%}else{%>台下<%}%>，现在打<span><%= seat.get('rank').name%></span></span>
+	<% }else{ %>
+		<span.waiting>等待其他人加入</span>
+	<% }%>	
+</div>
+<div class="playedCards">
+	<% seat.get('playedCards').each(function(card){%>
+		<div class="card <%= card.get('suit').get('name')%>" id="<%= card.id%>"><%= card.get('rank').get('name')%></div>
+	<% })%>
+</div>

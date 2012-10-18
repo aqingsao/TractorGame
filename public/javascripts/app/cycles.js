@@ -3,14 +3,15 @@ define(['backbone', 'underscore', 'app/rank', 'app/card', 'app/cards', 'app/cycl
 		model: Cycle,
 		initialize: function(){
 		},
-		nextCycle: function(fromSeatId){
+		nextCycle: function(serverSeatId){
 			if(this.length > 0){
 				var currentCycle = this.at(this.length - 1);
 				if(!currentCycle.isFinished()){
 					throw "Cycle " + currentCycle.get("index") +" has not been finished yet";
 				}
+				serverSeatId = currentCycle.getWinnerSeatId();
 			}
-			var cycle = new Cycle({index: this.length, fromSeat: fromSeatId});
+			var cycle = new Cycle({index: this.length, serverSeatId: serverSeatId});
 			this.add(cycle);
 			return cycle;
 		}, 

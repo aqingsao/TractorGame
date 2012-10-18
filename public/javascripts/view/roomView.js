@@ -30,6 +30,7 @@ define(['jQuery', 'underscore', 'backbone', 'ejs', 'app/rooms', 'app/room', 'app
 			this.model = seat;
 			var self = this;
 			this.model.on('change', function(){self.render();})
+			this.room.on('change:currentSeatId', function(){self.render();})
 			this.model.get("cards").bind('add', function(){self.render();})
 			this.model.get("cards").bind('remove', function(){self.render();})
 			_.bindAll(this, 'render', 'flip'); 
@@ -37,7 +38,8 @@ define(['jQuery', 'underscore', 'backbone', 'ejs', 'app/rooms', 'app/room', 'app
 		events:{
 			"click .card": 'toggleCard', 
 			"click .flip": 'flip',
-			"click .bury": 'bury'
+			"click .bury": 'bury', 
+			"click .play": 'play'
 		},
 		toggleCard: function(e){
 			$(e.target).toggleClass('selected');
@@ -57,12 +59,23 @@ define(['jQuery', 'underscore', 'backbone', 'ejs', 'app/rooms', 'app/room', 'app
 					this.$(".bury").addClass('hidden');	
 				}
 			}
+			if(this.room.get("currentSeatId") == this.model.id){
+				if(this.canPlay()){
+					this.$(".play").removeClass('hidden');
+				}
+				else{
+					this.$(".play").removeClass('hidden');
+				}
+			}
 		},
 		canFlip: function(){
 			return this.model.canFlip(this.$(".card.selected").map(function(index, c){return $(c).attr('id')}));
 		},
 		canBury: function(){
 			return this.$(".card.selected").length == 8;
+		}, 
+		canPlay: function(){
+			return this.$(".card.selected").length > 0;
 		}, 
 		flip: function(){
 			var self = this;
@@ -96,9 +109,31 @@ define(['jQuery', 'underscore', 'backbone', 'ejs', 'app/rooms', 'app/room', 'app
 			});
 			return false;
 		}, 
+		play: function(){
+			var self = this;
+
+			var form = this.$("form.play");  
+			var data = [];
+			this.$(".card.selected").each(function(index, c){
+				data.push($(c).attr('id'));
+			});
+			$.post(form.attr("action"), {'cards': data}, function(data){ 
+	   			console.log("Play successfully.") 
+			}).error(function(data){
+				console.log("Failed to play: " + data);
+		    	self.render();
+			});
+			return false;
+		}, 
 		render: function(){
 		 	var result = new EJS({url: '/templates/room/seat.ejs'}).render({seat: this.model, roomId: this.room.id, mySeat: this.mySeat});
 			this.$el.attr("id", "seat" + this.model.id);
+			if(this.room.get("currentSeatId") == this.model.id){
+				this.$el.addClass("playing");
+			}
+			else{
+				this.$el.removeClass("playing");
+			}
 		 	if(!this.model.isTaken()){
 		 		this.$el.addClass('notTaken');
 		 	}
@@ -108,19 +143,49 @@ define(['jQuery', 'underscore', 'backbone', 'ejs', 'app/rooms', 'app/room', 'app
 		 	this.$el.html(result);
 		}
 	});
-	var NorthSeatView = SeatView.extend({
-		el: $(".seat.north")
-	});
 	var SouthSeatView = SeatView.extend({
 		el: $(".seat.south"),
 		mySeat: true
 	});
-	var EastSeatView = SeatView.extend({
-		el: $(".seat.east")
+	var OtherSeatView = Backbone.View.extend({
+		mySeat: false,
+		initialize: function(room, seat){
+			this.room = room;
+			this.model = seat;
+			var self = this;
+			this.model.on('change', function(){self.render();})
+			this.room.on('change:currentSeatId', function(){self.render();})
+			this.model.get("cards").bind('add', function(){self.render();})
+			this.model.get("cards").bind('remove', function(){self.render();})
+		},
+		render: function(){
+		 	var result = new EJS({url: '/templates/room/otherSeat.ejs'}).render({seat: this.model, roomId: this.room.id, mySeat: this.mySeat});
+			this.$el.attr("id", "seat" + this.model.id);
+			if(this.room.get("currentSeatId") == this.model.id){
+				this.$el.addClass("playing");
+			}
+			else{
+				this.$el.removeClass("playing");
+			}
+		 	if(!this.model.isTaken()){
+		 		this.$el.addClass('notTaken');
+		 	}
+		 	else{
+		 		this.$el.removeClass('notTaken');
+		 	}
+		 	this.$el.html(result);
+		}
 	});
-	var WestSeatView = SeatView.extend({
-		el: $(".seat.west")
+	var NorthSeatView = OtherSeatView.extend({
+		el: $(".otherSeat.north")
 	});
+	var EastSeatView = OtherSeatView.extend({
+		el: $(".otherSeat.east")
+	});
+	var WestSeatView = OtherSeatView.extend({
+		el: $(".otherSeat.west")
+	});
+
 	var getSeat = function(seatId){
 		return seatId % 4;
 	}

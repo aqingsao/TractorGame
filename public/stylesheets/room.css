@@ -1,36 +1,41 @@
 .room{
 	position: relative;
 	height: 600px;
-	width: 898px;
+	width: 760px;
 }
-.seat{
-	border: solid;
-	padding: 5px 10px;
+.seat, .otherSeat{
+	border: solid 2px black;
+	padding: 8px;
 	position: absolute;
 }   
-.seat.north, .seat.south{
-	width: 550px;
-	height: 135px; 
-	left: 161px;
-}
-.seat.north{
-	top:0;
+.otherSeat.north, .seat.south{
+	left: 0px;
 } 
+.otherSeat.north{
+	width: 400px;
+	height: 150px; 
+	left: 170px;
+	top: 0;
+}
 .seat.south{
+	width: 740px;
+	height: 160px; 
 	bottom: 0;
 }
-.seat.east, .seat.west{
-	width: 135px;  
-	height: 550px;
-	top: 20px;
+.otherSeat.east, .otherSeat.west{
+	width: 150px;  
+	height: 400px;
+	top: 0;
 }
-.seat.east{
+.otherSeat.east{
 	left; 0;
 }
-.seat.west{
+.otherSeat.west{
 	right: 0;
 }
-
+.seat.playing{
+	border: 5px solid red;
+}
 
 .playarea{
 	position: absolute;
@@ -44,6 +49,7 @@
 }
 .player{
 	background-color: seaGreen;
+	height: 53px;
 }
 .player .name{
 	margin: 5px 15px;
@@ -55,10 +61,10 @@
 form.takeSeat{
 	
 }
-.flip.hidden, .bury.hidden{
+.flip.hidden, .bury.hidden, .play.hidden{
 	display: none;
 }
-.flip, .bury{
+.flip, .bury, .play{
 	display: inline;
 }
 .flip input{

@@ -18,6 +18,9 @@
 		<form class="bury hidden" action="/room/<%= roomId%>/bury/<%= seat.get('id')%>" method="POST" onclick="return false;">
 			<input type="submit" value="扣牌"/>
 		</form>
+		<form class="play hidden" action="/room/<%= roomId%>/play/<%= seat.get('id')%>" method="POST" onclick="return false;">
+			<input type="submit" value="出牌"/>
+		</form>
 	<% }%>
 </div>
 <div class="cards">

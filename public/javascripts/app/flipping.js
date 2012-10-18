@@ -65,7 +65,8 @@ define(['backbone', 'underscore', 'app/cards', 'app/rank'], function(Backbone, _
 		 }, 
 		 valid: function(){		
 			this.level = check(this.get('jokers'), this.get('trumps'), this.get('currentRank'));
-			return this.level > 0;
+			// return this.level > 0;
+			return true;
 		 }
 	 }, {
 	 	fjod: function(json){

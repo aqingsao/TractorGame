@@ -1,7 +1,7 @@
 define(['backbone', 'underscore', 'app/rank', 'app/pair', 'app/player', 'app/card', 'app/cards', 'app/flipping'], function(Backbone, _, Rank, Pair, Player, Card, Cards, Flipping){
 	var Seat = Backbone.Model.extend({
 		initialize: function(){
-			this.set({rank: Rank.TWO, defender: false, attacker: false, cards: Cards.cards()});
+			this.set({rank: Rank.TWO, defender: false, attacker: false, cards: Cards.cards(), playedCards: Cards.cards()});
 			if(this.get('id') != undefined){
 				this.id = this.get('id');
 			}
@@ -69,9 +69,22 @@ define(['backbone', 'underscore', 'app/rank', 'app/pair', 'app/player', 'app/car
 			});
 			return cards;
 		},
+		playCards: function(cards){
+			var self = this;
+			cards.each(function(card){
+				self.get("cards").remove(card.id);
+			});
+		}, 
 		playCard: function(cardId){
 			this.get("cards").remove(this.get("cards").get(cardId));
 		},
+		nextSeatId: function(){
+			var seatId = this.id - 1;
+			return seatId < 0 ? 3 : seatId;
+		},
+		playing: function(){
+			this.set({state: 'PLAYING'});
+		}, 
 		fjod: function(json){
 			var attributes = {};
 			if(json.player != undefined){
@@ -83,6 +96,10 @@ define(['backbone', 'underscore', 'app/rank', 'app/pair', 'app/player', 'app/car
 			if(json.attacker != undefined){
 				attributes['attacker'] = json.attacker;
 			}
+			if(json.state != undefined){
+				attributes['state'] = json.state;
+			}
+			attributes['playedCards'] = Cards.fjod(json.playedCards);
 
 			this.set(attributes);
 		}
@@ -94,7 +111,8 @@ define(['backbone', 'underscore', 'app/rank', 'app/pair', 'app/player', 'app/car
 			var seat = new Seat();
 			seat.id= json.id;
 
-			seat.set({id: json.id, rank: json.rank, defender: json.defender, attacker: json.attacker, cards: Cards.fjod(json.cards), player: Player.fjod(json.player)});
+			seat.set({id: json.id, rank: json.rank, defender: json.defender, attacker: json.attacker, 
+				cards: Cards.fjod(json.cards), player: Player.fjod(json.player), playedCards: Cards.fjod(json.playedCards)});
 			return seat;
 		}
 	}); 

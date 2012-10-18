@@ -137,20 +137,22 @@ define(['backbone', 'underscore', 'app/cards', 'app/seats', 'app/roomState', 'ap
 			}
 			this.buryCards = seat.buryCards(cards);
 			this.set({roomState: RoomState.PLAYING});
-			this.play();
+			this.startCycle();
 		}, 
-		play: function(){
-			var cycle = cycles.nextCycle(this.get("banker"));
+		startCycle: function(){
+			var cycle = this.get('cycles').nextCycle(this.get("banker"));
+			this.set({currentSeatId: cycle.get("currentSeatId")});
 		}, 
-		playCard: function(seatId, cycleId, cards){
+		playCards: function(seat, cards){
 			var currentCycle = this.get("cycles").currentCycle();
-			if(cycleId != currentCycle.id){
-				throw "Cannot play card as cycle " + cycleId +" is not current cycle";
+			currentCycle.playCards(seat.id, cards);
+			seat.playCards(cards);
+			if(currentCycle.isFinished()){
+				this.startCycle();
 			}
-			if(!currentCycle.canPlay(seatId)){
-				throw "Cannot play card as it's not seat " + seatId +"'s turn";
+			else{
+				this.set({currentSeatId: seat.nextSeatId()});
 			}
-			
 		}, 
 		fjod: function(json){
 			var attributes = {};
@@ -169,6 +171,9 @@ define(['backbone', 'underscore', 'app/cards', 'app/seats', 'app/roomState', 'ap
 			if(json.flipper != undefined){
 				attributes['flipper'] = json.flipper;
 			}
+			if(json.currentSeatId != undefined){
+				attributes['currentSeatId'] = json.currentSeatId;
+			}
 			
 			this.set(attributes);
 		}
@@ -179,7 +184,7 @@ define(['backbone', 'underscore', 'app/cards', 'app/seats', 'app/roomState', 'ap
 			var seats = Seats.fjod(json.seats);
 			var flipping = Flipping.fjod(json.flipping);
 			var cards = Cards.fjod(json.cards);
-			room.set({id: json.id, seats: seats, cards: cards, roomState: roomState, flipping: flipping, banker: json.banker, flipper: json.flipper});
+			room.set({id: json.id, seats: seats, cards: cards, roomState: roomState, flipping: flipping, banker: json.banker, flipper: json.flipper, currentSeatId: json.currentSeatId});
 			return room;
 		}
 	});

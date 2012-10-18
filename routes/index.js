@@ -1,5 +1,45 @@
 define(['util', 'app/cards', 'app/rooms', 'app/room', 'app/player', 'broader'], function(util, Cards, Rooms, Room, Player, broader){
-	var rooms = new Rooms();    
+	var rooms = new Rooms();   
+
+	var jacky = new Player({name: 'Jacky'});
+	var nana = new Player({name: 'Nana'});
+	var kerry = new Player({name: 'Kerry'});
+	var yao = new Player({name: 'Yao'});
+ 
+ 	var createRoom = function(id){
+ 		var room = new Room({id: id, dealInterval: 100}); 
+		room.id = id;
+		room.on('change', function(e){
+			console.log("Room changed...");
+			console.log(e.changed);
+			broader.roomChanged(e.id, e.changed);
+		});
+
+		room.get('seats').each(function(seat){
+			seat.on('change', function(e){
+				console.log("Seat " + e.get('id') +" of room " + room.id +" changed...");
+				broader.seatChanged(room.id, e.get('id'), e.changed);
+			});
+			seat.get("cards").bind("add", function(e){
+				broader.dealCard(room.id, seat.get('id'), e.toJSON());
+			});
+			seat.get("cards").bind("remove", function(e){
+				broader.buryCard(room.id, seat.get('id'), e.toJSON());
+			});
+		}); 
+		return room;
+ 	}; 
+ 	var readyGame = function(id){
+		var room = createRoom(id);
+		room.join(jacky, 0);
+		room.join(nana, 1);
+		room.join(kerry, 2);
+		return room;
+	}
+	rooms.add(readyGame(9998));
+	rooms.add(readyGame(9999));
+	rooms.add(readyGame(9997));
+
 	return{
 		index: function(req, res){ 
 			res.render('index', { title: 'Express' })
@@ -13,26 +53,7 @@ define(['util', 'app/cards', 'app/rooms', 'app/room', 'app/player', 'broader'], 
 		},
 		roomsCreate: function(req, res){
 			var id = rooms.length + 1;
-			var room = new Room({id: id, dealInterval: 100}); 
-			room.id = id;
-			room.on('change', function(e){
-				console.log("Room changed...");
-				console.log(e.changed);
-				broader.roomChanged(e.id, e.changed);
-			});
-
-			room.get('seats').each(function(seat){
-				seat.on('change', function(e){
-					console.log("Seat " + e.get('id') +" of room " + room.id +" changed...");
-					broader.seatChanged(room.id, e.get('id'), {'player': e.get('player').toJSON()});
-				});
-				seat.get("cards").bind("add", function(e){
-					broader.dealCard(room.id, seat.get('id'), e.toJSON());
-				});
-				seat.get("cards").bind("remove", function(e){
-					broader.buryCard(room.id, seat.get('id'), e.toJSON());
-				});
-			})
+			var room = createRoom(id);
 			rooms.add(room);
 			res.json(room.toJSON());
 		}, 
@@ -135,6 +156,29 @@ define(['util', 'app/cards', 'app/rooms', 'app/room', 'app/player', 'broader'], 
 				res.json({});
 			}catch(error){  
 				console.log("Failed to bury in room " + id + ": " + error);
+				res.json({error: error, room: room.toJSON()}, 400);
+			}
+		}, 
+		roomPlay: function(req, res){
+			var id = req.params.id; 
+			var seatId = req.params.seatId;
+			var cardIds = req.body.cards;
+			var room = rooms.get(id);
+			try{
+				if(room == undefined){
+					throw "Invalid room id " + id;
+				}
+				var seat = room.getSeat(seatId);
+				if(seat == undefined){
+					console.log(room.get('seats').map(function(seat){return seat.get('id')}));
+					throw "Invalid seat id " + seatId + " for room " + id;
+				}
+				console.log("Seat " + seatId + " is playing in room " + id +" with cards " + cardIds);
+
+				room.playCards(seat, seat.getCards(cardIds));
+				res.json({});
+			}catch(error){  
+				console.log("Failed to play in room " + id + ": " + error);
 				res.json({error: error, room: room.toJSON()}, 400);
 			}
 		}

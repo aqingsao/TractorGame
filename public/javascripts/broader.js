@@ -5,7 +5,7 @@ define(['backbone', 'underscore'], function(Backbone, _){
 			console.log("Broadcast event " + event +" to all sockets:");
 			io.sockets.emit(event, data);
 		}catch(error){
-			console.log("Failed to broadcast event " + event + " to socket " + socketId +": " + error);
+			console.log("Failed to broadcast event " + event + " to socket : " + error);
 		}
 	};
 	var Connection = Backbone.Model.extend({
