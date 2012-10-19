@@ -79,8 +79,7 @@ define(['backbone', 'underscore', 'app/rank', 'app/pair', 'app/player', 'app/car
 			this.get("cards").remove(this.get("cards").get(cardId));
 		},
 		nextSeatId: function(){
-			var seatId = this.id - 1;
-			return seatId < 0 ? 3 : seatId;
+			return (this.id + 1) % 4;
 		},
 		playing: function(){
 			this.set({state: 'PLAYING'});

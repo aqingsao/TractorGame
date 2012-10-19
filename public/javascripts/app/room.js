@@ -1,4 +1,4 @@
-define(['backbone', 'underscore', 'app/cards', 'app/seats', 'app/roomState', 'app/pair', 'app/rank', 'app/flipping', 'app/seat', 'app/cycle', 'app/cycles'], function(Backbone, _, Cards, Seats, RoomState, Pair, Rank, Flipping, Seat, Cycle, Cycles){ 
+define(['backbone', 'underscore', 'app/cards', 'app/seats', 'app/roomState', 'app/pair', 'app/rank', 'app/flipping', 'app/seat', 'app/cycle', 'app/cycles', 'app/hand'], function(Backbone, _, Cards, Seats, RoomState, Pair, Rank, Flipping, Seat, Cycle, Cycles, Hand){ 
 	var Room = Backbone.Model.extend({
 		defaults: {
 			dealInterval: 1
@@ -137,21 +137,23 @@ define(['backbone', 'underscore', 'app/cards', 'app/seats', 'app/roomState', 'ap
 			}
 			this.buryCards = seat.buryCards(cards);
 			this.set({roomState: RoomState.PLAYING});
-			this.startCycle();
+			this.nextCycle(seat.id);
 		}, 
-		startCycle: function(){
-			var cycle = this.get('cycles').nextCycle(this.get("banker"));
-			this.set({currentSeatId: cycle.get("currentSeatId")});
+		nextCycle: function(serverSeatId){
+			var cycles = this.get('cycles');
+			console.log("Next cycle " + cycles.length +" started.");
+			cycles.add(new Cycle({index: cycles.length, serverSeatId: serverSeatId}));
 		}, 
+		currentSeatId: function(){
+			var currentCycle = this.get('cycles').currentCycle();
+			return currentCycle == undefined ? undefined : currentCycle.get("currentSeatId");
+		},
 		playCards: function(seat, cards){
 			var currentCycle = this.get("cycles").currentCycle();
-			currentCycle.playCards(seat.id, cards);
-			seat.playCards(cards);
+			currentCycle.playCards(seat, cards);
+
 			if(currentCycle.isFinished()){
-				this.startCycle();
-			}
-			else{
-				this.set({currentSeatId: seat.nextSeatId()});
+				this.nextCycle(currentCycle.getWinnerSeatId());
 			}
 		}, 
 		fjod: function(json){
@@ -171,9 +173,6 @@ define(['backbone', 'underscore', 'app/cards', 'app/seats', 'app/roomState', 'ap
 			if(json.flipper != undefined){
 				attributes['flipper'] = json.flipper;
 			}
-			if(json.currentSeatId != undefined){
-				attributes['currentSeatId'] = json.currentSeatId;
-			}
 			
 			this.set(attributes);
 		}
@@ -184,7 +183,7 @@ define(['backbone', 'underscore', 'app/cards', 'app/seats', 'app/roomState', 'ap
 			var seats = Seats.fjod(json.seats);
 			var flipping = Flipping.fjod(json.flipping);
 			var cards = Cards.fjod(json.cards);
-			room.set({id: json.id, seats: seats, cards: cards, roomState: roomState, flipping: flipping, banker: json.banker, flipper: json.flipper, currentSeatId: json.currentSeatId});
+			room.set({id: json.id, seats: seats, cards: cards, roomState: roomState, flipping: flipping, banker: json.banker, flipper: json.flipper, cycles: Cycles.fjod(json.cycles)});
 			return room;
 		}
 	});

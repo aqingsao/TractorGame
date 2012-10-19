@@ -50,10 +50,17 @@ define(['backbone', 'underscore'], function(Backbone, _){
 		buryCard: function(roomId, seatId, card){
 			broadcastAll('buryCard', {roomId: roomId, seatId: seatId, changed: card});
 		},
+		newCycle: function(roomId, cycle){
+			broadcastAll('newCycle', {roomId: roomId, changed: cycle});
+		},
+		cycleChanged: function(roomId, cycleIndex, changed){
+			broadcastAll('cycleChanged', {roomId: roomId, cycleIndex: cycleIndex, changed: changed});
 
-		onNewRoom: function(roomId){
-			// this.connections.add(new Connection(roomId));
-		}, 
+		},
+		newHand: function(roomId, cycleIndex, changed){
+			broadcastAll('newHand', {roomId: roomId, cycleIndex: cycleIndex, changed: cycle});
+		},
+
 		getConnection: function(roomId){
 		   	var connection = this.connections.find(function(connection){
 				return connection.roomId == roomId;

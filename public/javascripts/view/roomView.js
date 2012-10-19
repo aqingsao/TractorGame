@@ -1,4 +1,4 @@
-define(['jQuery', 'underscore', 'backbone', 'ejs', 'app/rooms', 'app/room', 'app/player', 'io', 'app/card'], function($, _, Backbone, EJS, Rooms, Room, Player, io, Card){	          	
+define(['jQuery', 'underscore', 'backbone', 'ejs', 'app/rooms', 'app/room', 'app/player', 'io', 'app/card', 'app/hand'], function($, _, Backbone, EJS, Rooms, Room, Player, io, Card, Hand){
 	var socket = io.connect("ws://" + window.location.host);
   	socket.on("seatChanged", function(data){ 
   		if(room != undefined && room.id == data.roomId && room.getSeat(data.seatId) != undefined){
@@ -17,10 +17,39 @@ define(['jQuery', 'underscore', 'backbone', 'ejs', 'app/rooms', 'app/room', 'app
   		}
 	});
 	socket.on("roomChanged", function(data){ 
-  		if(room != undefined & room.id == data.roomId){
+  		if(room != undefined && room.id == data.roomId){
   			console.log("my room changed ...");
 			room.fjod(data.changed);
   		}
+	});
+	socket.on("newCycle", function(data){ 
+  		if(room != undefined && room.id == data.roomId){
+  			console.log("new cycle started ...");
+			room.fjod(data.changed);
+  		}
+	});
+	socket.on("cycleChanged", function(data){ 
+  		if(room == undefined || room.id != data.roomId){
+  			return;
+  		};
+  		var currentCycle = room.currentCycle();
+  		if(currentCycle == undefined || currentCycle.get("index") != data.cycleIndex){
+  			return;
+  		}
+  		console.log("cycle changed ...");
+		currentCycle.fjod(data.changed);
+	});
+	socket.on("newHand", function(data){ 
+		if(room == undefined || room.id != data.roomId){
+  			return;
+  		};
+  		var currentCycle = room.currentCycle();
+  		if(currentCycle == undefined || currentCycle.get("index") != data.cycleIndex){
+  			return;
+  		}
+
+  		console.log("player played cards ...");
+		currentCycle.get("hands").add(Hand.fjod(data.changed));
 	});
 
 	var SeatView = Backbone.View.extend({
@@ -59,7 +88,7 @@ define(['jQuery', 'underscore', 'backbone', 'ejs', 'app/rooms', 'app/room', 'app
 					this.$(".bury").addClass('hidden');	
 				}
 			}
-			if(this.room.get("currentSeatId") == this.model.id){
+			if(this.room.currentSeatId() == this.model.id){
 				if(this.canPlay()){
 					this.$(".play").removeClass('hidden');
 				}
@@ -128,7 +157,8 @@ define(['jQuery', 'underscore', 'backbone', 'ejs', 'app/rooms', 'app/room', 'app
 		render: function(){
 		 	var result = new EJS({url: '/templates/room/seat.ejs'}).render({seat: this.model, roomId: this.room.id, mySeat: this.mySeat});
 			this.$el.attr("id", "seat" + this.model.id);
-			if(this.room.get("currentSeatId") == this.model.id){
+			console.log("current seat id: " + this.room.currentSeatId());
+			if(this.room.currentSeatId() == this.model.id){
 				this.$el.addClass("playing");
 			}
 			else{
@@ -208,8 +238,8 @@ define(['jQuery', 'underscore', 'backbone', 'ejs', 'app/rooms', 'app/room', 'app
 
 				self.render();
 				new NorthSeatView(self.model, self.model.getSeat(self.mySeat + 2)).render();
-		 		new WestSeatView(self.model, self.model.getSeat(self.mySeat + 3)).render();
-		 		new EastSeatView(self.model, self.model.getSeat(self.mySeat + 1)).render();
+		 		new WestSeatView(self.model, self.model.getSeat(self.mySeat + 1)).render();
+		 		new EastSeatView(self.model, self.model.getSeat(self.mySeat + 3)).render();
 		 		new SouthSeatView(self.model, self.model.getSeat(self.mySeat + 0)).render();
 			});
 		},

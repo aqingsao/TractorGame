@@ -33,7 +33,7 @@
 .otherSeat.west{
 	right: 0;
 }
-.seat.playing{
+.playing{
 	border: 5px solid red;
 }
 
@@ -41,7 +41,6 @@
 	position: absolute;
 	height: 200px;
 	width: 215px;
-	border: 1px solid red;
 	top: 50%;
 	margin-top: -100px;
 	left: 50%;

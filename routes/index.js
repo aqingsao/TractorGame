@@ -27,6 +27,18 @@ define(['util', 'app/cards', 'app/rooms', 'app/room', 'app/player', 'broader'], 
 				broader.buryCard(room.id, seat.get('id'), e.toJSON());
 			});
 		}); 
+		var cycles = room.get('cycles');
+		cycles.bind("add", function(e){
+			broader.newCycle(room.id, e.toJSON());
+			e.on("change", function(e2){
+				broader.cycleChanged(room.id, e.get("index"), e2.changed);
+			});
+			e.get("hands").bind("add", function(e3){
+				broader.newHand(room.id, e.get("index"), e3.changed);
+			});
+
+		});
+
 		return room;
  	}; 
  	var readyGame = function(id){
