@@ -2,6 +2,9 @@ define(['backbone', 'underscore', 'app/rank', 'app/card', 'app/cards'], function
 	var Hand = Backbone.Model.extend({
 		initialize: function(){
 
+		}, 
+		defaults:{
+			"cards": Cards.cards()
 		}
 	}, {
 		fjod: function(json){

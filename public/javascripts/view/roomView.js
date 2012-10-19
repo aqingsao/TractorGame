@@ -32,7 +32,7 @@ define(['jQuery', 'underscore', 'backbone', 'ejs', 'app/rooms', 'app/room', 'app
   		if(room == undefined || room.id != data.roomId){
   			return;
   		};
-  		var currentCycle = room.currentCycle();
+  		var currentCycle = room.get("currentCycle");
   		if(currentCycle == undefined || currentCycle.get("index") != data.cycleIndex){
   			return;
   		}
@@ -43,7 +43,7 @@ define(['jQuery', 'underscore', 'backbone', 'ejs', 'app/rooms', 'app/room', 'app
 		if(room == undefined || room.id != data.roomId){
   			return;
   		};
-  		var currentCycle = room.currentCycle();
+  		var currentCycle = room.get("currentCycle");
   		if(currentCycle == undefined || currentCycle.get("index") != data.cycleIndex){
   			return;
   		}
@@ -155,7 +155,12 @@ define(['jQuery', 'underscore', 'backbone', 'ejs', 'app/rooms', 'app/room', 'app
 			return false;
 		}, 
 		render: function(){
-		 	var result = new EJS({url: '/templates/room/seat.ejs'}).render({seat: this.model, roomId: this.room.id, mySeat: this.mySeat});
+			if(this.room.get("cycles").currentCycle() != undefined){
+				var cycle = this.room.get("cycles").currentCycle();
+				console.log("my cards...");
+				console.log(cycle.get("hands").at(0).get("seatId") == this.model.id);
+			}
+		 	var result = new EJS({url: '/templates/room/seat.ejs'}).render({seat: this.model, roomId: this.room.id, mySeat: this.mySeat, currentCycle: this.room.get("cycles").currentCycle()});
 			this.$el.attr("id", "seat" + this.model.id);
 			console.log("current seat id: " + this.room.currentSeatId());
 			if(this.room.currentSeatId() == this.model.id){
@@ -189,7 +194,7 @@ define(['jQuery', 'underscore', 'backbone', 'ejs', 'app/rooms', 'app/room', 'app
 			this.model.get("cards").bind('remove', function(){self.render();})
 		},
 		render: function(){
-		 	var result = new EJS({url: '/templates/room/otherSeat.ejs'}).render({seat: this.model, roomId: this.room.id, mySeat: this.mySeat});
+		 	var result = new EJS({url: '/templates/room/otherSeat.ejs'}).render({seat: this.model, roomId: this.room.id, mySeat: this.mySeat, currentCycle: this.room.get("cycles").currentCycle()});
 			this.$el.attr("id", "seat" + this.model.id);
 			if(this.room.get("currentSeatId") == this.model.id){
 				this.$el.addClass("playing");

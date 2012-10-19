@@ -1,8 +1,12 @@
 define(['backbone', 'underscore', 'app/rank', 'app/card', 'app/cards', 'app/hand'], function(Backbone, _, Rank, Card, Cards, Hand){
 	var Cycle = Backbone.Model.extend({
 		initialize: function(){
-			this.set({currentSeatId: this.get("serverSeatId"), hands: new Backbone.Collection(), finished: false});
+			this.set({currentSeatId: this.get("serverSeatId")});
 		},	
+		defaults:{
+			"hands": new Backbone.Collection(), 
+			"finished": false
+		}, 
 		isFinished: function(){
 			return this.get("finished") == true;
 		}, 
@@ -28,6 +32,12 @@ define(['backbone', 'underscore', 'app/rank', 'app/card', 'app/cards', 'app/hand
 		getWinnerSeatId: function(){
 			return 0;
 		}, 
+		getCardsBySeat: function(seatId){
+			var hand = this.get("hands").find(function(hand){
+				return hand.get("seatId") == seatId;
+			});
+			return hand == undefined ? Cards.cards() : hand.get("cards");
+		},
 		fjod: function(json){
 			var attributes = {};
 			if(json.currentSeatId != undefined){
